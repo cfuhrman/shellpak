@@ -1,0 +1,80 @@
+#!/bin/bash
+# ====================================================================
+#
+# bash_darwin
+# 
+# Copyright (c) 2006 Christopher M. Fuhrman
+# All rights reserved.
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the Simplified BSD License (also
+# known as the "2-Clause License" or "FreeBSD License".)
+#
+# ====================================================================
+
+#
+# Sets up system environment for Mac OS X Darwin
+#
+
+# Determine PATH
+paths=('/opt/local/bin'       '/opt/local/sbin'                  \
+       '/usr/pkg/bin'         '/usr/pkg/sbin'                    \
+       '/usr/local/git/bin'   '/usr/pkg/lib/perl5/site_perl/bin' \
+       '/Applications/oracle' '/usr/texbin'                      \
+       "${HOME}/perl5/bin"
+)
+
+# Append additional directories if required
+for path in ${paths[@]}; do
+
+        # We only want to add the directory if it exists
+        if [ -d $path ]; then
+                echo $PATH | egrep '(^|\:)'${path}'(\:|$)' >/dev/null 2>&1 || PATH=$PATH:${path}
+        fi
+
+done
+
+# Get rid of pre-pended ':' and double colons
+PATH=${PATH#:}
+PATH=${PATH//::/:}
+
+# Set MANPATH
+MANPATH=/opt/local/man:/opt/local/share/man:$MANPATH:/usr/share/man:/usr/local/git/share/man:~/perl5/man
+
+# Enable LS Colors
+CLICOLOR=1
+LSCOLORS=Exfxcxdxbxegedhbagacad
+
+export PATH MANPATH CLICOLOR LSCOLORS
+
+# Set file operation verbose flags
+export FILE_OPS_FLAGS='v'
+export FILE_OPS_RM_FLAGS=${FILE_OPS_FLAGS}
+
+# Mac OS X uses killall instead of pkill
+export PKILL='killall'
+
+# Set up perl environment
+PERL5LIB="~/perl5/lib/perl5${PERL5LIB+:}$PERL5LIB"
+PERL_LOCAL_LIB_ROOT="~/perl5${PERL_LOCAL_LIB_ROOT+:}$PERL_LOCAL_LIB_ROOT"
+PERL_MB_OPT="--install_base \"~/perl5\""
+PERL_MM_OPT="INSTALL_BASE=~/perl5"
+
+export PERL5LIB PERL_LOCAL_LIB_ROOT PERL_MB_OPT PERL_MM_OPT
+
+# Colorize ls(1)
+alias ls='ls -G'
+
+# See if the MySQL package is installed and set up the appropriate aliases
+if [ -d /usr/local/mysql/bin ]; then
+        alias mysql=/usr/local/mysql/bin/mysql
+        alias mysqladmin=/usr/local/mysql/bin/mysqladmin
+fi
+
+# Set up fink if available
+test -r /sw/bin/init.sh && . /sw/bin/init.sh
+
+# Set up default ulimit
+ulimit -c unlimited
+
+# Ende

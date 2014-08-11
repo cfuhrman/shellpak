@@ -1,0 +1,92 @@
+#!/bin/bash
+# ====================================================================
+#
+# bash_unix_sv
+# 
+# Copyright (c) 2000 Christopher M. Fuhrman
+# All rights reserved.
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the Simplified BSD License (also
+# known as the "2-Clause License" or "FreeBSD License".)
+#
+# ====================================================================
+
+#
+# Sets up system environment specific to generic System 5 UNIX
+# systems (e.g. UnixWARE).  Note that this is the default file if we
+# cannot determine the host operating system.
+#
+
+# Try to overcome limitations of UnixWARE
+stty intr ^C
+
+# Determine PATH
+paths=('/usr/local/bin'            '/usr/pkg/bin'      \
+       '/usr/ccs/bin'              '/usr/sfw/bin'      \
+       '/opt/sfw/bin'              '/usr/dt/bin'       \
+       '/opt/csw/sbin'             '/opt/csw/bin'      \
+       '/usr/X11/bin'              '/usr/java/bin'     \
+       '/usr/X/bin'                '/usr/ucb')
+
+# Append additional directories if required
+for path in ${paths[@]}; do
+
+        # We only want to add the directory if it exists
+        if [ -d $path ]; then
+                echo $PATH | egrep '(^|\:)'${path}'(\:|$)' >/dev/null 2>&1 || PATH=$PATH:${path}
+        fi
+
+done
+
+# Get rid of pre-pended ':' and double colons
+PATH=${PATH#:}
+PATH=${PATH//::/:}
+
+export PATH
+
+# See if coreutils is installed
+aliasCoreUtils
+
+if [[ ${OSTYPE} == 'SunOS' ]]; then
+
+        # Make sure we have all necessary libraries loaded
+        if [ -d /opt/csw/lib ]; then
+                export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/csw/lib
+        fi
+
+        # Use groff for man page formatting if it's available
+        if type -p groff; then
+                alias man='GROFF_NO_SGR= TCAT="less -s" TROFF="groff -Tascii" man -t'
+        fi
+
+        # Use GNU AWK whenever possible
+        if [ -e /opt/csw/bin/gawk ]; then
+                AWK=gawk
+        fi
+
+        # Set up default ulimit
+        ulimit -c unlimited
+
+else
+
+        # Set file operation verbose flags
+        export FILE_OPS_RM_FLAGS='e'
+
+        # On my Mac at home, Terminal.app sets ${TERM} to 'xterm-color' or
+        # 'xterm-256color', which some SysV systems don't grok.  So change it
+        # to a generic xterm.  Also, if we encounter screen(1), then set
+        # terminal to vt220
+        if [[ ${TERM} =~ ^xterm\-[0-9]*color ]]; then
+                echo 'Resetting TERM to xterm'
+                TERM='xterm'
+                export TERM
+        elif [[ ${TERM} =~ ^screen ]]; then
+                echo 'Resetting TERM to vt220'
+                TERM='vt220'
+                export TERM
+        fi
+
+fi
+
+# Ende

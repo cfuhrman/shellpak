@@ -1,0 +1,22 @@
+# -*- mode: conf -*-
+# ====================================================================
+#
+# gitconfig
+#
+# See git-config(1) for details
+
+[user]
+	name = Change My Name
+	email = name@example.com
+
+[color]
+	ui = true
+
+[sendemail]
+        suppresscc = self
+        confirm = always
+        from = Change My Name <name@example.com>
+        bcc = name@example.com
+
+[merge]
+	tool = emerge

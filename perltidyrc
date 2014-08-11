@@ -1,0 +1,30 @@
+# ====================================================================
+#
+# perltidyrc
+#
+# perltidy options for formatting perl code to my own personal preferences
+#
+# ==================================================================== 
+
+--indent-columns=8
+--continuation-indentation=4
+--opening-sub-brace-on-new-line
+--line-up-parentheses
+--paren-tightness=2
+--paren-vertical-tightness=1
+--paren-vertical-tightness-closing=0
+--square-bracket-vertical-tightness=1
+--square-bracket-vertical-tightness-closing=0
+--brace-tightness=1
+--cuddled-else
+--nospace-for-semicolon
+--minimum-space-to-comment=10
+--hanging-side-comments
+--stack-opening-tokens
+--stack-closing-tokens
+--opening-brace-always-on-right
+--comma-arrow-breakpoints=0
+--blanks-before-subs
+--blanks-before-comments
+--blanks-before-blocks
+--trim-qw
