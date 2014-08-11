@@ -1,0 +1,14 @@
+#!/bin/bash
+# ====================================================================
+#
+# hostaliases
+# 
+# Place convenience aliases for commonly access secure-shell hosts
+# here
+#
+# ====================================================================
+
+# Shell host aliases
+alias sexamp='ssh shell.example.com'
+
+# Ende

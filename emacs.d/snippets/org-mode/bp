@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: Boiler Plate for Org-mode files
+# --
+#+TITLE: $1
+#+AUTHOR: `(user-full-name)`
+#+EMAIL: `(format "%s" user-mail-address)`
+#+OPTIONS: email:t
+#
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \pagestyle{fancyplain}
+
+#+LATEX: \thispagestyle{empty}
+[TABLE-OF-CONTENTS]
+
+* Overview
+
+  $0

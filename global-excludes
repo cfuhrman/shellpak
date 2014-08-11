@@ -1,0 +1,17 @@
+*.tar.gz
+*~
+.fslckout
+.org-id-locations
+GPATH
+GRTAGS
+GTAGS
+ac-comphist.dat
+ac-dict/
+auto-save-list
+bookmarks
+config/
+docs/*.org
+elpa/
+ext/
+url/
+xkcd/

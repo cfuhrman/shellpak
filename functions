@@ -1,0 +1,58 @@
+#!/bin/bash
+# ====================================================================
+#
+# functions
+# 
+# Copyright (c) 2005 Christopher M. Fuhrman
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the Simplified BSD License (also
+# known as the "2-Clause License" or "FreeBSD License".) 
+#
+# ====================================================================
+
+# Function: aliasCoreUtils
+#
+# Check for commonly installed GNU tools suite and aliases them as
+# appropriate.
+
+aliasCoreUtils ()
+{
+
+        local NOGNU=
+
+        # Do we have the GNU version of ls installed as gls?
+        if type -p gls >/dev/null; then
+
+                # Note we disable color-mode if we're a dumb terminal
+                if [[ ${TERM} != 'dumb' && ${TERM} != 'emacs' ]]; then
+                        alias ls='gls --color'
+                elif [ ${__Ret} ]; then
+                        alias ls='gls'
+                fi
+
+                NOGNU="unalias ls"
+
+        fi
+
+        # Do we have the GNU version of df installed as gdf?
+        if type -p gdf >/dev/null; then
+                alias df='gdf -h'
+                NOGNU="${NOGNU};unalias df"
+        fi
+
+        # Do we have the GNU version of du installed as gdu?
+        if type -p gdu >/dev/null; then
+                alias du='gdu -h'
+                NOGNU="${NOGNU};unalias du"
+        fi
+
+        # Add a convenience alias for undoing GNU aliases
+        if [ "${NOGNU}" ]; then
+                alias nognu=${NOGNU#;}
+        fi
+
+} # aliasCoreUtils()
+
+# Ende

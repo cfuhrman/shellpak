@@ -1,0 +1,90 @@
+#!/bin/bash
+# ====================================================================
+#
+# bash_bsd
+# 
+# Copyright (c) 2001 Christopher M. Fuhrman
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the Simplified BSD License (also
+# known as the "2-Clause License" or "FreeBSD License".)
+#
+# ====================================================================
+
+#
+# Sets up system environment for BSD-flavored boxen
+#
+
+# Set default locale
+MYLOCALE=en_US.UTF-8
+
+# Determine PATH
+paths=('/usr/games'      '/usr/pkg/sbin'     \
+       '/usr/pkg/lib/perl5/site_perl/bin')
+
+# Append additional directories if required
+for path in ${paths[@]}; do
+
+        if [ -d $path ]; then
+                echo $PATH | egrep '(^|\:)'${path}'(\:|$)' >/dev/null 2>&1 || PATH=$PATH:${path}
+        fi
+
+done
+
+# Get rid of pre-pended ':' and double colons
+PATH=${PATH#:}
+PATH=${PATH//::/:}
+
+export PATH
+
+# We want to use xterm-color under NetBSD
+if [[ ${OSTYPE} == 'NetBSD' ]]; then
+
+        NBSD_VERSION=( ${OSVERSION//./ } )
+
+        if [[ ${NBSD_VERSION[0]} -lt 6 ]]; then
+
+                # Reset terminal to xterm-color
+                if [[ ${TERM} =~ ^xterm\-[2-9]+color ]]; then
+                        echo "Resetting TERM to xterm-color"
+                        TERM='xterm-color'
+                        export TERM
+                fi
+
+        elif [[ -e /usr/pkg/bin/tmux ]]; then
+                alias tmux='/usr/pkg/bin/tmux'
+        fi
+
+fi
+
+# Set locale and file operation verbose flags
+if [[ ${OSTYPE} != 'OpenBSD' ]]; then
+
+        # File operating settings
+        FILE_OPS_FLAGS='v'
+        FILE_OPS_RM_FLAGS=${FILE_OPS_FLAGS}
+
+        # Locale Settings
+        LANG=${MYLOCALE}
+
+        # NetBSD has limited locale support
+        if [[ ${OSTYPE} == 'NetBSD' ]]; then
+                LC_COLLATE='C'
+                LC_MONETARY='C'
+                LC_NUMERIC='C'
+                LC_ALL=""
+        else
+                LC_ALL=${MYLOCALE}
+        fi
+
+        export FILE_OPS_FLAGS      FILE_OPS_RM_FLAGS   \
+               LANG LC_COLLATE     LC_MONETARY         \
+               LC_NUMERIC LC_ALL
+
+fi
+
+# See if coreutils is installed
+aliasCoreUtils
+
+# Ende
