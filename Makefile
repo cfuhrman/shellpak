@@ -182,7 +182,7 @@ ${DISTFILE}: clean clean-tags txt version
 	  echo '--------------------------------------------------------------------'; \
 	fi
 	@mkdir shellpak
-	@${TAR} ${DISTEXCLUDES} --exclude=shellpak -c . | ( cd shellpak ; tar xf - )
+	@${TAR} ${DISTEXCLUDES} --exclude=shellpak -c . | ( cd shellpak ; ${TAR} xf - )
 	@${TAR} --exclude='*.org' --exclude=.AppleDouble -cvzf $@ shellpak
 	@rm -rf shellpak
 	@echo "Successfully created ${DISTFILE}"
