@@ -71,7 +71,8 @@
    ShellPAK is also available for checkout from the following
    locations:
 
-    - Git :: [[https://github.com/cfuhrman/shpak][GitHub]]
+    - Git :: [[https://github.com/cfuhrman/shpak][GitHub]], [[https://bitbucket.org/chrisfuhrman/shellpak][BitBucket]]
+    - Fossil :: [[https://www.fuhrwerks.com/fossil/shpak][FuhrWerks]]
     - Bazaar :: [[https://code.launchpad.net/~cfuhrman/shpak/trunk][Launchpad]]
 
    Be aware that portions of the ShellPAK infrastructure relies on

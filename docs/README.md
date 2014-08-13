@@ -53,7 +53,8 @@ Guide](http://www.fossil-scm.org/index.html/doc/trunk/www/quickstart.wiki).
 ShellPAK is also available for checkout from the following
 locations:
 
--   **Git:** [GitHub](https://github.com/cfuhrman/shpak)
+-   **Git:** [GitHub](https://github.com/cfuhrman/shpak), [BitBucket](https://bitbucket.org/chrisfuhrman/shellpak)
+-   **Fossil:** [FuhrWerks](https://www.fuhrwerks.com/fossil/shpak)
 -   **Bazaar:** [Launchpad](https://code.launchpad.net/~cfuhrman/shpak/trunk)
 
 Be aware that portions of the ShellPAK infrastructure relies on
