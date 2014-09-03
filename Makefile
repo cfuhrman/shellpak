@@ -42,9 +42,9 @@ PUBLICCO=../public/
 
 # Determine distribution file.  These lines will produce spewage if
 # this isn't a fossil checkout
-FOSSIL_BRANCH=$(shell fossil info | grep ^tags | awk -F\: '{print $$2}' | sed 's/ //g' | awk -F\, '{print $$NF}')
+FOSSIL_BRANCH=$(shell fossil info | grep "^tags" | awk -F\: '{print $$2}' | sed 's/ //g' | awk -F\, '{print $$NF}')
 FOSSIL_REPO=${HOME}/repos/public.fossil
-CKOUT_DATE=$(shell fossil info | grep ^checkout | awk '{ print $$3 }' | sed 's/[-: ]//g')
+CKOUT_DATE=$(shell fossil info | grep "^checkout" | awk '{ print $$3 }' | sed 's/[-: ]//g')
 DISTFILE=shellpak-${FOSSIL_BRANCH}-${CKOUT_DATE}.tar.gz
 DISTEXCLUDES=--exclude=.fslckout --exclude=.AppleDouble --exclude=config --exclude=ext
 
@@ -119,6 +119,10 @@ clean-dist:
 	@rm -vf shellpak*.tar.gz
 	@rm -rvf shellpak
 
+# WARNING: Will remove *all* installed packages.  Use with care!
+clean-elpa: clean-elc
+	@rm -rvf ${HOME}/.emacs.d/elpa/*
+
 public:
 	@echo 'Syncing with public repository'
 	${RSYNC} ${RSYNC_PUBLIC_OPTS} . ${PUBLICCO}
@@ -136,7 +140,7 @@ dist: ${DISTFILE}
 version: VERSION
 
 VERSION:
-	@fossil info | grep ^checkout | awk '{ printf "[%s] %s %s", substr($$2, 0, 10), $$3, $$4 }' > VERSION
+	@fossil info | grep "^checkout" | awk '{ printf "[%s] %s %s", substr($$2, 0, 10), $$3, $$4 }' > VERSION
 
 # Binary targets
 emacs:

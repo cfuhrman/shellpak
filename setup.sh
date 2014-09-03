@@ -194,6 +194,13 @@ EOF
 
         done
 
+        # Restore .emacs file if it exists
+        if [ -f ${BACKUPDIR}/.emacs ]; then
+            inform $L2 $FALSE "Restoring original .emacs"
+            mv ${BACKUPDIR}/.emacs ${HOME}
+            echo "${GREEN}done${NORMAL}"            
+        fi
+
         # Finally remove SHELLDIR
         if [ -d ${SHELLDIR} ]; then
                 inform $L2 $FALSE "Removing ${SHELLDIR}"
@@ -377,14 +384,22 @@ if [ ${NOLINK} -ne 1 ]; then
 
                 # Only move the file if it exists and it is not a symlink
                 if [[ -e ${DOTFILE} && ! -e ${BACKUPFILE} && ! -h ${DOTFILE} ]]; then
-                        inform $L2 $TRUE "Moving .${file} to ${BACKUPDIR}"
+                        inform $L2 $FALSE "Moving .${file} to ${BACKUPDIR}"
                         mv ${DOTFILE} ${BACKUPDIR}
+                        echo -e "${GREEN}done${NORMAL}"                        
                 elif [[ -h ${DOTFILE} && ! ${BACKUPFLAG} ]]; then
                         inform $L2 $TRUE "Removing old symlink .${file}"
                         rm ${DOTFILE}
                 fi
 
         done
+
+        # See if there is a pre-existing .emacs file
+        if [ -f ${HOME}/.emacs ]; then
+            inform $L2 $FALSE "Moving .emacs to ${BACKUPDIR}"
+            mv ${HOME}/.emacs ${BACKUPDIR}
+            echo -e "${GREEN}done${NORMAL}"
+        fi
 
 fi
 

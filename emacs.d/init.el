@@ -1,27 +1,27 @@
 ;; ====================================================================
 ;;
 ;; emacs.d/init.el
-;; 
+;;
 ;; Copyright (c) 2008 Christopher M. Fuhrman
 ;; All rights reserved.
-;; 
+;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the Simplified BSD License (also known
 ;; as the "2-Clause License" or "FreeBSD License".)
 ;;
 ;; --------------------------------------------------------------------
-;; 
+;;
 ;; DESCRIPTION:
 ;;
 ;;   GNU Emacs-compatible initialization file defining a number of
 ;;   coding styles and preferences
 ;;
 ;; CAVEATS:
-;; 
+;;
 ;;   To install php-auto-yasnippets, php-mode must be loaded
 ;;   beforehand.  This gets around an issue whereby
 ;;   php-auto-yasnippets is loaded before php-mode, causing an error.
-;; 
+;;
 ;; TODO:
 ;;
 ;;    - The same thing we do every night, Pinky.  Try to take over
@@ -54,7 +54,9 @@
 (defvar local-loadpaths '("/pkg/share/emacs/site-lisp" "/usr/local/share/emacs/site-lisp"))
 (defvar multi-web-present nil)
 (defvar my-package-list nil)
+(defvar org-bullets-present nil)
 (defvar payas-mode-present nil)
+(defvar smart-mode-line-present nil)
 (defvar solarized-theme-present nil)
 (defvar vc-fossil-present nil)
 (defvar xlicense-present nil)
@@ -85,6 +87,7 @@
                         indent-guide
                         markdown-mode
                         multi-web-mode
+                        org-bullets
                         php-eldoc
                         php-extras
                         php-mode
@@ -104,7 +107,18 @@
 (if (>= emacs-major-version 24)
     (setq my-package-list
           (append my-package-list '(ggtags
+                                    smart-mode-line
                                     weather-metno))))
+
+;; Customize font under X
+(if (equal window-system 'x)
+    (set-face-attribute 'default nil
+                        :family  "DejaVu Sans Mono"
+                        :foundry 'unknown
+                        :slant   'normal
+                        :weight  'normal
+                        :height   100
+                        :width   'normal))
 
 ;; Install Org-Mode, if present
 (if (>= emacs-major-version 23)
@@ -118,22 +132,22 @@
 
 ;; AC-Ispell mode present?
 (if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not `absolute) "^ac-ispell" 'nosort))
+         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^ac-ispell" 'nosort))
     (setq ac-ispell-present t))
 
 ;; Flymake-mode present?
 (if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not `absolute) "^flymake" 'nosort))
+         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^flymake" 'nosort))
     (setq ac-ispell-present t))
 
 ;; Geben present?
 (if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not `absolute) "^geben" 'nosort))
+         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^geben" 'nosort))
     (setq geben-present t))
 
 ;; ggtags-mode present?
 (if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not `absolute) "^ggtags" 'nosort))
+         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^ggtags" 'nosort))
     (setq ggtags-mode-present t))
 
 ;; Indent-Guide mode present?
@@ -146,10 +160,20 @@
          (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^multi-web-mode" 'nosort))
     (setq multi-web-present t))
 
+;; Org-bullets present?
+(if (and (file-directory-p "~/.emacs.d/elpa/")
+         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^org-bullets" 'nosort))
+    (setq org-bullets-present t))
+
 ;;  PHP Auto YASnippets present?
 (if (and (file-directory-p "~/.emacs.d/elpa/")
          (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^php-auto-yasnippets" 'nosort))
     (setq payas-mode-present t))
+
+;; Smart Mode Line present?
+(if (and (file-directory-p "~/.emacs.d/elpa/")
+         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^smart-mode-line" 'nosort))
+    (setq smart-mode-line-present t))
 
 ;; Solarized theme present?
 (if (and (file-directory-p "~/.emacs.d/elpa/")
@@ -187,6 +211,9 @@
 (fset 'align-on-equal
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("xalign-regex=" 0 "%d")) arg)))
 
+(fset 'align-on-hash-arrow
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217848 97 108 105 103 110 45 114 101 103 101 120 return 61 62 return] 0 "%d")) arg)))
+
 
 ;; Keyboard Bindings
 ;; --------------------------------------------------------------------
@@ -204,6 +231,7 @@
 (global-set-key [?\C-x ?\C-k ?0] 'normal-erase-is-backspace-mode)
 (global-set-key [?\C-x ?\C-k ?1] 'delete-trailing-whitespace)
 (global-set-key [?\C-x ?\C-k ?2] 'align-on-equal)
+(global-set-key [?\C-x ?\C-k ?3] 'align-on-hash-arrow)
 
 
 ;; Functions
@@ -357,6 +385,8 @@
   "Hook for sane editing of org-mode documents"
   (defvar org-mode-map)
   (org-defkey org-mode-map "\C-c[" 'org-time-stamp-inactive)
+  (if (equal org-bullets-present t)
+      (org-bullets-mode t))
   )
 
 ;; Define a basic hook for editing PHP files
@@ -501,6 +531,9 @@
 (add-to-list 'auto-mode-alist '("\\.cron\\(tab\\)?\\'"     . crontab-mode))
 (add-to-list 'auto-mode-alist '("cron\\(tab\\)?\\."        . crontab-mode))
 
+;; CSV files
+(add-to-list 'auto-mode-alist '("\\.csv\\'"                . csv-nav-mode))
+
 ;; HTML Mode
 (add-to-list 'auto-mode-alist '("\\.tmpl\\'"               . html-mode))
 
@@ -553,6 +586,7 @@
  '(calendar-view-holidays-initially-flag nil)
  '(column-number-mode t)
  '(comment-auto-fill-only-comments t)
+ '(comment-fill-column 80)
  '(comment-multi-line t)
  '(comment-style (quote indent))
  '(cperl-continued-brace-offset -8)
@@ -702,10 +736,16 @@
      (add-to-list 'my-package-list 'php-auto-yasnippets t)
      ))
 
+(eval-after-load "smart-mode-line"
+  '(progn
+     (setq custom-safe-themes (quote ("3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723" default)))
+     (sml/apply-theme 'respectful)
+     ))
+
 (eval-after-load "solarized-theme"
   '(progn
      (if (window-system)
-         (load-theme 'solarized-light t))
+         (load-theme 'solarized-dark t))
      ))
 
 (eval-after-load "vc-fossil"
@@ -740,16 +780,18 @@
                   (require 'indent-guide))
               (if (equal multi-web-present t)
                   (require 'multi-web-mode))
+              (if (equal org-bullets-present t)
+                  (require 'org-bullets))
               (if (equal payas-mode-present t)
                   (require 'php-auto-yasnippets))
               (if (equal vc-fossil-present t)
                   (require 'vc-fossil))
               (if (equal xlicense-present t)
                   (require 'xlicense))
+              (if (equal smart-mode-line-present t)
+                  (sml/setup))
               (if (equal solarized-theme-present t)
-                  (if (window-system)
-                      (load-theme 'solarized-light t)
-                    (load-theme 'solarized-dark t)))
+                  (load-theme 'solarized-dark t))
               (require 'sr-speedbar)))
 
 ;; Ende
