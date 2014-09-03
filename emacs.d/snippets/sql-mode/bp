@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: Boiler Plate for SQL Files
+# --
+-- `(file-name-nondirectory (buffer-file-name))`
+--
+-- Created on `(current-time-string)`
+--
+-- ${1:Describe SQL File}
+--
+
+$0
+
+-- Ende
