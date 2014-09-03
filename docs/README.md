@@ -50,7 +50,7 @@ Guide](http://www.fossil-scm.org/index.html/doc/trunk/www/quickstart.wiki).
 
 ## Alternate Repositories<a id="sec-3-1" name="sec-3-1"></a>
 
-ShellPAK is also available for checkout from the following
+[ShellPAK](https://chiselapp.com/user/cfuhrman/repository/shpak/home) is also available for checkout from the following
 locations:
 
 -   **Git:** [GitHub](https://github.com/cfuhrman/shpak), [BitBucket](https://bitbucket.org/chrisfuhrman/shellpak)

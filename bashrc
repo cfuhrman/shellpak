@@ -2,13 +2,13 @@
 # ====================================================================
 #
 # bashrc
-# 
+#
 # Copyright (c) 2000 Christopher M. Fuhrman
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the Simplified BSD License (also
-# known as the "2-Clause License" or "FreeBSD License".) 
+# known as the "2-Clause License" or "FreeBSD License".)
 #
 # ====================================================================
 
@@ -27,15 +27,11 @@ source $SHELLDIR/prompts
 source $SHELLDIR/hostaliases
 source $SHELLDIR/thirdparty/git-prompt.sh
 
-# Determine version and output to file
-if [ -f VERSION ]; then
-        SHELLPAK_VERSION=$( cat VERSION )
-elif test -f .fslckout; then
-        SHELLPAK_VERSION=$( fossil info | grep ^checkout | awk '{ printf "[%s] %s %s", substr($2, 0, 10), $3, $4 }' )
-        echo ${SHELLPAK_VERSION} > VERSION
+# Set SHELLPAK_VERSION
+if [ -f ${SHELLDIR}/VERSION ]; then
+        SHELLPAK_VERSION=$( cat ${SHELLDIR}/VERSION )
+        export SHELLPAK_VERSION
 fi
-
-export SHELLPAK_VERSION
 
 # Set some variables useful in determining our environment
 export HOSTNAME=$(hostname)
@@ -332,7 +328,7 @@ HISTIGNORE='\&:fg:bg:ls:pwd:cd ..:cd ~-:cd -:cd:jobs:set -x:ls -l:ls -l'
 # keep dangerous commands in the history file.  Who really needs to
 # repeat the shutdown(8) command accidentally from your command
 # history?
-HISTIGNORE=${HISTIGNORE}':%1:%2:popd:top:alpine:mutt:shutdown*'
+HISTIGNORE=${HISTIGNORE}':%1:%2:popd:top:alpine:mutt:clear:shutdown*'
 export HISTIGNORE
 
 # Save multi-line commands in history as single line

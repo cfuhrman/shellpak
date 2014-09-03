@@ -7,7 +7,7 @@
 #+LATEX_HEADER: \pagestyle{fancyplain}
 
 #+LATEX: \thispagestyle{empty}
-[TABLE-OF-CONTENTS]
+# [TABLE-OF-CONTENTS]
 
 * Overview
 
@@ -68,7 +68,7 @@
 
 ** Alternate Repositories
 
-   ShellPAK is also available for checkout from the following
+   [[https://chiselapp.com/user/cfuhrman/repository/shpak/home][ShellPAK]] is also available for checkout from the following
    locations:
 
     - Git :: [[https://github.com/cfuhrman/shpak][GitHub]], [[https://bitbucket.org/chrisfuhrman/shellpak][BitBucket]]
