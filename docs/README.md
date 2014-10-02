@@ -79,6 +79,10 @@ un-installation (via the `-u` flag)
     # Install into another directory
     $ ./setup.sh -d /path/to/directory
     
+    # Install ShellPAK and automatically download & install
+    # personal set of Emacs packages
+    $ ./setup.sh -p
+
     # Do not automatically link files during installation
     $ ./setup.sh -n
     
