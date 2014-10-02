@@ -33,6 +33,7 @@ DOCDIRS+=docs
 HTMDIRS=$(DOCDIRS:%=html-%)
 PDFDIRS=$(DOCDIRS:%=pdf-%)
 TXTDIRS=$(DOCDIRS:%=txt-%)
+DBKDIRS=$(DOCDIRS:%=docbook-%)
 
 # Host targets
 LOCALHOSTS=
@@ -46,9 +47,12 @@ FOSSIL_BRANCH=$(shell fossil info | grep "^tags" | awk -F\: '{print $$2}' | sed 
 FOSSIL_REPO=${HOME}/repos/public.fossil
 CKOUT_DATE=$(shell fossil info | grep "^checkout" | awk '{ print $$3 }' | sed 's/[-: ]//g')
 DISTFILE=shellpak-${FOSSIL_BRANCH}-${CKOUT_DATE}.tar.gz
-DISTEXCLUDES=--exclude=.fslckout --exclude=.AppleDouble --exclude=config --exclude=ext
+DISTEXCLUDES=--exclude=.fslckout --exclude=_FOSSIL_ --exclude=.AppleDouble --exclude=config --exclude=ext
 
 # Command options
+EMACS=emacs
+EMACS_INIT=${HOME}/.emacs.d/init.el
+EMACS_INSTALL_PACKAGES=cmf-autoinstall-packages
 RSYNC=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS=-Ccavz --exclude='svn-commit*' --exclude='.AppleDouble' --exclude='*~' --exclude-from=${RSYNC_EXCLUDE} --delete
@@ -88,7 +92,11 @@ local: ${LOCALHOSTS}
 remote: ${REMOTEHOSTS} ${POLARHOSTS}
 	@echo 'All remote hosts updated'
 
+emacs-packages:
+	${EMACS} --batch -l ${EMACS_INIT} -f ${EMACS_INSTALL_PACKAGES}
+
 clean : clean-echo ${CLEANDIRS} clean-dist
+	@rm -vf *.bak
 	@rm -vf *~
 	@rm -vf *-baseline
 	@rm -vf *-merge
@@ -154,6 +162,10 @@ ${SUBDIRS} :
 ${CLEANDIRS} :
 	${MAKE} -C $(@:clean-%=%) clean
 
+docbook : emacs ${DBKDIRS}
+${DBKDIRS} :
+	${MAKE} -C $(@:docbook-%=%) docbook
+
 html : emacs ${HTMDIRS}
 ${HTMDIRS} :
 	${MAKE} -C $(@:html-%=%) html
@@ -180,7 +192,7 @@ ${REMOTEHOSTS}: txt
 # Note: This target requires a tar that supports '--exclude' option,
 # such as GNU tar
 ${DISTFILE}: clean clean-tags txt version
-	@if test -f .fslckout ; then \
+	@if [[ test -f .fslckout || test -f _FOSSIL_ ]]; then \
 	  echo '--------------------------------------------------------------------'; \
 	  echo "|   Do not forget to run 'fossil up' before running this command   |"; \
 	  echo '--------------------------------------------------------------------'; \
@@ -196,6 +208,7 @@ ${DISTFILE}: clean clean-tags txt version
 .PHONY: subdirs ${HTMDIRS}
 .PHONY: subdirs ${PDFDIRS}
 .PHONY: subdirs ${TXTDIRS}
-.PHONY: clean clean-elc html pdf txt
+.PHONY: subdirs ${DBKDIRS}
+.PHONY: clean clean-elc docbook html pdf txt
 
 # Ende

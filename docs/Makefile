@@ -5,6 +5,6 @@
 # Files
 ORG_FILES=README.org
 
-include ../mk/targets.mk
+include ../mk/documentation.mk
 
 # Ende

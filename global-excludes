@@ -5,6 +5,7 @@
 GPATH
 GRTAGS
 GTAGS
+_FOSSIL_
 ac-comphist.dat
 ac-dict/
 auto-save-list
@@ -15,3 +16,4 @@ elpa/
 ext/
 url/
 xkcd/
+

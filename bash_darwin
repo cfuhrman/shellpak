@@ -62,6 +62,9 @@ PERL_MM_OPT="INSTALL_BASE=~/perl5"
 
 export PERL5LIB PERL_LOCAL_LIB_ROOT PERL_MB_OPT PERL_MM_OPT
 
+# Needed for XML Parsing
+export XML_CATALOG_FILES=/usr/local/etc/xml/catalog
+
 # Colorize ls(1)
 alias ls='ls -G'
 

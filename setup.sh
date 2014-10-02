@@ -19,7 +19,7 @@
 #
 # USAGE:
 #
-#   bash setup.sh [-hnru] [-d <directory>] [-b <directory>]
+#   bash setup.sh [-hnpru] [-d <directory>] [-b <directory>]
 #
 # REQUIREMENTS:
 #
@@ -41,6 +41,8 @@ COPYRIGHT='Copyright (c) 2000-2014 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 DRYRUN=""
 UNINSTALL=0
+BUILD_EMACS_PACKAGES=0
+EMACS_OUTPUT_LOG=${HOME}/tmp/emacs-pkg-install-$$-`date +%y%m%d`.log
 NOLINK=0            # If set to 1 (true), then the following apply:
                     #   - Linked files will not be created
                     #   - ~/tmp directory will not be created
@@ -105,7 +107,7 @@ do
 done
 
 # Determine version and output to file
-if [ -f .fslckout ]; then
+if [[ -f .fslckout || -f _FOSSIL_ ]]; then
         SHELLPAK_VERSION=$( fossil info | grep ^checkout | awk '{ printf "[%s] %s %s", substr($2, 0, 10), $3, $4 }' )
         echo ${SHELLPAK_VERSION} > VERSION
 elif [ -f VERSION ]; then
@@ -224,7 +226,7 @@ EOF
 headerDisplay ()
 {
 
-        # Make the version string green
+        # Make the version string magenta
         PRETTY_VERSION=${SHELLPAK_VERSION/\[/\[${MAGENTA}}
         PRETTY_VERSION=${PRETTY_VERSION/\]/${NORMAL}\]}
 
@@ -288,6 +290,7 @@ usage: ${0##*/} -h This screen                             \\
                 -b (Default:\$HOME/Backup/shell) Location   \\
                    of backup files
                 -n Do _not_ link files                     \\
+                -p Automatically install emacs packages    \\
                 -u Uninstall ShellPAK                      \\
                 -r perform a trial run with no changes made
                    (implies -n)
@@ -301,7 +304,7 @@ STDERR
 
 headerDisplay
 
-args=$(getopt d:b:hnru $*)
+args=$(getopt d:b:hpnru $*)
 
 set -- $args
 
@@ -321,6 +324,11 @@ do
         -n)
                 NOLINK=1
                 inform $L1 $TRUE 'Shell-related files will _not_ be linked to $HOME'
+                ;;
+
+        -p)
+                BUILD_EMACS_PACKAGES=1
+                inform $L1 $TRUE 'Emacs packages will automatically be installed'
                 ;;
 
         -r)
@@ -417,7 +425,7 @@ if [[ ${SHELLDIR#$(dirname "$(dirname "$SHELLDIR")")/} != ${PWD#$(dirname "$(dir
 
         # Generate any necessary documentation prior to synchronizing,
         # but only if we are in a fossil checkout
-        if [ -f .fslckout ]; then
+        if [[ -f .fslckout || -f _FOSSIL_ ]]; then
                 inform $L1 $TRUE 'Generating documentation'
                 ${MAKE} ${DRYRUN} txt
         fi
@@ -456,6 +464,16 @@ if [[ ${NOLINK} -ne 1 && ! -d ${HOMETMPDIR} ]]; then
         inform $L1 $FALSE "Creating ${HOMETMPDIR}"
         mkdir ${HOMETMPDIR}
         echo -e "${GREEN}done${NORMAL}"
+fi
+
+# Automatically build emacs packages
+if [[ ${BUILD_EMACS_PACKAGES} -eq 1 ]]; then
+        inform $L1 $FALSE 'Building Emacs Packages'
+        tmplog=$(mktemp /tmp/${0##*/}.XXXXX) || exit 1
+        make emacs-packages >${tmplog} 2>&1
+        echo -e "${GREEN}done${NORMAL}"
+        mv $tmplog $EMACS_OUTPUT_LOG
+        inform $L2 $TRUE "Package log located at ${EMACS_OUTPUT_LOG}"
 fi
 
 # We're done
