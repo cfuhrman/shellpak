@@ -305,30 +305,6 @@
 ;; Programming styles
 ;; --------------------------------------------------------------------
 
-;; Zend programming style
-(c-add-style "zend"
-             '((c-basic-offset . 4)
-               (c-offsets-alist . (
-                                   (defun-open            . 0)
-                                   (defun-close           . 0)
-                                   (defun-block-intro     . +)
-                                   (topmost-intro         . 0)
-                                   (topmost-intro-cont    . c-lineup-topmost-intro-cont)
-                                   (block-open            . 0)
-                                   (block-close           . 0)
-                                   (statement             . 0)
-                                   (statement-cont        . +)
-                                   (statement-block-intro . +)
-                                   (statement-case-intro  . +)
-                                   (statement-case-open   . +)
-                                   (substatement          . +)
-                                   (substatement-open     . 0)
-                                   (case-label            . +)
-                                   (arglist-intro         . +)
-                                   (arglist-cont          . (c-lineup-gcc-asm-reg 0))
-                                   (arglist-close         . 0)
-                                   ))))
-
 ;; OpenBSD Coding Style
 (c-add-style "openbsd"
              '("bsd"
@@ -482,6 +458,9 @@
 (add-hook 'php-mode-hook      'flymake-php-load)
 (add-hook 'php-mode-hook      'nice-php-hook)
 
+;; For Ruby files
+(add-hook 'ruby-mode-hook     'nice-prog-hook)
+
 ;; For Shell Scripts
 (add-hook 'sh-mode-hook       'nice-prog-hook)
 (add-hook 'sh-set-shell-hook  'flymake-shell-load)
@@ -492,6 +471,9 @@
 
 ;; For SQL files
 (add-hook 'sql-mode-hook      'nice-sql-hook)
+
+;; For XML files
+(add-hook 'nxml-mode-hook     'nice-prog-hook)
 
 ;;
 ;; Enable appropriate hooks for text documents
@@ -560,6 +542,7 @@
 
 ;; XML Mode
 (add-to-list 'auto-mode-alist '("\\.xsd\\'"                . xml-mode))
+(add-to-list 'auto-mode-alist '("\\.wsdl\\'"               . xml-mode))
 
 ;; YAML Mode
 (add-to-list 'auto-mode-alist '("\\.sls\\'"                . yaml-mode))
@@ -607,6 +590,7 @@
 ")
  '(global-hl-line-mode t)
  '(gud-gdb-command-name "gdb --annotate=1")
+ '(ido-mode t)
  '(js-indent-level 8)
  '(js-expr-indent-offset 4)
  '(linum-delay t)
@@ -715,6 +699,8 @@
   '(progn
      ;; Use Emacs ls(1) emulation
      (setq ls-lisp-use-insert-directory-program nil)
+     (if (equal window-system 'ns)
+         (setq default-directory (concat (getenv "HOME") "/")))
      ))
 
 (eval-after-load "multi-web-mode"
