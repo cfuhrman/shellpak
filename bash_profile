@@ -33,7 +33,7 @@ Linux )
         ;;
 
 *BSD )
-        echo '*BSD Detected'
+        echo "*BSD (${OSTYPE}) Detected"
         ;;
 
 Darwin )

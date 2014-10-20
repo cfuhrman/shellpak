@@ -3,7 +3,7 @@
 # --
 -- `(file-name-nondirectory (buffer-file-name))`
 --
--- Created on `(current-time-string)`
+-- Created on `(current-time-string)` `(car (cdr (current-time-zone)))`
 --
 -- ${1:Describe SQL File}
 --

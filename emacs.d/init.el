@@ -125,75 +125,38 @@
     (require 'org-install)
   (message "Emacs version %d does not include org-mode, so not setting it up" emacs-major-version))
 
-;; Auto-Complete mode present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^auto-complete" 'nosort))
-    (setq auto-complete-present t))
-
-;; AC-Ispell mode present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^ac-ispell" 'nosort))
-    (setq ac-ispell-present t))
-
-;; Flymake-mode present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^flymake" 'nosort))
-    (setq ac-ispell-present t))
-
-;; Geben present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^geben" 'nosort))
-    (setq geben-present t))
-
-;; ggtags-mode present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^ggtags" 'nosort))
-    (setq ggtags-mode-present t))
-
-;; Indent-Guide mode present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^indent-guide" 'nosort))
-    (setq indent-guide-present t))
-
-;; Multi-Web mode present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^multi-web-mode" 'nosort))
-    (setq multi-web-present t))
-
-;; Org-bullets present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^org-bullets" 'nosort))
-    (setq org-bullets-present t))
-
-;;  PHP Auto YASnippets present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^php-auto-yasnippets" 'nosort))
-    (setq payas-mode-present t))
-
-;; Smart Mode Line present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^smart-mode-line" 'nosort))
-    (setq smart-mode-line-present t))
-
-;; Solarized theme present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^solarized" 'nosort))
-    (setq solarized-theme-present t))
-
-;; Xlicense present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^xlicense" 'nosort))
-    (setq xlicense-present t))
-
-;; VC-Fossil present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^vc-fossil" 'nosort))
-    (setq vc-fossil-present t))
-
-;; YASnippet present?
-(if (and (file-directory-p "~/.emacs.d/elpa/")
-         (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^yasnippet" 'nosort))
-    (setq yasnippet-present t))
+;; Determine what packages are present
+(if (file-directory-p "~/.emacs.d/elpa")
+    (progn
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^auto-complete" 'nosort)
+          (setq auto-complete-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^ac-ispell" 'nosort)
+          (setq ac-ispell-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^flymake" 'nosort)
+          (setq flymake-mode-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^geben" 'nosort)
+          (setq geben-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^ggtags" 'nosort)
+          (setq ggtags-mode-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^indent-guide" 'nosort)
+          (setq indent-guide-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^multi-web-mode" 'nosort)
+          (setq multi-web-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^org-bullets" 'nosort)
+          (setq org-bullets-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^php-auto-yasnippets" 'nosort)
+          (setq payas-mode-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^smart-mode-line" 'nosort)
+          (setq smart-mode-line-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^solarized" 'nosort)
+          (setq solarized-theme-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^xlicense" 'nosort)
+          (setq xlicense-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^vc-fossil" 'nosort)
+          (setq vc-fossil-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^yasnippet" 'nosort)
+          (setq yasnippet-present t)))
+  )
 
 ;; Set speller to aspell
 (setq-default ispell-program-name "aspell")
@@ -757,9 +720,10 @@
               (if (equal auto-complete-present t)
                   (require 'auto-complete))
               (if (equal flymake-mode-present t)
-                  ((require 'flymake)
-                   (require 'flymake-php)
-                   (require 'flymake-shell)))
+                  (progn
+                    (require 'flymake)
+                    (require 'flymake-php)
+                    (require 'flymake-shell)))
               (if (equal geben-present t)
                   (autoload 'geben "geben" "DBGp protocol frontend, a script debugger" t))
               (if (equal indent-guide-present t)
