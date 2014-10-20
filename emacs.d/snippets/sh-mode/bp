@@ -13,7 +13,7 @@
 #  modify it under terms of the Simplified BSD License (also
 #  known as the "2-Clause License" or "FreeBSD License".)
 # 
-#  Created `(current-time-string)`
+#  Created `(current-time-string)` `(car (cdr (current-time-zone)))`
 #
 # ====================================================================
 
