@@ -58,6 +58,7 @@
 (defvar payas-mode-present nil)
 (defvar smart-mode-line-present nil)
 (defvar solarized-theme-present nil)
+(defvar sr-speedbar-present nil)
 (defvar vc-fossil-present nil)
 (defvar xlicense-present nil)
 (defvar yasnippet-present nil)
@@ -66,7 +67,7 @@
 (setq-default indent-tabs-mode nil)
 
 ;; Add personal paths
-(add-to-list 'load-path (format "%s/.emacs.d" (getenv "HOME")))
+;; (add-to-list 'load-path (format "%s/.emacs.d" (getenv "HOME")))
 (add-to-list 'load-path (format "%s/.emacs.d/thirdparty" (getenv "HOME")))
 
 ;; Load individual files
@@ -93,6 +94,7 @@
                         php-mode
                         psvn
                         solarized-theme
+                        sr-speedbar
                         vc-fossil
                         xkcd
                         xlicense
@@ -150,6 +152,8 @@
           (setq smart-mode-line-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^solarized" 'nosort)
           (setq solarized-theme-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^solarized" 'nosort)
+          (setq sr-speedbar-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^xlicense" 'nosort)
           (setq xlicense-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^vc-fossil" 'nosort)
@@ -557,6 +561,7 @@
  '(js-indent-level 8)
  '(js-expr-indent-offset 4)
  '(linum-delay t)
+ '(log-edit-hook (quote (log-edit-show-files)))
  '(mark-even-if-inactive t)
  '(mark-holidays-in-calendar t)
  '(org-agenda-custom-commands (quote (("n" "Agenda and all TODO's" ((agenda "") (alltodo))) ("g" . "GTD Task Lists") ("gh" "Home" tags-todo "HOME") ("go" "Office" tags-todo "OFFICE") ("gr" "Tasks to refile" todo "TODO" ((org-agenda-files (quote ("~/org/from-mobile.org" "~/org/refile.org"))))) ("B" "GTD (B)lock Agenda" ((tags-todo "OFFICE") (tags-todo "HOME")) nil) ("H" "Home Agenda" ((agenda "") (tags-todo "HOME")) ((org-agenda-tag-filter-preset (quote ("+HOME"))))) ("O" "Office Agenda" ((agenda "") (tags-todo "OFFICE")) ((org-agenda-tag-filter-preset (quote ("+OFFICE"))))))))
@@ -742,6 +747,6 @@
                   (sml/setup))
               (if (equal solarized-theme-present t)
                   (load-theme 'solarized-dark t))
-              (require 'sr-speedbar)))
+              ))
 
 ;; Ende
