@@ -152,7 +152,7 @@
           (setq smart-mode-line-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^solarized" 'nosort)
           (setq solarized-theme-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^solarized" 'nosort)
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^sr-speedbar" 'nosort)
           (setq sr-speedbar-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^xlicense" 'nosort)
           (setq xlicense-present t))
