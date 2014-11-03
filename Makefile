@@ -220,6 +220,7 @@ ${DISTFILE}: clean clean-tags txt version
 .PHONY: subdirs ${TXTDIRS}
 .PHONY: subdirs ${MDDIRS}
 .PHONY: subdirs ${DBKDIRS}
-.PHONY: clean clean-elc docbook html pdf txt
+.PHONE: subdirs ${TXIDIRS}
+.PHONY: clean clean-elc docbook html pdf txt markdown texinfo
 
 # Ende
