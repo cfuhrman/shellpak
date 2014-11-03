@@ -33,7 +33,9 @@ DOCDIRS+=docs
 HTMDIRS=$(DOCDIRS:%=html-%)
 PDFDIRS=$(DOCDIRS:%=pdf-%)
 TXTDIRS=$(DOCDIRS:%=txt-%)
+MDDIRS=$(DOCDIRS:%=markdown-%)
 DBKDIRS=$(DOCDIRS:%=docbook-%)
+TXIDIRS=$(DOCDIRS:%=texinfo-%)
 
 # Host targets
 LOCALHOSTS=
@@ -170,13 +172,21 @@ html : emacs ${HTMDIRS}
 ${HTMDIRS} :
 	${MAKE} -C $(@:html-%=%) html
 
+markdown : emacs ${MDDIRS}
+${MDDIRS} :
+	${MAKE} -C $(@:markdown-%=%) markdown
+
 pdf : emacs ${PDFDIRS}
-$(PDFDIRS) :
+${PDFDIRS} :
 	${MAKE} -C $(@:pdf-%=%) pdf
 
 txt : emacs ${TXTDIRS}
 ${TXTDIRS} :
 	${MAKE} -C $(@:txt-%=%) txt
+
+texinfo : emacs ${TXIDIRS}
+${TXIDIRS} :
+	${MAKE} -C $(@:texinfo-%=%) texinfo
 
 # Host Targets
 ${LOCALHOSTS}: txt
@@ -208,6 +218,7 @@ ${DISTFILE}: clean clean-tags txt version
 .PHONY: subdirs ${HTMDIRS}
 .PHONY: subdirs ${PDFDIRS}
 .PHONY: subdirs ${TXTDIRS}
+.PHONY: subdirs ${MDDIRS}
 .PHONY: subdirs ${DBKDIRS}
 .PHONY: clean clean-elc docbook html pdf txt
 
