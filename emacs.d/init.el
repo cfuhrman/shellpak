@@ -97,7 +97,6 @@
                         sr-speedbar
                         vc-fossil
                         xkcd
-                        xlicense
                         yaml-mode
                         yasnippet))
 
@@ -330,6 +329,8 @@
   (org-defkey org-mode-map "\C-c[" 'org-time-stamp-inactive)
   (if (equal org-bullets-present t)
       (org-bullets-mode t))
+  (if (equal (car (split-string org-version ".")) 8)
+      (require 'ox-md))
   )
 
 ;; Define a basic hook for editing PHP files
@@ -566,6 +567,7 @@
  '(mark-holidays-in-calendar t)
  '(org-agenda-custom-commands (quote (("n" "Agenda and all TODO's" ((agenda "") (alltodo))) ("g" . "GTD Task Lists") ("gh" "Home" tags-todo "HOME") ("go" "Office" tags-todo "OFFICE") ("gr" "Tasks to refile" todo "TODO" ((org-agenda-files (quote ("~/org/from-mobile.org" "~/org/refile.org"))))) ("B" "GTD (B)lock Agenda" ((tags-todo "OFFICE") (tags-todo "HOME")) nil) ("H" "Home Agenda" ((agenda "") (tags-todo "HOME")) ((org-agenda-tag-filter-preset (quote ("+HOME"))))) ("O" "Office Agenda" ((agenda "") (tags-todo "OFFICE")) ((org-agenda-tag-filter-preset (quote ("+OFFICE"))))))))
  '(org-agenda-files (quote ("~/org/tasks.org")))
+ '(org-ascii-charset (quote utf-8))
  '(org-archive-location "~/org/archive/%s_archive::datetree/")
  '(org-capture-templates (quote (("t" "Task" entry (file+headline "~/org/refile.org" "New Tasks") "* TODO %^{Description}  %^G
   Added: %U
@@ -621,7 +623,7 @@
  '(org-stuck-projects (quote ("+LEVEL=2/-DONE" ("TODO" "NEXT" "STARTED" "WAITING") nil "")))
  '(org-tag-persistent-alist (quote (("HOME" . 104) ("OFFICE" . 111) ("ERRAND" . 101) ("PHONE" . 112) ("EMAIL" . 109) ("GGG" . 103) ("APPT" . 97))))
  '(org-todo-keywords (quote ((sequence "TODO" "NEXT(n!)" "STARTED(s!/@)" "DEFERRED(f!/@)" "DELEGATED(l@/@)" "WAITING(w@/@)" "|" "CANCELED(x@)" "DONE(d@)"))))
- '(package-archives (quote (("gnu" . "http://elpa.gnu.org/packages/") ("marmalade" . "http://marmalade-repo.org/packages/") ("melpa" . "http://melpa.milkbox.net/packages/"))))
+ '(package-archives (quote (("gnu" . "http://elpa.gnu.org/packages/") ("marmalade" . "http://marmalade-repo.org/packages/") ("melpa" . "http://melpa.org/packages/"))))
  '(recentf-mode t)
  '(scroll-bar-mode (quote right))
  '(sh-basic-offset 8)
@@ -637,7 +639,7 @@
  '(user-full-name "Christopher M. Fuhrman")
  '(user-mail-address "cfuhrman@pobox.com")
  '(view-calendar-holidays-initially nil)
- '(weather-metno-unit-name (quote (("celcius" . "°C"))))
+ '(weather-metno-unit-name (quote (("celsius" . "°C") ("percent" . "%"))))
  '(which-function-mode t)
  )
 
