@@ -423,14 +423,7 @@ fi
 # resides in a symlinked directory.
 if [[ ${SHELLDIR#$(dirname "$(dirname "$SHELLDIR")")/} != ${PWD#$(dirname "$(dirname "$PWD")")/} ]]; then
 
-        # Generate any necessary documentation prior to synchronizing,
-        # but only if we are in a fossil checkout
-        if [[ -f .fslckout || -f _FOSSIL_ ]]; then
-                inform $L1 $TRUE 'Generating documentation'
-                ${MAKE} ${DRYRUN} txt
-        fi
-
-        # And now rsync(1) things over
+        # Now rsync(1) things over
         inform $L1 $TRUE "Synchronize ${SHELLDIR}"
         ${RSYNC} ${DRYRUN} ${RSYNC_OPTS} . ${SHELLDIR}
 

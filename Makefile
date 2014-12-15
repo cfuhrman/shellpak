@@ -3,12 +3,23 @@
 #
 # Common targets:
 #
-#   all             - push out to all machines
-#   install         - install ShellPAK locally
-#   dist            - create a shellpak tarball
-#   clean           - cleans up various files in source directory
-#   clean-elc       - Remove all top-level *.elc files from ~/.emacs.d
-#   clean-all       - clean + clean-elc + clean-xkcd + clean-tags
+#   all         : push out to all machines
+#   install     : install ShellPAK locally, while building Emacs packages
+#   update      : Same as install, but does not auto-build Emacs packages
+#   dist        : create a shellpak tarball
+#   clean       : cleans up various files in source directory
+#   clean-elc   : Remove all top-level *.elc files from ~/.emacs.d
+#   clean-all   : clean + clean-elc + clean-xkcd + clean-tags
+#   uninstall   : Removes ShellPAK via `shellpak -u`
+#
+# Documentation targets:
+#
+#   docbook     : Generate PDF documentation using docbook (org-mode < 8)
+#   html        : Generate HTML-formatted documentation
+#   markdown    : Generate markdown-formatted documentation (org-mode >= 8)
+#   pdf         : Generate PDF documentation using LaTeX
+#   txt         : Generate plain-text documentation (UTF-8 encoding when available)
+#   texinfo     : Generate PDF documentation using texinfo (org-mode >= 8)
 #
 # Notes:
 #
@@ -61,24 +72,34 @@ RSYNC_OPTS=-Ccavz --exclude='svn-commit*' --exclude='.AppleDouble' --exclude='*~
 RSYNC_CONN_OPTS=-e ssh
 RSYNC_PUBLIC_OPTS=-Ccavz --exclude=GPATH --exclude=GRTAGS --exclude=GTAGS --exclude=docs/*.txt \
   --exclude=.fslckout --exclude=config --exclude=ext --exclude='.AppleDouble' --exclude='*~' \
-  --exclude=VERSION --delete
+  --exclude=_FOSSIL_ --exclude=VERSION --delete
 
 SSH=ssh
 SSH_SETUP_CMD="cd ${SHELLDIR} ; ./setup.sh"
 
 TAR=$(shell if [ `uname` != "Darwin" ] && type gtar >/dev/null; then echo 'gtar'; else echo 'tar'; fi)
+DRYRUN_OPT=$(shell if echo ${DRYRUN} | egrep '[Yy][Ee][Ss]' >/dev/null ; then echo -n '-r'; fi)
 
 #
 # Targets
 #
 
-all: local remote
+all: install local remote
 	@echo 'All known hosts updated'
 
 # Convenience target
-install: setup.sh
+install: txt setup.sh
 	@echo 'Executing setup.sh for ShellPAK installation'
-	@setup.sh
+	@setup.sh ${DRYRUN_OPT} -p
+
+uninstall: setup.sh VERSION
+	@echo -n 'Removing ShellPAK '
+	@cat VERSION
+	@setup.sh ${DRYRUN_OPT} -u
+
+update: txt setup.sh
+	@echo 'Executing setup.sh for ShellPAK update'
+	@setup.sh ${DRYRUN_OPT}
 
 tags: gtags
 
@@ -152,17 +173,21 @@ version: VERSION
 VERSION:
 	@fossil info | grep "^checkout" | awk '{ printf "[%s] %s %s", substr($$2, 0, 10), $$3, $$4 }' > VERSION
 
-# Binary targets
-emacs:
-	@which emacs >/dev/null
-
-# Documentation Targets
 subdirs: ${SUBDIRS}
 ${SUBDIRS} :
 	${MAKE} -C $@
 
 ${CLEANDIRS} :
 	${MAKE} -C $(@:clean-%=%) clean
+
+# Binary targets
+emacs:
+	@which emacs >/dev/null
+
+
+#
+# Documentation Targets
+#
 
 docbook : emacs ${DBKDIRS}
 ${DBKDIRS} :
@@ -188,7 +213,11 @@ texinfo : emacs ${TXIDIRS}
 ${TXIDIRS} :
 	${MAKE} -C $(@:texinfo-%=%) texinfo
 
+
+#
 # Host Targets
+#
+
 ${LOCALHOSTS}: txt
 	@echo "Propagating to $@"
 	@${RSYNC} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . ${USER}@$@:${SHELLDIR}

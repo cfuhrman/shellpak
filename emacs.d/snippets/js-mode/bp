@@ -1,0 +1,20 @@
+# -*- mode: snippet -*-
+# name : Javascript File Boilerplate
+# expand-env: ((yas/indent-line 'fixed)
+# --
+// ====================================================================
+// 
+// `(file-name-nondirectory (buffer-file-name))`
+// 
+// Copyright (c) `(format-time-string "%Y")` `(user-full-name)`
+// All rights reserved
+// 
+// Created on `(current-time-string)` `(car (cdr (current-time-zone)))`
+//
+// ${1:Describe SQL File}
+//
+// ====================================================================
+
+$0
+
+// Ende
