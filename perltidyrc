@@ -7,6 +7,7 @@
 # ==================================================================== 
 
 --indent-columns=8
+--variable-maximum-line-length
 --continuation-indentation=4
 --opening-sub-brace-on-new-line
 --line-up-parentheses

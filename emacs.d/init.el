@@ -82,6 +82,7 @@
                         csv-nav
                         flymake-php
                         flymake-shell
+                        flymake-yaml
                         geben
                         git-commit-mode
                         git-rebase-mode
@@ -443,6 +444,10 @@
 ;; For XML files
 (add-hook 'nxml-mode-hook     'nice-prog-hook)
 
+;; For YAML files
+(if (equal flymake-mode-present t)
+    (add-hook 'yaml-mode-hook 'flymake-yaml-load))
+
 ;;
 ;; Enable appropriate hooks for text documents
 ;;
@@ -544,7 +549,7 @@
  '(cperl-continued-statement-offset 4)
  '(cperl-electric-keywords t)
  '(cperl-electric-linefeed t)
- '(cperl-electric-parens t)
+ '(cperl-electric-parens nil)
  '(cperl-font-lock t)
  '(cperl-highlight-variables-indiscriminately t)
  '(cperl-indent-level 8)
@@ -565,7 +570,7 @@
  '(log-edit-hook (quote (log-edit-show-files)))
  '(mark-even-if-inactive t)
  '(mark-holidays-in-calendar t)
- '(org-agenda-custom-commands (quote (("n" "Agenda and all TODO's" ((agenda "") (alltodo))) ("g" . "GTD Task Lists") ("gh" "Home" tags-todo "HOME") ("go" "Office" tags-todo "OFFICE") ("gr" "Tasks to refile" todo "TODO" ((org-agenda-files (quote ("~/org/from-mobile.org" "~/org/refile.org"))))) ("B" "GTD (B)lock Agenda" ((tags-todo "OFFICE") (tags-todo "HOME")) nil) ("H" "Home Agenda" ((agenda "") (tags-todo "HOME")) ((org-agenda-tag-filter-preset (quote ("+HOME"))))) ("O" "Office Agenda" ((agenda "") (tags-todo "OFFICE")) ((org-agenda-tag-filter-preset (quote ("+OFFICE"))))))))
+ '(org-agenda-custom-commands (quote (("n" "Agenda and all TODO's" ((agenda "") (alltodo))) ("g" . "GTD Task Lists") ("gh" "Home" tags-todo "HOME") ("go" "Office" tags-todo "OFFICE") ("gg" "G.G. Guards" tags-todo "GGG") ("gr" "Tasks to refile" ((todo "TODO" ((org-agenda-files (quote ("~/org/from-mobile.org" "~/org/refile.org"))))) (todo "WAITING" ((org-agenda-files (quote ("~/org/from-mobile.org" "~/org/refile.org"))))))) ("B" "GTD (B)lock Agenda" ((tags-todo "OFFICE") (tags-todo "GGG") (tags-todo "HOME")) nil) ("H" "Home Agenda" ((agenda "") (tags-todo "HOME")) ((org-agenda-tag-filter-preset (quote ("+HOME"))))) ("O" "Office Agenda" ((agenda "") (tags-todo "OFFICE")) ((org-agenda-tag-filter-preset (quote ("+OFFICE"))))) ("G" "G.G. Guards Agenda" ((agenda "") (tags-todo "GGG")) ((org-agenda-tag-filter-preset (quote ("+GGG"))))))))
  '(org-agenda-files (quote ("~/org/tasks.org")))
  '(org-ascii-charset (quote utf-8))
  '(org-archive-location "~/org/archive/%s_archive::datetree/")
