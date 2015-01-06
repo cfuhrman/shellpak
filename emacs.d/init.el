@@ -16,12 +16,6 @@
 ;;   GNU Emacs-compatible initialization file defining a number of
 ;;   coding styles and preferences
 ;;
-;; CAVEATS:
-;;
-;;   To install php-auto-yasnippets, php-mode must be loaded
-;;   beforehand.  This gets around an issue whereby
-;;   php-auto-yasnippets is loaded before php-mode, causing an error.
-;;
 ;; TODO:
 ;;
 ;;    - The same thing we do every night, Pinky.  Try to take over
@@ -49,6 +43,7 @@
 (defvar flymake-mode-present nil)
 (defvar geben-present nil)
 (defvar ggtags-mode-present nil)
+(defvar go-mode-present nil)
 (defvar indent-guide-present nil)
 (defvar local-execpaths '("/usr/texbin" "/usr/pkg/bin" "/usr/local/bin"))
 (defvar local-loadpaths '("/pkg/share/emacs/site-lisp" "/usr/local/share/emacs/site-lisp"))
@@ -80,12 +75,18 @@
                         auto-complete
                         crontab-mode
                         csv-nav
+                        flymake-go
                         flymake-php
                         flymake-shell
                         flymake-yaml
                         geben
                         git-commit-mode
                         git-rebase-mode
+                        go-autocomplete
+                        go-direx
+                        go-eldoc
+                        go-mode
+                        go-snippets
                         indent-guide
                         markdown-mode
                         multi-web-mode
@@ -140,6 +141,8 @@
           (setq geben-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^ggtags" 'nosort)
           (setq ggtags-mode-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^go-mode" 'nosort)
+          (setq go-mode-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^indent-guide" 'nosort)
           (setq indent-guide-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^multi-web-mode" 'nosort)
@@ -176,7 +179,7 @@
 ;; --------------------------------------------------------------------
 
 (fset 'align-on-equal
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("xalign-regex=" 0 "%d")) arg)))
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217848 97 108 105 103 110 45 114 101 103 101 120 112 return 61 return] 0 "%d")) arg)))
 
 (fset 'align-on-hash-arrow
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217848 97 108 105 103 110 45 114 101 103 101 120 return 61 62 return] 0 "%d")) arg)))
@@ -338,7 +341,8 @@
 (defun nice-php-hook ()
   ;; Hook for sane editing of PHP files
   (c-set-style "cmf")
-  (define-key php-mode-map (kbd "C-c C-y") 'yas/create-php-snippet)
+  (if (equal payas-mode-present t)
+      (define-key php-mode-map (kbd "C-c C-y") 'yas/create-php-snippet))
   (define-key php-mode-map (kbd "C-x p") 'phpdoc)
   )
 
@@ -414,6 +418,9 @@
             (font-lock-add-keywords nil
                                     '(("\\<\\(FIXME\\|TODO\\|BUG\\):" 1 font-lock-warning-face t)))))
 
+;; For Go language files
+(add-hook 'go-mode-hook       'nice-prog-hook)
+
 ;; For HTML files
 (add-hook 'html-mode-hook     'nice-prog-hook)
 
@@ -488,6 +495,9 @@
 
 ;; CSV files
 (add-to-list 'auto-mode-alist '("\\.csv\\'"                . csv-nav-mode))
+
+;; Go files
+(add-to-list 'auto-mode-alist '("\\.go\\'"                 . go-mode))
 
 ;; HTML Mode
 (add-to-list 'auto-mode-alist '("\\.tmpl\\'"               . html-mode))
@@ -678,6 +688,9 @@
          (setq default-directory (concat (getenv "HOME") "/")))
      ))
 
+(eval-after-load "go-mode"
+  '(require 'flymake-go))
+
 (eval-after-load "multi-web-mode"
   '(progn
      ;; Set up multi-web-mode
@@ -695,11 +708,17 @@
 (eval-after-load "php-mode"
   '(progn
      (add-to-list 'my-package-list 'php-auto-yasnippets t)
+     (setq php-executable "php")
+     (if (equal payas-mode-present nil)
+         (cmf-autoinstall-packages))
      ))
 
 (eval-after-load "smart-mode-line"
   '(progn
-     (setq custom-safe-themes (quote ("3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723" default)))
+     (setq custom-safe-themes
+           (quote ("c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482"
+                   "3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723"
+                   default)))
      (sml/apply-theme 'respectful)
      ))
 
@@ -738,6 +757,8 @@
                     (require 'flymake-shell)))
               (if (equal geben-present t)
                   (autoload 'geben "geben" "DBGp protocol frontend, a script debugger" t))
+              (if (equal go-mode-present t)
+                  (require 'go-direx))
               (if (equal indent-guide-present t)
                   (require 'indent-guide))
               (if (equal multi-web-present t)

@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: Boiler Plate for Go Files
+# --
+// ====================================================================
+//
+// `(file-name-nondirectory (buffer-file-name))`
+//
+// Copyright (c) `(format-time-string "%Y")` `(user-full-name)`
+// All rights reserved
+//
+// Created `(current-time-string)` `(car (cdr (current-time-zone)))`
+//
+// ====================================================================
+
+$0
+
+// Ende

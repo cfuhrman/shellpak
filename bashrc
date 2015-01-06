@@ -305,6 +305,11 @@ else
         alias no256='export TERM=xterm'
 fi
 
+# Alias for fossil
+if type -p fossil >/dev/null; then
+        alias fl="fossil"
+fi
+
 # Program defaults
 # --------------------------------------------------------------------
 
