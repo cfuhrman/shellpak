@@ -9,11 +9,6 @@
 #+LATEX: \thispagestyle{empty}
 # [TABLE-OF-CONTENTS]
 
-* Overview
-
-  Provides a general overview of ShellPAK as well as instructions for
-  installing and removing ShellPAK.
-
 * Description
 
   ShellPAK allows for the automatic installation and configuration of
@@ -26,6 +21,9 @@
    - [[https://www.gnu.org/software/indent/][GNU Indent]]
    - [[http://search.cpan.org/~shancock/Perl-Tidy-20140711/lib/Perl/Tidy.pod][Perl::Tidy]]
    - [[http://tmux.sourceforge.net][tmux]]
+
+  This code is specific to my own needs and is here in the hopes it
+  will be useful as a reference.
 
 ** Requirements
 
@@ -130,7 +128,7 @@
 
 * Copyright
 
-  Copyright (c) 2000-2014 Christopher M. Fuhrman
+  Copyright (c) 2000-2015 Christopher M. Fuhrman
   All rights reserved.
 
   All files contained herein can be redistributed and/or modified
