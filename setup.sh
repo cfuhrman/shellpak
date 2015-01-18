@@ -37,7 +37,7 @@ RSYNC=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS="-Ccav --delete --exclude-from=${RSYNC_EXCLUDE}"
 MAKE=make
-COPYRIGHT='Copyright (c) 2000-2014 Christopher M. Fuhrman'
+COPYRIGHT='Copyright (c) 2000-2015 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 DRYRUN=""
 UNINSTALL=0
@@ -323,7 +323,7 @@ do
 
         -n)
                 NOLINK=1
-                inform $L1 $TRUE 'Shell-related files will _not_ be linked to $HOME'
+                inform $L1 $TRUE "Shell-related files will ${UNDERLINE}not${NORMAL} be linked to \$HOME"
                 ;;
 
         -p)
