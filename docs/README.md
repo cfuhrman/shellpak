@@ -1,6 +1,6 @@
-# Description<a id="sec-2" name="sec-2"></a>
+# Description<a id="sec-1" name="sec-1"></a>
 
-[ShellPAK](http://chiselapp.com/user/cfuhrman/repository/shpak) allows for the automatic installation and configuration of
+ShellPAK allows for the automatic installation and configuration of
 my personal [GNU Bash](http://www.gnu.org/software/bash/) shell environment as well as the configuration
 of the following programs:
 
@@ -11,13 +11,16 @@ of the following programs:
 -   [Perl::Tidy](http://search.cpan.org/~shancock/Perl-Tidy-20140711/lib/Perl/Tidy.pod)
 -   [tmux](http://tmux.sourceforge.net)
 
-## Requirements<a id="sec-2-1" name="sec-2-1"></a>
+This code is specific to my own needs and is here in the hopes it
+will be useful as a reference.
+
+## Requirements<a id="sec-1-1" name="sec-1-1"></a>
 
 -   GNU Bash version 3.2 or greater
 -   GNU Emacs 23.1 or greater (Emacs >24.1 preferred)
 -   rsync
 
-## Supported Platforms<a id="sec-2-2" name="sec-2-2"></a>
+## Supported Platforms<a id="sec-1-2" name="sec-1-2"></a>
 
 The following operating systems are known to be supported:
 
@@ -32,7 +35,7 @@ The following operating systems are known to be supported:
 In addition, ShellPAK has been known to run on OpenSuSE, SuSE
 Enterprise Linux, Ubuntu, FreeBSD, and Cygwin.
 
-# Obtaining ShellPAK<a id="sec-3" name="sec-3"></a>
+# Obtaining ShellPAK<a id="sec-2" name="sec-2"></a>
 
 As of <span class="timestamp-wrapper"><span class="timestamp">&lt;2014-07-30 Wed&gt;</span></span>, [ShellPAK](https://chiselapp.com/user/cfuhrman/repository/shpak/home) is managed by the [Fossil](http://fossil-scm.org)
 distributed version control system.  To check out a repository:
@@ -48,7 +51,7 @@ distributed version control system.  To check out a repository:
 Further information on Fossil can be found at this [Quick Start
 Guide](http://www.fossil-scm.org/index.html/doc/trunk/www/quickstart.wiki).
 
-## Alternate Repositories<a id="sec-3-1" name="sec-3-1"></a>
+## Alternate Repositories<a id="sec-2-1" name="sec-2-1"></a>
 
 [ShellPAK](https://chiselapp.com/user/cfuhrman/repository/shpak/home) is also available for checkout from the following
 locations:
@@ -61,7 +64,7 @@ Be aware that portions of the ShellPAK infrastructure relies on
 Fossil.  Conversion to support the conventions of an alternative
 revision control system is an exercise left to the user.
 
-# Installation<a id="sec-4" name="sec-4"></a>
+# Installation<a id="sec-3" name="sec-3"></a>
 
     # Install ShellPAK
     $ ./setup.sh
@@ -71,7 +74,7 @@ Note that during installation, ShellPAK will store dot-files (e.g.,
 specified by the `-b` flag).  These files will be restored during
 un-installation (via the `-u` flag)
 
-## Other setup options<a id="sec-4-1" name="sec-4-1"></a>
+## Other setup options<a id="sec-3-1" name="sec-3-1"></a>
 
     # Perform a dry-run
     $ ./setup.sh -r
@@ -82,7 +85,7 @@ un-installation (via the `-u` flag)
     # Install ShellPAK and automatically download & install
     # personal set of Emacs packages
     $ ./setup.sh -p
-
+    
     # Do not automatically link files during installation
     $ ./setup.sh -n
     
@@ -95,18 +98,19 @@ un-installation (via the `-u` flag)
     # List runtime options
     $ ./setup.sh -h
 
-# Bugs<a id="sec-5" name="sec-5"></a>
+# Bugs<a id="sec-4" name="sec-4"></a>
 
 Please report any bugs or feature requests by [filing a ticket](https://chiselapp.com/user/cfuhrman/repository/shpak/reportlist) via
 the ShellPAK repository website.
 
-# Author<a id="sec-6" name="sec-6"></a>
+# Author<a id="sec-5" name="sec-5"></a>
 
-Christopher M. Fuhrman &lt;`cfuhrman atta pobox dotta com`&gt;
+Christopher M. Fuhrman
+[cfuhrman@pobox.com](cfuhrman@pobox.com)
 
-# Copyright<a id="sec-7" name="sec-7"></a>
+# Copyright<a id="sec-6" name="sec-6"></a>
 
-Copyright (c) 2000-2014 Christopher M. Fuhrman<br>
+Copyright (c) 2000-2015 Christopher M. Fuhrman
 All rights reserved.
 
 All files contained herein can be redistributed and/or modified
