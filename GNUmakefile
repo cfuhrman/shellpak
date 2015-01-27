@@ -1,5 +1,5 @@
 #
-# Makefile
+# GNUmakefile
 #
 # Common targets:
 #
@@ -20,11 +20,6 @@
 #   pdf         : Generate PDF documentation using LaTeX
 #   txt         : Generate plain-text documentation (UTF-8 encoding when available)
 #   texinfo     : Generate PDF documentation using texinfo (org-mode >= 8)
-#
-# Notes:
-#
-#   This Makefile is *not* compatible with NetBSD make(1).  Consider
-#   using GNU Make (gmake) instead.
 #
 
 #
