@@ -1,5 +1,5 @@
 #
-# emacs.d/Makefile
+# emacs.d/GNUmakefile
 #
 
 include ../mk/subclean.mk

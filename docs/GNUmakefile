@@ -1,5 +1,5 @@
 #
-# docs/Makefile
+# docs/GNUmakefile
 #
 
 # Files
