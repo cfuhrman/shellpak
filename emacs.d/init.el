@@ -537,10 +537,22 @@
 (custom-set-variables
  '(ac-ispell-requires 4)
  '(all-christian-calendar-holidays t)
- '(c-default-style (quote ((c-mode . "cmf") (c++-mode . "cmf") (objc-mode . "cmf") (java-mode . "cmf") (awk-mode . "awk") (other . "cmf"))))
+ '(c-default-style
+   (quote
+    ((c-mode . "cmf")
+     (c++-mode . "cmf")
+     (objc-mode . "cmf")
+     (java-mode . "cmf")
+     (awk-mode . "awk")
+     (other . "cmf"))))
  '(c-echo-syntactic-information-p t)
  '(c-report-syntactic-errors t)
- '(c-require-final-newline (quote ((c-mode . t) (c++-mode . t) (objc-mode . t) (java-mode . t))))
+ '(c-require-final-newline
+   (quote
+    ((c-mode . t)
+     (c++-mode . t)
+     (objc-mode . t)
+     (java-mode . t))))
  '(calendar-christian-all-holidays-flag t)
  '(calendar-daylight-time-zone-name "PDT")
  '(calendar-latitude 37.7822)
@@ -580,31 +592,99 @@
  '(log-edit-hook (quote (log-edit-show-files)))
  '(mark-even-if-inactive t)
  '(mark-holidays-in-calendar t)
- '(org-agenda-custom-commands (quote (("n" "Agenda and all TODO's" ((agenda "") (alltodo))) ("g" . "GTD Task Lists") ("gh" "Home" tags-todo "HOME") ("go" "Office" tags-todo "OFFICE") ("gg" "G.G. Guards" tags-todo "GGG") ("gr" "Tasks to refile" ((todo "TODO" ((org-agenda-files (quote ("~/org/from-mobile.org" "~/org/refile.org"))))) (todo "WAITING" ((org-agenda-files (quote ("~/org/from-mobile.org" "~/org/refile.org"))))))) ("B" "GTD (B)lock Agenda" ((tags-todo "OFFICE") (tags-todo "GGG") (tags-todo "HOME")) nil) ("H" "Home Agenda" ((agenda "") (tags-todo "HOME")) ((org-agenda-tag-filter-preset (quote ("+HOME"))))) ("O" "Office Agenda" ((agenda "") (tags-todo "OFFICE")) ((org-agenda-tag-filter-preset (quote ("+OFFICE"))))) ("G" "G.G. Guards Agenda" ((agenda "") (tags-todo "GGG")) ((org-agenda-tag-filter-preset (quote ("+GGG"))))))))
+ '(org-agenda-custom-commands
+   (quote
+    (("n" "Agenda and all TODO's"
+      ((agenda "")
+       (alltodo)))
+     ("g" . "GTD Task Lists")
+     ("gh" "Home" tags-todo "HOME")
+     ("go" "Office" tags-todo "OFFICE")
+     ("gg" "G.G. Guards" tags-todo "GGG")
+     ("gr" "Tasks to refile"
+      ((todo "TODO"
+             ((org-agenda-files
+               (quote
+                ("~/org/from-mobile.org" "~/org/refile.org")))))
+       (todo "WAITING"
+             ((org-agenda-files
+               (quote
+                ("~/org/from-mobile.org" "~/org/refile.org")))))))
+     ("B" "GTD (B)lock Agenda"
+      ((tags-todo "OFFICE")
+       (tags-todo "GGG")
+       (tags-todo "HOME"))
+      nil)
+     ("H" "Home Agenda"
+      ((agenda "")
+       (tags-todo "HOME"))
+      ((org-agenda-tag-filter-preset
+        (quote
+         ("+HOME")))))
+     ("O" "Office Agenda"
+      ((agenda "")
+       (tags-todo "OFFICE"))
+      ((org-agenda-tag-filter-preset
+        (quote
+         ("+OFFICE")))))
+     ("G" "G.G. Guards Agenda"
+      ((agenda "")
+       (tags-todo "GGG"))
+      ((org-agenda-tag-filter-preset
+        (quote
+         ("+GGG"))))))))
  '(org-agenda-files (quote ("~/org/tasks.org")))
  '(org-ascii-charset (quote utf-8))
  '(org-archive-location "~/org/archive/%s_archive::datetree/")
- '(org-capture-templates (quote (("t" "Task" entry (file+headline "~/org/refile.org" "New Tasks") "* TODO %^{Description}  %^G
+ '(org-capture-templates
+   (quote
+    (("t" "Task" entry
+      (file+headline "~/org/refile.org" "New Tasks")
+      "* TODO %^{Description}  %^G
   Added: %U
   Context: %a
 
-  %?") ("i" "Idea" entry (file+headline "~/org/refile.org" "New Ideas") "* %^{Title} %^G
+  %?")
+     ("i" "Idea" entry
+      (file+headline "~/org/refile.org" "New Ideas")
+      "* %^{Title} %^G
   Added: %U
   Context: %a
 
   %?
-            ") ("a" "Appointment" entry (file+headline "~/org/tasks.org" "Appointments") "* TODO %^{Description}  :APPT:%^G
+            ")
+     ("a" "Appointment" entry
+      (file+headline "~/org/tasks.org" "Appointments")
+      "* TODO %^{Description}  :APPT:%^G
   Added: %U
   Context: %a
 
-  %?") ("n" "Note" entry (file+datetree "~/org/notes.org") "* %^{Description}  %^G
+  %?")
+     ("n" "Note" entry
+      (file+datetree "~/org/notes.org")
+      "* %^{Description}  %^G
   Added: %U
   Context: %a
 
-  %?" :empty-lines 1) ("j" "Journal Entry" entry (file+datetree "~/org/journal.org") "** %^{Heading}
+  %?" :empty-lines 1)
+     ("j" "Journal Entry" entry
+      (file+datetree "~/org/journal.org")
+      "** %^{Heading}
   Added: %U
 
-  %?" :empty-lines 1) ("K" "Kawasaki Riding Log Entry" table-line (file+headline "~/org/journal.org" "Kawasaki Riding Log") " | %^u | %^{Miles} |") ("B" "Blood Pressure Log Entry" table-line (file+headline "~/org/journal.org" "Blood Pressure Log") "| %^u | %^{Systolic} | %^{Diastolic} |") ("E" "Household Expense" table-line (file+headline "~/org/journal.org" "Household Expenses") "| %^u | %^{Vendor} | %^{Description} | %^{Cost} |") ("P" "Project" entry (file+headline "~/org/projects.org" "Projects") "* %^{Description} :%^G:
+  %?" :empty-lines 1)
+     ("K" "Kawasaki Riding Log Entry" table-line
+      (file+headline "~/org/journal.org" "Kawasaki Riding Log")
+      " | %^u | %^{Miles} |")
+     ("B" "Blood Pressure Log Entry" table-line
+      (file+headline "~/org/journal.org" "Blood Pressure Log")
+      "| %^u | %^{Systolic} | %^{Diastolic} |")
+     ("E" "Household Expense" table-line
+      (file+headline "~/org/journal.org" "Household Expenses")
+      "| %^u | %^{Vendor} | %^{Description} | %^{Cost} |")
+     ("P" "Project" entry
+      (file+headline "~/org/projects.org" "Projects")
+      "* %^{Description} :%^G:
   Added: %U
   Context: %a
 
@@ -628,17 +708,40 @@
  '(org-export-latex-packages-alist (quote (("" "listings") ("" "color"))))
  '(org-export-with-tags nil)
  '(org-fast-tag-selection-single-key t)
+ '(org-latex-pdf-process
+   (quote
+    ("pdflatex -interaction nonstopmode -output-directory %o %f" "bibtex %b" "pdflatex -interaction nonstopmode -output-directory %o %f" "pdflatex -interaction nonstopmode -output-directory %o %f")))
  '(org-log-done (quote note))
  '(org-log-refile (quote time))
  '(org-mobile-directory "~/Dropbox/MobileOrg")
- '(org-mobile-files (quote (org-agenda-files "~/org/notes.org" "~/org/journal.org" "~/org/incubate.org" "~/org/ideas.org")))
+ '(org-mobile-files
+   (quote
+    (org-agenda-files "~/org/notes.org" "~/org/journal.org" "~/org/incubate.org" "~/org/ideas.org")))
  '(org-refile-targets (quote ((org-agenda-files :maxlevel . 2) ("~/org/incubate.org" :maxlevel . 1) ("~/org/ideas.org" :maxlevel . 1))))
  '(org-refile-use-outline-path t)
  '(org-src-fontify-natively t)
- '(org-stuck-projects (quote ("+LEVEL=2/-DONE" ("TODO" "NEXT" "STARTED" "WAITING") nil "")))
- '(org-tag-persistent-alist (quote (("HOME" . 104) ("OFFICE" . 111) ("ERRAND" . 101) ("PHONE" . 112) ("EMAIL" . 109) ("GGG" . 103) ("APPT" . 97))))
- '(org-todo-keywords (quote ((sequence "TODO" "NEXT(n!)" "STARTED(s!/@)" "DEFERRED(f!/@)" "DELEGATED(l@/@)" "WAITING(w@/@)" "|" "CANCELED(x@)" "DONE(d@)"))))
- '(package-archives (quote (("gnu" . "http://elpa.gnu.org/packages/") ("marmalade" . "http://marmalade-repo.org/packages/") ("melpa" . "http://melpa.org/packages/"))))
+ '(org-stuck-projects
+   (quote
+    ("+LEVEL=2/-DONE"
+     ("TODO" "NEXT" "STARTED" "WAITING")
+     nil "")))
+ '(org-tag-persistent-alist
+   (quote
+    (("HOME" . 104)
+     ("OFFICE" . 111)
+     ("ERRAND" . 101)
+     ("PHONE" . 112)
+     ("EMAIL" . 109)
+     ("GGG" . 103)
+     ("APPT" . 97))))
+ '(org-todo-keywords
+   (quote
+    ((sequence "TODO" "NEXT(n!)" "STARTED(s!/@)" "DEFERRED(f!/@)" "DELEGATED(l@/@)" "WAITING(w@/@)" "|" "CANCELED(x@)" "DONE(d@)"))))
+ '(package-archives
+   (quote
+    (("gnu" . "http://elpa.gnu.org/packages/")
+     ("marmalade" . "http://marmalade-repo.org/packages/")
+     ("melpa" . "http://melpa.org/packages/"))))
  '(recentf-mode t)
  '(scroll-bar-mode (quote right))
  '(sh-basic-offset 8)

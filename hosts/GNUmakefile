@@ -1,5 +1,5 @@
 #
-# hosts/Makefile
+# hosts/GNUmakefile
 #
 
 include ../mk/subclean.mk
