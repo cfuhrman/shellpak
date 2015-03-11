@@ -1,6 +1,5 @@
+;;; cmf-org-export.el --- Org-mode export wrapper functions
 ;; ====================================================================
-;;
-;; cmf-org-export.el
 ;;
 ;; Copyright (c) 2014 Christopher M. Fuhrman
 ;; All rights reserved
@@ -13,10 +12,13 @@
 ;;
 ;; ====================================================================
 
+;;; Commentary:
 ;;
 ;; Contains interactive wrapper functions for intelligently generating
 ;; documentation via org-mode
 ;;
+
+;;; Code:
 
 ;; Grab Org-mode major version number
 (defvar cmf-org-version (string-to-number (car (split-string (org-release) "[.]"))))
@@ -26,9 +28,9 @@
   '(org-ascii-charset (quote utf-8)))
 
 (defun cmf-export-to-txt ()
-  "Wrapper function for exporting an org-mode document to text format.
+  "Wrapper function for exporting an 'org-mode' document to text format.
 
-The default encoding for org-mode versions >= 7 is UTF-8.  Older versions
+The default encoding for 'org-mode' versions >= 7 is UTF-8.  Older versions
 will export to ASCII format."
   (interactive)
   (if (>= cmf-org-version 8)
@@ -39,7 +41,7 @@ will export to ASCII format."
   )
 
 (defun cmf-export-to-pdf ()
-  "Wrapper function for exporting an org-mode document to PDF format via LaTeX"
+  "Wrapper function for exporting an 'org-mode' document to PDF format via LaTeX."
   (interactive)
   (if (>= cmf-org-version 8)
       (org-latex-export-to-pdf)
@@ -47,7 +49,7 @@ will export to ASCII format."
   )
 
 (defun cmf-export-to-html ()
-  "Wrapper function for exporting an org-mode document to HTML"
+  "Wrapper function for exporting an 'org-mode' document to HTML."
   (interactive)
   (if (>= cmf-org-version 8)
       (org-html-export-to-html)
@@ -55,7 +57,7 @@ will export to ASCII format."
   )
 
 (defun cmf-export-to-texinfo ()
-  "Wrapper function for exporting an org-mode document to TexInfo"
+  "Wrapper function for exporting an 'org-mode' document to TexInfo."
   (interactive)
   (if (>= cmf-org-version 8)
       (progn
@@ -65,7 +67,7 @@ will export to ASCII format."
   )
 
 (defun cmf-export-to-docbook ()
-  "Wrapper function for exporting an org-mode document to DocBook"
+  "Wrapper function for exporting an 'org-mode' document to DocBook."
   (interactive)
   (if (>= cmf-org-version 8)
       (error "Org mode version %s does not support export to DocBook" (org-release))
@@ -73,11 +75,11 @@ will export to ASCII format."
   )
 
 (defun cmf-export-to-markdown ()
-  "Wrapper function for exporting an org-mode document to Markdown"
+  "Wrapper function for exporting an 'org-mode' document to Markdown."
   (interactive)
   (if (>= cmf-org-version 8)
       (org-md-export-to-markdown)
     (error "Org mode version %s does not support export to Markdown" (org-release)))
   )
 
-;; Ende
+;;; cmf-org-export.el ends here

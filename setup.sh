@@ -86,6 +86,7 @@ HOMEDOTFILES=('bash_logout'   \
               'emacs.d'       \
               'gitconfig'     \
               'indent.pro'    \
+              "mg"            \
               'perltidyrc'    \
               'tmux.conf'     \
               'screenrc'      \
@@ -93,10 +94,15 @@ HOMEDOTFILES=('bash_logout'   \
 
 # Use GNU Make if available, otherwise blindly assume that the system
 # make is compatible.
-makepaths=('/usr/pkg/bin/gmake'      '/usr/bin/gnumake'     \
-           '/opt/csw/bin/gmake'      '/usr/sfw/bin/gmake'   \
-           '/opt/freeware/bin/gmake' '/usr/ccs/bin/make'    \
-           '/opt/csw/bin/make'       '/usr/bin/make')
+makepaths=('/usr/pkg/bin/gmake'      \
+           '/usr/local/bin/gmake'    \
+           '/usr/bin/gnumake'        \
+           '/opt/csw/bin/gmake'      \
+           '/usr/sfw/bin/gmake'      \
+           '/opt/freeware/bin/gmake' \
+           '/usr/ccs/bin/make'       \
+           '/opt/csw/bin/make'       \
+           '/usr/bin/make')
 
 for makeprog in ${makepaths[@]};
 do
@@ -462,8 +468,8 @@ fi
 # Automatically build emacs packages
 if [[ ${BUILD_EMACS_PACKAGES} -eq 1 ]]; then
         inform $L1 $FALSE 'Building Emacs Packages'
-        tmplog=$(mktemp /tmp/${0##*/}.XXXXX) || exit 1
-        make emacs-packages >${tmplog} 2>&1
+        tmplog=$(mktemp /tmp/${0##*/}.XXXXXX) || exit 1
+        ${MAKE} emacs-packages >${tmplog} 2>&1
         echo -e "${GREEN}done${NORMAL}"
         mv $tmplog $EMACS_OUTPUT_LOG
         inform $L2 $TRUE "Package log located at ${EMACS_OUTPUT_LOG}"

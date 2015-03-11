@@ -74,6 +74,8 @@ SSH_SETUP_CMD="cd ${SHELLDIR} ; ./setup.sh"
 
 TAR=$(shell if [ `uname` != "Darwin" ] && type gtar >/dev/null; then echo 'gtar'; else echo 'tar'; fi)
 DRYRUN_OPT=$(shell if echo ${DRYRUN} | egrep '[Yy][Ee][Ss]' >/dev/null ; then echo -n '-r'; fi)
+RM_OPTS=$(shell if [ `uname` != "OpenBSD" ]; then echo '-vf'; else echo '-f'; fi)
+
 
 #
 # Targets
@@ -113,12 +115,12 @@ remote: ${REMOTEHOSTS} ${POLARHOSTS}
 emacs-packages:
 	${EMACS} --batch -l ${EMACS_INIT} -f ${EMACS_INSTALL_PACKAGES}
 
-clean : clean-echo ${CLEANDIRS} clean-dist
-	@rm -vf *.bak
-	@rm -vf *~
-	@rm -vf *-baseline
-	@rm -vf *-merge
-	@rm -vf *-original
+clean: clean-echo ${CLEANDIRS} clean-dist
+	@rm ${RM_OPTS} *.bak
+	@rm ${RM_OPTS} *~
+	@rm ${RM_OPTS} *-baseline
+	@rm ${RM_OPTS} *-merge
+	@rm ${RM_OPTS} *-original
 
 clean-echo:
 	@echo 'Cleaning old files:'
@@ -127,27 +129,27 @@ clean-elc: clean-home-elc
 
 clean-home-elc:
 	@echo 'Removing installed elc files:'
-	@rm -vf ${HOME}/.emacs.d/*.elc
-	@rm -vf ${HOME}/.emacs.d/*~
+	@rm ${RM_OPTS} ${HOME}/.emacs.d/*.elc
+	@rm ${RM_OPTS} ${HOME}/.emacs.d/*~
 
-clean-xkcd :
+clean-xkcd:
 	@echo 'Removing left-over xkcd comics:'
-	@rm -rvf ${HOME}/.emacs.d/xkcd/*
+	@rm ${RM_OPTS}r ${HOME}/.emacs.d/xkcd/*
 
-clean-tags : clean-gtags
+clean-tags: clean-gtags
 
-clean-gtags :
-	@rm -vf GPATH GTAGS GRTAGS
+clean-gtags:
+	@rm ${RM_OPTS} GPATH GTAGS GRTAGS
 
-clean-all : clean clean-elc clean-xkcd clean-tags
+clean-all: clean clean-elc clean-xkcd clean-tags
 
 clean-dist: 
-	@rm -vf shellpak*.tar.gz
-	@rm -rvf shellpak
+	@rm ${RM_OPTS} shellpak*.tar.gz
+	@rm ${RM_OPTS}r shellpak
 
 # WARNING: Will remove *all* installed packages.  Use with care!
 clean-elpa: clean-elc
-	@rm -rvf ${HOME}/.emacs.d/elpa/*
+	@rm ${RM_OPTS}r ${HOME}/.emacs.d/elpa/*
 
 public:
 	@echo 'Syncing with public repository'
@@ -184,28 +186,28 @@ emacs:
 # Documentation Targets
 #
 
-docbook : emacs ${DBKDIRS}
-${DBKDIRS} :
+docbook: emacs ${DBKDIRS}
+${DBKDIRS}:
 	${MAKE} -C $(@:docbook-%=%) docbook
 
-html : emacs ${HTMDIRS}
-${HTMDIRS} :
+html: emacs ${HTMDIRS}
+${HTMDIRS}:
 	${MAKE} -C $(@:html-%=%) html
 
-markdown : emacs ${MDDIRS}
-${MDDIRS} :
+markdown: emacs ${MDDIRS}
+${MDDIRS}:
 	${MAKE} -C $(@:markdown-%=%) markdown
 
-pdf : emacs ${PDFDIRS}
-${PDFDIRS} :
+pdf: emacs ${PDFDIRS}
+${PDFDIRS}:
 	${MAKE} -C $(@:pdf-%=%) pdf
 
-txt : emacs ${TXTDIRS}
-${TXTDIRS} :
+txt: emacs ${TXTDIRS}
+${TXTDIRS}:
 	${MAKE} -C $(@:txt-%=%) txt
 
-texinfo : emacs ${TXIDIRS}
-${TXIDIRS} :
+texinfo: emacs ${TXIDIRS}
+${TXIDIRS}:
 	${MAKE} -C $(@:texinfo-%=%) texinfo
 
 

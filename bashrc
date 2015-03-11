@@ -216,8 +216,6 @@ done
 PATH=${PATH#:}
 PATH=${PATH//::/:}
 
-export PATH
-
 # Set default for YASTISBROKEN
 YASTISBROKEN=0
 
@@ -234,6 +232,19 @@ AWK=awk
 
 # Make grep(1) output pretty on systems that support color
 export GREP_OPTIONS='--color=auto'
+
+# Set up GOPATH
+if type -p go >/dev/null; then
+        export GOPATH=${HOME}/go
+
+        if [ -d ${GOPATH}/bin ]; then
+                echo $PATH | egrep '(^|\:)'${GOPATH}'/bin(\:|$)' >/dev/null 2>&1 || PATH=$PATH:${GOPATH}/bin
+        fi
+
+fi
+
+export PATH
+
 
 # OS-Specific variable(s)
 # --------------------------------------------------------------------
