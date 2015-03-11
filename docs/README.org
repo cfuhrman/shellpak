@@ -19,6 +19,7 @@
    - [[http://www.gnu.org/software/emacs/][GNU Emacs]]
    - [[http://www.gnu.org/software/screen/][GNU Screen]]
    - [[https://www.gnu.org/software/indent/][GNU Indent]]
+   - [[http://homepage.boetes.org/software/mg/][mg Text Editor]]
    - [[http://search.cpan.org/~shancock/Perl-Tidy-20140711/lib/Perl/Tidy.pod][Perl::Tidy]]
    - [[http://tmux.sourceforge.net][tmux]]
 

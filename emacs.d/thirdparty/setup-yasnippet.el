@@ -1,3 +1,24 @@
+;;; setup-yasnippet.el --- Make autocomplete and yasnippet play nice 
+;; ====================================================================
+;;;
+;; Copyright (c) 2014 Christopher M. Fuhrman
+;; All rights reserved
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under terms of the Simplified BSD License (also
+;; known as the "2-Clause License" or "FreeBSD License".)
+;;
+;; Created Thu Jul  3 13:31:46 2014 PDT
+;;
+;; ====================================================================
+
+;;; Commentary:
+;;
+;; Describe Lisp File here
+;;
+
+;;; Code:
+
 ;; (require 'yasnippet)
 
 ;; Use only own snippets, do not use bundled ones
@@ -10,7 +31,7 @@
 ;; (require 'datomic-snippets)
 
 ;; Jump to end of snippet definition
-(define-key yas-keymap (kbd "<return>") 'yas/exit-all-snippets)
+(define-key yas-keymap (kbd "<return>") 'yas-exit-all-snippets)
 
 ;; Inter-field navigation
 (defun yas/goto-end-of-active-field ()
@@ -54,3 +75,5 @@
             (define-key yas/keymap [tab] 'yas/next-field)))
 
 (provide 'setup-yasnippet)
+
+;;; setup-yasnippet.el ends here

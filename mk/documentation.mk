@@ -10,6 +10,7 @@ EMACS_BIN=emacs
 EMACS_VER=$(shell emacs --version | head -1 | awk  '{ print $$3 }' | awk -F\. '{ print $$1 }')
 EMACS_WRAPPER_EL=../emacs.d/cmf-org-export.el
 TEXI2PDF_BIN=texi2pdf
+RM_OPTS=$(shell if [ `uname` != "OpenBSD" ]; then echo '-vf'; else echo '-f'; fi)
 
 # Emacs Evaluation strings
 EMACS_CMD_PDF=cmf-export-to-pdf
@@ -39,25 +40,27 @@ TXP_FILES=$(ORG_FILES:.org=-texi.pdf)
 all : html pdf txt
 
 clean :
-	@rm -vf ${HTM_FILES}
-	@rm -vf ${PDF_FILES}
-	@rm -vf ${TXT_FILES}
-	@rm -vf ${XML_FILES}
-	@rm -vf ${MD_FILES}
-	@rm -vf ${DBK_FILES}
-	@rm -vf ${TXI_FILES}
-	@rm -vf ${TXP_FILES}
-	@rm -vf $(ORG_FILES:.org=.tex)
-	@rm -vf $(ORG_FILES:.org=.toc)
-	@rm -vf $(ORG_FILES:.org=.out)
-	@rm -vf $(ORG_FILES:.org=.aux)
-	@rm -vf $(ORG_FILES:.org=.xml)
-	@rm -vf *.log
-	@rm -vf *.bak
-	@rm -vf *-baseline
-	@rm -vf *-merge
-	@rm -vf *-original
-	@rm -vf *~
+	@rm ${RM_OPTS} ${HTM_FILES}
+	@rm ${RM_OPTS} ${PDF_FILES}
+	@rm ${RM_OPTS} ${TXT_FILES}
+	@rm ${RM_OPTS} ${XML_FILES}
+	@rm ${RM_OPTS} ${MD_FILES}
+	@rm ${RM_OPTS} ${DBK_FILES}
+	@rm ${RM_OPTS} ${TXI_FILES}
+	@rm ${RM_OPTS} ${TXP_FILES}
+	@rm ${RM_OPTS} $(ORG_FILES:.org=.tex)
+	@rm ${RM_OPTS} $(ORG_FILES:.org=.toc)
+	@rm ${RM_OPTS} $(ORG_FILES:.org=.out)
+	@rm ${RM_OPTS} $(ORG_FILES:.org=.aux)
+	@rm ${RM_OPTS} $(ORG_FILES:.org=.xml)
+	@rm ${RM_OPTS} $(ORG_FILES:.org=.bbl)
+	@rm ${RM_OPTS} $(ORG_FILES:.org=.blg)
+	@rm ${RM_OPTS} *.log
+	@rm ${RM_OPTS} *.bak
+	@rm ${RM_OPTS} *-baseline
+	@rm ${RM_OPTS} *-merge
+	@rm ${RM_OPTS} *-original
+	@rm ${RM_OPTS} *~
 
 # Check dblatex
 

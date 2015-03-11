@@ -1,6 +1,5 @@
+;;; init.el --- Personal customizations
 ;; ====================================================================
-;;
-;; emacs.d/init.el
 ;;
 ;; Copyright (c) 2008 Christopher M. Fuhrman
 ;; All rights reserved.
@@ -9,9 +8,11 @@
 ;; modify it under the terms of the Simplified BSD License (also known
 ;; as the "2-Clause License" or "FreeBSD License".)
 ;;
-;; --------------------------------------------------------------------
+;; Created Thu Feb 29 17:16:39 2008 PST
 ;;
-;; DESCRIPTION:
+;; ====================================================================
+
+;;; Commentary:
 ;;
 ;;   GNU Emacs-compatible initialization file defining a number of
 ;;   coding styles and preferences
@@ -21,7 +22,8 @@
 ;;    - The same thing we do every night, Pinky.  Try to take over
 ;;      *THE WORLD*!
 ;;
-;; ====================================================================
+
+;;; Code:
 
 ;; Make sure all Emacs Lisp files are byte-compiled for speed
 (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
@@ -40,6 +42,7 @@
 ;; Variable definitions
 (defvar ac-ispell-present nil)
 (defvar auto-complete-present nil)
+(defvar flycheck-mode-present nil)
 (defvar flymake-mode-present nil)
 (defvar geben-present nil)
 (defvar ggtags-mode-present nil)
@@ -75,10 +78,6 @@
                         auto-complete
                         crontab-mode
                         csv-nav
-                        flymake-go
-                        flymake-php
-                        flymake-shell
-                        flymake-yaml
                         geben
                         git-commit-mode
                         git-rebase-mode
@@ -97,6 +96,7 @@
                         psvn
                         solarized-theme
                         sr-speedbar
+                        twittering-mode
                         vc-fossil
                         xkcd
                         yaml-mode
@@ -109,9 +109,16 @@
 ;; Add Emacs-24-specific packages
 (if (>= emacs-major-version 24)
     (setq my-package-list
-          (append my-package-list '(ggtags
+          (append my-package-list '(flycheck
+                                    ggtags
                                     smart-mode-line
-                                    weather-metno))))
+                                    weather-metno)))
+  (setq my-package-list
+        (append my-package-list '(flymake-go
+                                  flymake-php
+                                  flymake-shell
+                                  flymake-yaml)))
+  )
 
 ;; Customize font under X
 (if (equal window-system 'x)
@@ -122,6 +129,11 @@
                         :weight  'normal
                         :height   100
                         :width   'normal))
+
+;; Fix normal-erase-is-backspace under non-Linux OS
+(if (and (equal window-system nil)
+         (equal (equal system-type 'gnu/linux) nil))
+    (normal-erase-is-backspace-mode 0))
 
 ;; Install Org-Mode, if present
 (if (>= emacs-major-version 23)
@@ -135,6 +147,8 @@
           (setq auto-complete-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^ac-ispell" 'nosort)
           (setq ac-ispell-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^flycheck" 'nosort)
+          (setq flycheck-mode-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^flymake" 'nosort)
           (setq flymake-mode-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^geben" 'nosort)
@@ -153,8 +167,8 @@
           (setq payas-mode-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^smart-mode-line" 'nosort)
           (setq smart-mode-line-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^solarized" 'nosort)
-          (setq solarized-theme-present t))
+      ;; (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^solarized" 'nosort)
+      ;;     (setq solarized-theme-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^sr-speedbar" 'nosort)
           (setq sr-speedbar-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^xlicense" 'nosort)
@@ -208,7 +222,7 @@
 ;; --------------------------------------------------------------------
 
 (defun cmf-autoinstall-packages ()
-  "Automatically downloads and installs list of preferred packages"
+  "Automatically downloads and install list of preferred packages."
   (interactive)
   (package-initialize)
   (unless package-archive-contents
@@ -220,7 +234,7 @@
 
 ;; Debug a simple PHP script.
 (defun cmf-php-debug ()
-  "Run current PHP script for debugging with geben"
+  "Run current PHP script for debugging with geben."
   (interactive)
   (call-interactively 'geben)
   (shell-command
@@ -230,7 +244,7 @@
 
 ;; Function for loading exec paths
 (defun nice-exec-path (pathlist)
-  "Add given list of paths to exec-path"
+  "Add given PATHLIST to 'exec-path'."
   (dolist (path pathlist)
     (add-to-list 'exec-path path)
     (setenv "PATH" (concat (getenv "PATH") ":" path)))
@@ -239,7 +253,7 @@
 ;; Function for loading library paths
 ;; TODO: Simplify list iteration logic a la nice-exec-path
 (defun nice-load-path (pathlist)
-  "Add given list of paths to load-path"
+  "Add given PATHLIST to 'load-path'."
   (while pathlist
     (if (and (file-directory-p (car pathlist))
              (not (member (car pathlist) load-path)))
@@ -251,7 +265,7 @@
 
 ;; A nice function for email, commit messages, etc
 (defun nice-text-mode ()
-  "Setup a sane mode for editing english text"
+  "Setup a sane mode for editing english text."
   (interactive)
   (text-mode)
   )
@@ -291,15 +305,16 @@
 ;; My own style
 (c-add-style "cmf"
              '("bsd"
-	       (indent-tabs-mode . nil)))
-
+	       (indent-tabs-mode . nil)
+               (c-offsets-alist
+                (statement-cont . (first c-lineup-cascaded-calls +)))))
 
 ;; Hooks
 ;; --------------------------------------------------------------------
 
 ;; Enable code folding
 (defun folding-code-hook ()
-  "Enable code folding"
+  "Enable code folding."
   (defvar outline-minor-mode-prefix)
   (setq outline-minor-mode-prefix "\C-co")
   (outline-minor-mode t)
@@ -308,27 +323,27 @@
 
 ;; Define a basic hook for Emacs lisp files
 (defun nice-elisp-hook ()
-  "Hook for sane editing of lisp files"
+  "Hook for sane editing of Lisp files."
   (setq indent-tabs-mode nil)
   )
 
 ;; Define a basic hook for enabling ac-ispell
 (defun nice-ispell-hook ()
-  "Hook for enabling ac-ispell"
+  "Hook for enabling ac-ispell."
   (if (equal ac-ispell-present t)
       (add-to-list 'ac-sources 'ac-source-ispell))
   )
 
 ;; Define a basic hook for sane editing of makefiles
 (defun nice-makefile-hook ()
-  "Hook for sane editing of Makefiles"
+  "Hook for sane editing of Makefiles."
   (if (>= emacs-major-version 23)
       (linum-mode t))
   )
 
 ;; Define a basic hook for sane editing of org-mode documents
 (defun nice-org-hook ()
-  "Hook for sane editing of org-mode documents"
+  "Hook for sane editing of 'org-mode' documents."
   (defvar org-mode-map)
   (org-defkey org-mode-map "\C-c[" 'org-time-stamp-inactive)
   (if (equal org-bullets-present t)
@@ -339,7 +354,7 @@
 
 ;; Define a basic hook for editing PHP files
 (defun nice-php-hook ()
-  ;; Hook for sane editing of PHP files
+  "Hook for sane editing of PHP files."
   (c-set-style "cmf")
   (if (equal payas-mode-present t)
       (define-key php-mode-map (kbd "C-c C-y") 'yas/create-php-snippet))
@@ -348,7 +363,7 @@
 
 ;; Define a nice programming hook
 (defun nice-prog-hook ()
-  "Enable some sanity for programming source files"
+  "Enable some sanity for programming source files."
   (if (>= emacs-major-version 23)
       (linum-mode t))
   (if (equal ggtags-mode-present t)
@@ -362,7 +377,7 @@
 
 ;; Define a nice hook for editing SQL files
 (defun nice-sql-hook ()
-  "Hook for sane editing of SQL files"
+  "Hook for sane editing of SQL files."
   (if (>= emacs-major-version 23)
       (linum-mode t))
   (auto-fill-mode t)
@@ -371,7 +386,7 @@
 
 ;; Define a basic hook for sane editing of text documents
 (defun nice-text-hook ()
-  "Hook for sane editing of text (ASCII) documents"
+  "Hook for sane editing of text (ASCII) documents."
   (auto-fill-mode t)
   (flyspell-mode t)
   (footnote-mode t)
@@ -382,6 +397,7 @@
 ;; Real lisp hackers use the lambda character
 ;; Source: https://github.com/edmore/dotemacs/blob/master/modules/defuns.el
 (defun sm-lambda-mode-hook ()
+  "Replace the word 'lambda' with the greek character 'λ'."
   (if (equal custom-file "~/.emacs.d/custom.el")
       (font-lock-add-keywords
        nil `(("\\<lambda\\>"
@@ -431,7 +447,6 @@
 (add-hook 'makefile-mode-hook 'nice-makefile-hook)
 
 ;; For PHP files
-(add-hook 'php-mode-hook      'flymake-php-load)
 (add-hook 'php-mode-hook      'nice-php-hook)
 
 ;; For Ruby files
@@ -439,7 +454,6 @@
 
 ;; For Shell Scripts
 (add-hook 'sh-mode-hook       'nice-prog-hook)
-(add-hook 'sh-set-shell-hook  'flymake-shell-load)
 (add-hook 'sh-mode-hook
           (lambda ()
             (font-lock-add-keywords nil
@@ -575,6 +589,7 @@
  '(cperl-font-lock t)
  '(cperl-highlight-variables-indiscriminately t)
  '(cperl-indent-level 8)
+ '(custom-enabled-themes (quote (wombat)))
  '(delete-selection-mode nil)
  '(diff-switches "-u")
  '(dired-listing-switches "-alh")
@@ -583,6 +598,8 @@
 %b
 %a
 ")
+ '(flycheck-completion-system 'ido)
+ '(flycheck-highlighting-mode 'lines)
  '(global-hl-line-mode t)
  '(gud-gdb-command-name "gdb --annotate=1")
  '(ido-mode t)
@@ -754,6 +771,12 @@
  '(sr-speedbar-max-width 20)
  '(sr-speedbar-right-side nil)
  '(transient-mark-mode 1)
+ '(twittering-display-remaining t)
+ '(twittering-timer-interval 900)
+ '(twittering-tinyurl-service (quote tinyurl))
+ '(twittering-use-icon-storage t)
+ '(twittering-use-master-password t)
+ ;; '(twittering-username "your_twitter_account_here")
  '(user-full-name "Christopher M. Fuhrman")
  '(user-mail-address "cfuhrman@pobox.com")
  '(view-calendar-holidays-initially nil)
@@ -769,6 +792,9 @@
 (nice-load-path local-loadpaths)
 (nice-exec-path local-execpaths)
 
+;; Enable flycheck-mode globally
+(if (equal flycheck-mode-present t)
+    (add-hook 'after-init-hook #'global-flycheck-mode))
 
 ;; Library evaluations
 ;; --------------------------------------------------------------------
@@ -792,7 +818,10 @@
      ))
 
 (eval-after-load "go-mode"
-  '(require 'flymake-go))
+  '(progn
+     (if (equal flymake-mode-present t)
+         '(require 'flymake-go))
+     ))
 
 (eval-after-load "multi-web-mode"
   '(progn
@@ -810,10 +839,18 @@
 ;; package list until after we know it's been loaded.
 (eval-after-load "php-mode"
   '(progn
-     (add-to-list 'my-package-list 'php-auto-yasnippets t)
      (setq php-executable "php")
+     (add-to-list 'my-package-list 'php-auto-yasnippets t)
+     (if (equal flymake-mode-present t)
+         (add-hook 'php-mode-hook      'flymake-php-load))
      (if (equal payas-mode-present nil)
          (cmf-autoinstall-packages))
+     ))
+
+(eval-after-load "sh-mode"
+  '(progn
+     (if (equal flymake-mode-present t)
+         (add-hook 'sh-set-shell-hook 'flymake-shell-load))
      ))
 
 (eval-after-load "smart-mode-line"
@@ -829,6 +866,12 @@
   '(progn
      (if (window-system)
          (load-theme 'solarized-dark t))
+     ))
+
+(eval-after-load "twittering-mode"
+  '(progn
+     (if (window-system)
+         (twittering-icon-mode t))
      ))
 
 (eval-after-load "vc-fossil"
@@ -856,7 +899,6 @@
               (if (equal flymake-mode-present t)
                   (progn
                     (require 'flymake)
-                    (require 'flymake-php)
                     (require 'flymake-shell)))
               (if (equal geben-present t)
                   (autoload 'geben "geben" "DBGp protocol frontend, a script debugger" t))
@@ -880,4 +922,4 @@
                   (load-theme 'solarized-dark t))
               ))
 
-;; Ende
+;;; init.el ends here
