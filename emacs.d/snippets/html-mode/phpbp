@@ -1,6 +1,9 @@
 # -*- mode: snippet -*-
 # name : PHP File Boilerplate
 # expand-env: ((yas/indent-line 'fixed))
+#
+# TODO: Mollify PHP_CodeSniffer?
+#
 # --
 <?php
 
