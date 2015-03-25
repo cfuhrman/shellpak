@@ -8,6 +8,7 @@ of the following programs:
 -   [GNU Emacs](http://www.gnu.org/software/emacs/)
 -   [GNU Screen](http://www.gnu.org/software/screen/)
 -   [GNU Indent](https://www.gnu.org/software/indent/)
+-   [mg Text Editor](http://homepage.boetes.org/software/mg/)
 -   [Perl::Tidy](http://search.cpan.org/~shancock/Perl-Tidy-20140711/lib/Perl/Tidy.pod)
 -   [tmux](http://tmux.sourceforge.net)
 

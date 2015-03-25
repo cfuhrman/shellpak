@@ -27,6 +27,7 @@
   ;; If there is more than one, they won't work right.
  '(font-use-system-font t)
  '(linum-format "%03d|")
+ '(sunshine-show-icons t)
  '(tool-bar-mode nil))
 
 ;;; custom.el ends here

@@ -49,7 +49,7 @@
 (defvar go-mode-present nil)
 (defvar indent-guide-present nil)
 (defvar local-execpaths '("/usr/texbin" "/usr/pkg/bin" "/usr/local/bin"))
-(defvar local-loadpaths '("/pkg/share/emacs/site-lisp" "/usr/local/share/emacs/site-lisp"))
+(defvar local-loadpaths '("/usr/pkg/share/emacs/site-lisp" "/usr/local/share/emacs/site-lisp"))
 (defvar multi-web-present nil)
 (defvar my-package-list nil)
 (defvar org-bullets-present nil)
@@ -96,6 +96,7 @@
                         psvn
                         solarized-theme
                         sr-speedbar
+                        sunshine
                         twittering-mode
                         vc-fossil
                         xkcd
@@ -111,8 +112,8 @@
     (setq my-package-list
           (append my-package-list '(flycheck
                                     ggtags
-                                    smart-mode-line
-                                    weather-metno)))
+                                    smart-mode-line)))
+
   (setq my-package-list
         (append my-package-list '(flymake-go
                                   flymake-php
@@ -211,7 +212,7 @@
 (define-key global-map "\C-cc" 'org-capture)
 (define-key global-map "\C-cl" 'org-store-link)
 
-;; Set keyboard shortcut for normal-erase-is-backspace
+;; Custom key bindings for commonly used commands
 (global-set-key [?\C-x ?\C-k ?0] 'normal-erase-is-backspace-mode)
 (global-set-key [?\C-x ?\C-k ?1] 'delete-trailing-whitespace)
 (global-set-key [?\C-x ?\C-k ?2] 'align-on-equal)
@@ -770,6 +771,7 @@
  '(show-paren-mode 1)
  '(sr-speedbar-max-width 20)
  '(sr-speedbar-right-side nil)
+ '(sunshine-location "94110,USA")
  '(transient-mark-mode 1)
  '(twittering-display-remaining t)
  '(twittering-timer-interval 900)
@@ -780,7 +782,6 @@
  '(user-full-name "Christopher M. Fuhrman")
  '(user-mail-address "cfuhrman@pobox.com")
  '(view-calendar-holidays-initially nil)
- '(weather-metno-unit-name (quote (("celsius" . "°C") ("percent" . "%"))))
  '(which-function-mode t)
  )
 
@@ -856,7 +857,8 @@
 (eval-after-load "smart-mode-line"
   '(progn
      (setq custom-safe-themes
-           (quote ("c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482"
+           (quote ("c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223"
+                   "c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482"
                    "3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723"
                    default)))
      (sml/apply-theme 'respectful)
