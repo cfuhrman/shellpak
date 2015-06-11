@@ -68,6 +68,7 @@ RSYNC_CONN_OPTS=-e ssh
 RSYNC_PUBLIC_OPTS=-Ccavz --exclude=GPATH --exclude=GRTAGS --exclude=GTAGS --exclude=docs/*.txt \
   --exclude=.fslckout --exclude=config --exclude=ext --exclude='.AppleDouble' --exclude='*~' \
   --exclude=_FOSSIL_ --exclude=VERSION --delete
+SETUP_BIN=${PWD}/setup.sh
 
 SSH=ssh
 SSH_SETUP_CMD="cd ${SHELLDIR} ; ./setup.sh"
@@ -87,16 +88,16 @@ all: install local remote
 # Convenience target
 install: txt setup.sh
 	@echo 'Executing setup.sh for ShellPAK installation'
-	@setup.sh ${DRYRUN_OPT} -p
+	@${SETUP_BIN} ${DRYRUN_OPT} -p
 
 uninstall: setup.sh VERSION
 	@echo -n 'Removing ShellPAK '
 	@cat VERSION
-	@setup.sh ${DRYRUN_OPT} -u
+	@${SETUP_BIN} ${DRYRUN_OPT} -u
 
 update: txt setup.sh
 	@echo 'Executing setup.sh for ShellPAK update'
-	@setup.sh ${DRYRUN_OPT}
+	@${SETUP_BIN} ${DRYRUN_OPT}
 
 tags: gtags
 
@@ -111,6 +112,9 @@ local: ${LOCALHOSTS}
 
 remote: ${REMOTEHOSTS} ${POLARHOSTS}
 	@echo 'All remote hosts updated'
+
+disabled: ${DISABLEDHOSTS}
+	@echo 'All disabled hosts updated (Are they working now?)'
 
 emacs-packages:
 	${EMACS} --batch -l ${EMACS_INIT} -f ${EMACS_INSTALL_PACKAGES}

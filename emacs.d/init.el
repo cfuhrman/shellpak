@@ -57,6 +57,7 @@
 (defvar smart-mode-line-present nil)
 (defvar solarized-theme-present nil)
 (defvar sr-speedbar-present nil)
+(defvar twilight-theme-present nil)
 (defvar vc-fossil-present nil)
 (defvar xlicense-present nil)
 (defvar yasnippet-present nil)
@@ -97,6 +98,7 @@
                         solarized-theme
                         sr-speedbar
                         sunshine
+                        twilight-theme
                         twittering-mode
                         vc-fossil
                         xkcd
@@ -113,7 +115,6 @@
           (append my-package-list '(flycheck
                                     ggtags
                                     smart-mode-line)))
-
   (setq my-package-list
         (append my-package-list '(flymake-go
                                   flymake-php
@@ -172,6 +173,8 @@
       ;;     (setq solarized-theme-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^sr-speedbar" 'nosort)
           (setq sr-speedbar-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^twilight-theme" 'nosort)
+          (setq twilight-theme-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^xlicense" 'nosort)
           (setq xlicense-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^vc-fossil" 'nosort)
@@ -393,6 +396,12 @@
   (footnote-mode t)
   (if (equal auto-complete-present t)
       (auto-complete-mode t))
+  (if (>= emacs-major-version 23)
+      (progn
+        (if (and (equal emacs-major-version 24)
+                 (<= emacs-minor-version 4))
+            (setq max-lisp-eval-depth 10000))
+        (orgstruct-mode t)))
   )
 
 ;; Real lisp hackers use the lambda character
@@ -549,9 +558,15 @@
 ;; Customized Variables
 ;; --------------------------------------------------------------------
 
+;; Change if I decide to go with another theme.
+(custom-set-faces
+ '(which-func ((t (:foreground "goldenrod")))))
+
 (custom-set-variables
  '(ac-ispell-requires 4)
  '(all-christian-calendar-holidays t)
+ '(ansi-color-names-vector
+   ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
  '(c-default-style
    (quote
     ((c-mode . "cmf")
@@ -590,7 +605,14 @@
  '(cperl-font-lock t)
  '(cperl-highlight-variables-indiscriminately t)
  '(cperl-indent-level 8)
- '(custom-enabled-themes (quote (wombat)))
+ '(custom-enabled-themes (quote (twilight)))
+ '(custom-safe-themes
+   (quote
+    ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa"
+     "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e"
+     "e24180589c0267df991cf54bf1a795c07d00b24169206106624bb844292807b9"
+     "51e228ffd6c4fff9b5168b31d5927c27734e82ec61f414970fc6bcce23bc140d"
+     default)))
  '(delete-selection-mode nil)
  '(diff-switches "-u")
  '(dired-listing-switches "-alh")
@@ -621,6 +643,10 @@
      ("gg" "G.G. Guards" tags-todo "GGG")
      ("gr" "Tasks to refile"
       ((todo "TODO"
+             ((org-agenda-files
+               (quote
+                ("~/org/from-mobile.org" "~/org/refile.org")))))
+       (todo "STARTED"
              ((org-agenda-files
                (quote
                 ("~/org/from-mobile.org" "~/org/refile.org")))))
@@ -856,12 +882,7 @@
 
 (eval-after-load "smart-mode-line"
   '(progn
-     (setq custom-safe-themes
-           (quote ("c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223"
-                   "c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482"
-                   "3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723"
-                   default)))
-     (sml/apply-theme 'respectful)
+     (sml/apply-theme 'dark)
      ))
 
 (eval-after-load "solarized-theme"
@@ -922,6 +943,8 @@
                   (sml/setup))
               (if (equal solarized-theme-present t)
                   (load-theme 'solarized-dark t))
+	      (if (equal twilight-theme-present t)
+		  (load-theme 'twilight))
               ))
 
 ;;; init.el ends here
