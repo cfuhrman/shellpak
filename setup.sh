@@ -2,13 +2,13 @@
 # ====================================================================
 #
 # setup.sh
-# 
+#
 # Copyright (c) 2003 Christopher M. Fuhrman
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the Simplified BSD License (also
-# known as the "2-Clause License" or "FreeBSD License".) 
+# known as the "2-Clause License" or "FreeBSD License".)
 #
 # --------------------------------------------------------------------
 #
@@ -206,7 +206,7 @@ EOF
         if [ -f ${BACKUPDIR}/.emacs ]; then
             inform $L2 $FALSE "Restoring original .emacs"
             mv ${BACKUPDIR}/.emacs ${HOME}
-            echo "${GREEN}done${NORMAL}"            
+            echo "${GREEN}done${NORMAL}"
         fi
 
         # Finally remove SHELLDIR
@@ -400,7 +400,7 @@ if [ ${NOLINK} -ne 1 ]; then
                 if [[ -e ${DOTFILE} && ! -e ${BACKUPFILE} && ! -h ${DOTFILE} ]]; then
                         inform $L2 $FALSE "Moving .${file} to ${BACKUPDIR}"
                         mv ${DOTFILE} ${BACKUPDIR}
-                        echo -e "${GREEN}done${NORMAL}"                        
+                        echo -e "${GREEN}done${NORMAL}"
                 elif [[ -h ${DOTFILE} && ! ${BACKUPFLAG} ]]; then
                         inform $L2 $TRUE "Removing old symlink .${file}"
                         rm ${DOTFILE}
@@ -467,12 +467,19 @@ fi
 
 # Automatically build emacs packages
 if [[ ${BUILD_EMACS_PACKAGES} -eq 1 ]]; then
+
         inform $L1 $FALSE 'Building Emacs Packages'
-        tmplog=$(mktemp /tmp/${0##*/}.XXXXXX) || exit 1
-        ${MAKE} emacs-packages >${tmplog} 2>&1
-        echo -e "${GREEN}done${NORMAL}"
-        mv $tmplog $EMACS_OUTPUT_LOG
-        inform $L2 $TRUE "Package log located at ${EMACS_OUTPUT_LOG}"
+
+        if type emacs >/dev/null; then
+                tmplog=$(mktemp /tmp/${0##*/}.XXXXXX) || exit 1
+                ${MAKE} emacs-packages >${tmplog} 2>&1
+                echo -e "${GREEN}done${NORMAL}"
+                mv $tmplog $EMACS_OUTPUT_LOG
+                inform $L2 $TRUE "Package log located at ${EMACS_OUTPUT_LOG}"
+        else
+                echo -e "${RED}failed${NORMAL}"
+                inform $L2 $TRUE "Unable to locate emacs binary"
+        fi
 fi
 
 # We're done

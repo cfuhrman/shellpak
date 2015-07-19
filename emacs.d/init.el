@@ -80,8 +80,6 @@
                         crontab-mode
                         csv-nav
                         geben
-                        git-commit-mode
-                        git-rebase-mode
                         go-autocomplete
                         go-direx
                         go-eldoc
@@ -114,6 +112,7 @@
     (setq my-package-list
           (append my-package-list '(flycheck
                                     ggtags
+                                    magit
                                     smart-mode-line)))
   (setq my-package-list
         (append my-package-list '(flymake-go
@@ -220,7 +219,7 @@
 (global-set-key [?\C-x ?\C-k ?1] 'delete-trailing-whitespace)
 (global-set-key [?\C-x ?\C-k ?2] 'align-on-equal)
 (global-set-key [?\C-x ?\C-k ?3] 'align-on-hash-arrow)
-
+(global-set-key [?\C-x ?\C-g]    'magit-status)
 
 ;; Functions
 ;; --------------------------------------------------------------------
@@ -267,13 +266,6 @@
     (setq pathlist (cdr pathlist)))
   )
 
-;; A nice function for email, commit messages, etc
-(defun nice-text-mode ()
-  "Setup a sane mode for editing english text."
-  (interactive)
-  (text-mode)
-  )
-
 ;; Functions for perltidy
 (defun perltidy-region ()
   "Run perltidy on the current region."
@@ -289,6 +281,13 @@
 		  (perltidy-region))
   )
 
+;; Define modes
+;; --------------------------------------------------------------------
+
+(define-derived-mode nice-msg-mode
+  text-mode "Nice"
+  "Major mode for editing messages."
+  )
 
 ;; Programming styles
 ;; --------------------------------------------------------------------
@@ -396,12 +395,6 @@
   (footnote-mode t)
   (if (equal auto-complete-present t)
       (auto-complete-mode t))
-  (if (>= emacs-major-version 23)
-      (progn
-        (if (and (equal emacs-major-version 24)
-                 (<= emacs-minor-version 4))
-            (setq max-lisp-eval-depth 10000))
-        (orgstruct-mode t)))
   )
 
 ;; Real lisp hackers use the lambda character
@@ -483,10 +476,18 @@
 ;; Enable appropriate hooks for text documents
 ;;
 
-(add-hook 'log-edit-mode-hook 'nice-text-hook)
-(add-hook 'muse-mode-hook     'nice-text-hook)
+;; Org-mode hooks
 (add-hook 'org-mode-hook      'nice-org-hook)
-(add-hook 'text-mode-hook     'nice-text-hook)
+
+;; Text-mode hooks
+(add-hook 'text-mode-hook        'nice-text-hook)
+(add-hook 'log-edit-mode-hook    'nice-text-hook)
+(add-hook 'log-edit-mode-hook    'turn-on-orgstruct++)
+(add-hook 'muse-mode-hook        'nice-text-hook)
+(add-hook 'with-editor-mode-hook 'turn-on-orgstruct++)
+
+;; A hook for nice-msg-mode
+(add-hook 'nice-msg-mode-hook 'turn-on-orgstruct++)
 
 ;; nice-ispell-hook() will automatically detect presence of ac-ispell
 (add-hook 'LaTeX-mode-hook    'nice-ispell-hook)
@@ -542,10 +543,10 @@
 (add-to-list 'auto-mode-alist '("\\.pp\\'"                 . puppet-mode))
 
 ;; Text Mode
-(add-to-list 'auto-mode-alist '("COMMIT"                   . text-mode))
-(add-to-list 'auto-mode-alist '("\\.tmp\\'"                . text-mode))
-(add-to-list 'auto-mode-alist '("bzr_log\\."               . text-mode))
-(add-to-list 'auto-mode-alist '("pico\\."                  . text-mode))
+(add-to-list 'auto-mode-alist '("COMMIT"                   . nice-msg-mode))
+(add-to-list 'auto-mode-alist '("ci-comment"               . nice-msg-mode))
+(add-to-list 'auto-mode-alist '("bzr_log\\."               . nice-msg-mode))
+(add-to-list 'auto-mode-alist '("pico\\."                  . nice-msg-mode))
 
 ;; XML Mode
 (add-to-list 'auto-mode-alist '("\\.xsd\\'"                . xml-mode))
@@ -745,6 +746,8 @@
 ** Tasks
 
   " :prepend t :empty-lines 1))))
+ '(org-clock-persist 'history)
+ '(org-clock-persist-file "~/.org-clock-save.el")
  '(org-complete-tags-always-offer-all-agenda-tags t)
  '(org-default-notes-file "~/org/notes.org")
  '(org-directory "~/org")
@@ -761,6 +764,7 @@
  '(org-mobile-files
    (quote
     (org-agenda-files "~/org/notes.org" "~/org/journal.org" "~/org/incubate.org" "~/org/ideas.org")))
+ '(org-log-note-clock-out t)
  '(org-refile-targets (quote ((org-agenda-files :maxlevel . 2) ("~/org/incubate.org" :maxlevel . 1) ("~/org/ideas.org" :maxlevel . 1))))
  '(org-refile-use-outline-path t)
  '(org-src-fontify-natively t)
@@ -860,6 +864,9 @@
      (setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5"))
      (multi-web-global-mode 1)
      ))
+
+(eval-after-load "org-mode"
+  (org-clock-persistence-insinuate))
 
 ;; php-auto-yasnippets attempts to use php-mode *before* it has had a
 ;; chance to compile, so only append php-auto-yasnippets to the
