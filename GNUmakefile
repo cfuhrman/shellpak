@@ -172,7 +172,7 @@ dist: ${DISTFILE}
 version: VERSION
 
 VERSION:
-	@fossil info | grep "^checkout" | awk '{ printf "[%s] %s %s", substr($$2, 0, 10), $$3, $$4 }' > VERSION
+	@fossil info | awk '/^checkout/ { printf "[%s] %s %s\n", substr($$2, 1, 10), $$3, $$4 }' > VERSION
 
 subdirs: ${SUBDIRS}
 ${SUBDIRS} :

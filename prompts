@@ -2,13 +2,13 @@
 # ====================================================================
 #
 # prompts
-# 
+#
 # Copyright (c) 2006, Christopher M. Fuhrman
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the Simplified BSD License (also
-# known as the "2-Clause License" or "FreeBSD License".) 
+# known as the "2-Clause License" or "FreeBSD License".)
 #
 # ====================================================================
 
@@ -43,6 +43,16 @@ else
         ECHO='echo'
 fi
 
+# Default prompt
+DEFAULTPS1=
+
+# Make sure GNU echo is used (especially under Solaris!)
+if [ -e /usr/gnu/bin/echo ]; then
+        ECHO="/usr/gnu/bin/echo"
+else
+        ECHO="echo"
+fi
+
 # Function: doXTerm()
 #
 # Sets the title font if an xterm is detected
@@ -69,10 +79,28 @@ doXTerm ()
 promptCMF ()
 {
         doXTerm
+        DEFAULTPS1=$PS1
         PS1=${BLACK_BACKGROUND}${BRIGHT_BLUE}'[ '${BRIGHT_YELLOW}'\h'${BRIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${BRIGHT_BLUE}' ]-'${BRIGHT_YELLOW}'\W '${CYAN}'$(__git_ps1 "(%s) ")'${BLACK_BACKGROUND}${BRIGHT_WHITE}'\$'${NO_COLOR}' '
         PS2='> '
         PS4='+ '
+
+        export DEFAULTPS1
 }                                                 # promptCMF()
+
+# Function: promptDefault
+#
+# Method that uses whatever default prompt is used by the
+# current system
+
+promptDefault ()
+{
+        # Only reset PS1 if there is a stored default
+        if [ ${#DEFAULTPS1} -gt 0 ]; then
+                PS1=$DEFAULTPS1
+        else
+                DEFAULTPS1=$PS1
+        fi
+}
 
 # Function: promptDumb
 #
@@ -81,9 +109,12 @@ promptCMF ()
 promptDumb ()
 {
         doXTerm
+        DEFAULTPS1=$PS1
         PS1='[ \h-\@ ]-\W $(__git_ps1 "(%s) ")\$ '
         PS2='> '
         PS4='+ '
+
+        export DEFAULTPS1
 }                                                 # promptDumb()
 
 # Function: promptGENTOO
@@ -93,8 +124,11 @@ promptDumb ()
 promptGENTOO ()
 {
         doXTerm
+        DEFAULTPS1=$PS1
         PS1=${BRIGHT_GREEN}'\u'@'\h'${BRIGHT_BLUE}' \w '${YELLOW}'$(__git_ps1 "(%s) ")'${BRIGHT_BLUE}'\$'${NO_COLOR}' '
         PS2="\h> "
+
+        export DEFAULTPS1
 }                                                 # promptGENTOO()
 
 # Function: promptRED
@@ -104,10 +138,12 @@ promptGENTOO ()
 promptRED ()
 {
         doXTerm
+        DEFAULTPS1=$PS1
         PS1=${BLUE}'['${RED}'\@'${BLUE}'||'${BRIGHT_RED}'\u@\h:\w'${BRIGHT_YELLOW}'$(__git_ps1 " (%s)")'${BLUE}']'${BRIGHT_WHITE}'\$ '${NO_COLOR}
         PS2='> '
         PS4='+ '
 
+        export DEFAULTPS1
 }                                                 # promptRED()
 
 # Function: promptTFCC()
@@ -116,8 +152,11 @@ promptRED ()
 
 promptTFCC ()
 {
+        DEFAULTPS1=$PS1
         PS1='[\h-\[\e[32m\]\u\[\e[0m\]]$ '
         PS2='\h> '
+
+        export DEFAULTPS1
 }                                                 # promptTFCC()
 
 # Ende
