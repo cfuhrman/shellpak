@@ -1,4 +1,4 @@
-#+TITLE: ShellPAK README
+z#+TITLE: ShellPAK README
 #+AUTHOR: Christopher M. Fuhrman
 #+EMAIL: cfuhrman@pobox.com
 #+OPTIONS: email:t
@@ -71,7 +71,7 @@
    locations:
 
     - Git :: [[https://github.com/cfuhrman/shpak][GitHub]], [[https://bitbucket.org/chrisfuhrman/shellpak][BitBucket]]
-    - Fossil :: [[https://www.fuhrwerks.com/fossil/shpak][FuhrWerks]]
+    - Fossil :: [[https://fossil.fuhrwerks.com/shpak][FuhrWerks]]
     - Bazaar :: [[https://code.launchpad.net/~cfuhrman/shpak/trunk][Launchpad]]
 
    Be aware that portions of the ShellPAK infrastructure relies on
