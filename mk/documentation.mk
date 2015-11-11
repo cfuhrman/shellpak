@@ -60,6 +60,8 @@ clean :
 	@rm ${RM_OPTS} *-baseline
 	@rm ${RM_OPTS} *-merge
 	@rm ${RM_OPTS} *-original
+	@rm ${RM_OPTS} *blx.bib
+	@rm ${RM_OPTS} *run.xml
 	@rm ${RM_OPTS} *~
 
 # Check dblatex

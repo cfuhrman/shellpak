@@ -144,7 +144,7 @@ setEditor ()
 setPager ()
 {
 
-        # Should this is an emacs terminal, then set $PAGER to 'cat' since
+        # Should this be an emacs terminal, then set $PAGER to 'cat' since
         # emacs will do our paging for us
         if [ $TERM == 'dumb' ] || [ $TERM == 'emacs' ]; then
                 PAGER='cat'

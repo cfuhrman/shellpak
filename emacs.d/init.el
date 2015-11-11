@@ -29,7 +29,7 @@
 (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 
 ;; Load the appropriate customization file based on if we are running
-;; under a window system, such as "x" or "mac"
+;; under a window system, such as "x" or "ns" (Mac OS X or GNUstep)
 (if (equal window-system nil)
     (if (or (string-match "term-256" (getenv "TERM"))
             (string-match "screen-256" (getenv "TERM")))
@@ -52,6 +52,7 @@
 (defvar local-loadpaths '("/usr/pkg/share/emacs/site-lisp" "/usr/local/share/emacs/site-lisp"))
 (defvar multi-web-present nil)
 (defvar my-package-list nil)
+(defvar org-ac-present nil)
 (defvar org-bullets-present nil)
 (defvar payas-mode-present nil)
 (defvar smart-mode-line-present nil)
@@ -74,6 +75,7 @@
 
 ;; Define desired packages
 (setq my-package-list '(ac-ispell
+                        ac-emoji
                         apache-mode
                         auctex
                         auto-complete
@@ -88,6 +90,7 @@
                         indent-guide
                         markdown-mode
                         multi-web-mode
+                        org-ac
                         org-bullets
                         php-eldoc
                         php-extras
@@ -136,6 +139,12 @@
          (equal (equal system-type 'gnu/linux) nil))
     (normal-erase-is-backspace-mode 0))
 
+;; Enable Apple Color Emoji
+(if (equal window-system 'ns)
+    (set-fontset-font
+     t 'symbol
+     (font-spec :family "Apple Color Emoji") nil 'prepend))
+
 ;; Install Org-Mode, if present
 (if (>= emacs-major-version 23)
     (require 'org-install)
@@ -162,6 +171,8 @@
           (setq indent-guide-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^multi-web-mode" 'nosort)
           (setq multi-web-present t))
+      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^org-ac" 'nosort)
+          (setq org-ac-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^org-bullets" 'nosort)
           (setq org-bullets-present t))
       (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^php-auto-yasnippets" 'nosort)
@@ -349,10 +360,21 @@
   "Hook for sane editing of 'org-mode' documents."
   (defvar org-mode-map)
   (org-defkey org-mode-map "\C-c[" 'org-time-stamp-inactive)
+  (org-ac/setup-current-buffer)
   (if (equal org-bullets-present t)
       (org-bullets-mode t))
   (if (equal (car (split-string org-version ".")) 8)
       (require 'ox-md))
+  )
+
+;; Define a nice hook for editing nXML files
+(defun nice-nxml-hook ()
+  "Hook for sane editing of nXML files."
+  (if (>= emacs-major-version 23)
+      (linum-mode t))
+  (if (equal indent-guide-present t)
+      (indent-guide-mode t))
+  (auto-fill-mode -1)
   )
 
 ;; Define a basic hook for editing PHP files
@@ -466,7 +488,7 @@
 (add-hook 'sql-mode-hook      'nice-sql-hook)
 
 ;; For XML files
-(add-hook 'nxml-mode-hook     'nice-prog-hook)
+(add-hook 'nxml-mode-hook     'nice-nxml-hook)
 
 ;; For YAML files
 (if (equal flymake-mode-present t)
@@ -478,16 +500,23 @@
 
 ;; Org-mode hooks
 (add-hook 'org-mode-hook      'nice-org-hook)
+(add-hook 'org-mode-hook      'ac-emoji-setup)
 
 ;; Text-mode hooks
 (add-hook 'text-mode-hook        'nice-text-hook)
 (add-hook 'log-edit-mode-hook    'nice-text-hook)
 (add-hook 'log-edit-mode-hook    'turn-on-orgstruct++)
+(add-hook 'log-edit-mode-hook    'ac-emoji-setup)
 (add-hook 'muse-mode-hook        'nice-text-hook)
 (add-hook 'with-editor-mode-hook 'turn-on-orgstruct++)
+(add-hook 'with-editor-mode-hook 'ac-emoji-setup)
+
+;; Add hook(s) for twittering mode
+(add-hook 'twittering-edit-mode-hook 'nice-text-hook)
 
 ;; A hook for nice-msg-mode
 (add-hook 'nice-msg-mode-hook 'turn-on-orgstruct++)
+(add-hook 'nice-msg-mode-hook 'ac-emoji-setup)
 
 ;; nice-ispell-hook() will automatically detect presence of ac-ispell
 (add-hook 'LaTeX-mode-hook    'nice-ispell-hook)
@@ -497,7 +526,7 @@
 (add-hook 'text-mode-hook     'nice-ispell-hook)
 
 ;; Enable lambda character translation for appropriate Lisp documents
-(add-hook 'lisp-interactive-mode-hook 'sm-lamba-mode-hook)
+(add-hook 'lisp-interactive-mode-hook 'sm-lambda-mode-hook)
 (add-hook 'scheme-mode-hook           'sm-lambda-mode-hook)
 
 
@@ -938,6 +967,8 @@
                   (require 'indent-guide))
               (if (equal multi-web-present t)
                   (require 'multi-web-mode))
+              (if (equal org-ac-present t)
+                  (require 'org-ac))
               (if (equal org-bullets-present t)
                   (require 'org-bullets))
               (if (equal payas-mode-present t)
