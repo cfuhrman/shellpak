@@ -104,8 +104,7 @@ makepaths=('/usr/pkg/bin/gmake'      \
            '/opt/csw/bin/make'       \
            '/usr/bin/make')
 
-for makeprog in ${makepaths[@]};
-do
+for makeprog in ${makepaths[@]}; do
         if [ -e ${makeprog} ]; then
                 MAKE=${makeprog}
                 break

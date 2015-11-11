@@ -38,6 +38,11 @@ done
 PATH=${PATH#:}
 PATH=${PATH//::/:}
 
+# Place /usr/local/bin first if Homebrew is present
+if [ -d /usr/local/Cellar ]; then
+        PATH=/usr/local/bin:${PATH//\/usr\/local\/bin\:/}
+fi
+
 # Set MANPATH
 MANPATH=/opt/local/man:/opt/local/share/man:$MANPATH:/usr/share/man:/usr/local/git/share/man:~/perl5/man
 

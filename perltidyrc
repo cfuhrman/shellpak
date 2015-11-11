@@ -19,6 +19,7 @@
 --brace-tightness=1
 --cuddled-else
 --nospace-for-semicolon
+--maximum-line-length=100
 --minimum-space-to-comment=10
 --hanging-side-comments
 --stack-opening-tokens
