@@ -200,7 +200,7 @@ paths=('/usr/games'      '/usr/X11R6/bin'    \
        '/opt/bin'        '/opt/sbin'         \
        '/sbin'           '/opt/schily/bin'   \
        '/usr/local/sbin' "$HOME/bin"         \
-       '.')
+       '.'               "$HOME/.composer/vendor/bin")
 
 # Append additional directories if required
 for path in ${paths[@]}; do

@@ -19,6 +19,7 @@ will be useful as a reference.
 
 -   GNU Bash version 3.2 or greater
 -   GNU Emacs 23.1 or greater (Emacs >24.1 preferred)
+-   GNU Make
 -   rsync
 
 ## Supported Platforms<a id="sec-1-2" name="sec-1-2"></a>
