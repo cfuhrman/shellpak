@@ -119,7 +119,7 @@ disabled: ${DISABLEDHOSTS}
 emacs-packages:
 	${EMACS} --batch -l ${EMACS_INIT} -f ${EMACS_INSTALL_PACKAGES}
 
-clean: clean-echo ${CLEANDIRS} clean-dist
+clean: clean-echo ${CLEANDIRS} clean-dist clean-tags
 	@rm ${RM_OPTS} *.bak
 	@rm ${RM_OPTS} *~
 	@rm ${RM_OPTS} *-baseline
@@ -232,7 +232,7 @@ ${REMOTEHOSTS}: txt
 # Note: This target requires a tar that supports '--exclude' option,
 # such as GNU tar
 ${DISTFILE}: clean clean-tags txt version
-	@if [[ test -f .fslckout || test -f _FOSSIL_ ]]; then \
+	@if test -f .fslckout || test -f _FOSSIL_ ; then \
 	  echo '--------------------------------------------------------------------'; \
 	  echo "|   Do not forget to run 'fossil up' before running this command   |"; \
 	  echo '--------------------------------------------------------------------'; \

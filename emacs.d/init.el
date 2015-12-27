@@ -40,28 +40,9 @@
 (load custom-file)
 
 ;; Variable definitions
-(defvar ac-ispell-present nil)
-(defvar auto-complete-present nil)
-(defvar flycheck-mode-present nil)
-(defvar flymake-mode-present nil)
-(defvar geben-present nil)
-(defvar ggtags-mode-present nil)
-(defvar go-mode-present nil)
-(defvar indent-guide-present nil)
-(defvar local-execpaths '("/usr/texbin" "/usr/pkg/bin" "/usr/local/bin"))
+(defvar local-execpaths '("/usr/texbin" "/usr/pkg/bin" "/usr/local/bin"  "~/.composer/vendor/bin"))
 (defvar local-loadpaths '("/usr/pkg/share/emacs/site-lisp" "/usr/local/share/emacs/site-lisp"))
-(defvar multi-web-present nil)
 (defvar my-package-list nil)
-(defvar org-ac-present nil)
-(defvar org-bullets-present nil)
-(defvar payas-mode-present nil)
-(defvar smart-mode-line-present nil)
-(defvar solarized-theme-present nil)
-(defvar sr-speedbar-present nil)
-(defvar twilight-theme-present nil)
-(defvar vc-fossil-present nil)
-(defvar xlicense-present nil)
-(defvar yasnippet-present nil)
 
 ;; Sane defaults
 (setq-default indent-tabs-mode nil)
@@ -74,6 +55,7 @@
 (load-file (format "%s/.emacs.d/thirdparty/phpdocumentor.el" (getenv "HOME")))
 
 ;; Define desired packages
+(package-initialize)
 (setq my-package-list '(ac-ispell
                         ac-emoji
                         apache-mode
@@ -106,10 +88,6 @@
                         yaml-mode
                         yasnippet))
 
-
-;; Use Emacs 'ls' emulation
-(require 'ls-lisp)
-
 ;; Add Emacs-24-specific packages
 (if (>= emacs-major-version 24)
     (setq my-package-list
@@ -123,6 +101,9 @@
                                   flymake-shell
                                   flymake-yaml)))
   )
+
+;; Use Emacs 'ls' emulation
+(require 'ls-lisp)
 
 ;; Customize font under X
 (if (equal window-system 'x)
@@ -149,49 +130,6 @@
 (if (>= emacs-major-version 23)
     (require 'org-install)
   (message "Emacs version %d does not include org-mode, so not setting it up" emacs-major-version))
-
-;; Determine what packages are present
-(if (file-directory-p "~/.emacs.d/elpa")
-    (progn
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^auto-complete" 'nosort)
-          (setq auto-complete-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^ac-ispell" 'nosort)
-          (setq ac-ispell-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^flycheck" 'nosort)
-          (setq flycheck-mode-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^flymake" 'nosort)
-          (setq flymake-mode-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^geben" 'nosort)
-          (setq geben-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^ggtags" 'nosort)
-          (setq ggtags-mode-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^go-mode" 'nosort)
-          (setq go-mode-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^indent-guide" 'nosort)
-          (setq indent-guide-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^multi-web-mode" 'nosort)
-          (setq multi-web-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^org-ac" 'nosort)
-          (setq org-ac-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^org-bullets" 'nosort)
-          (setq org-bullets-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^php-auto-yasnippets" 'nosort)
-          (setq payas-mode-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^smart-mode-line" 'nosort)
-          (setq smart-mode-line-present t))
-      ;; (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^solarized" 'nosort)
-      ;;     (setq solarized-theme-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^sr-speedbar" 'nosort)
-          (setq sr-speedbar-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^twilight-theme" 'nosort)
-          (setq twilight-theme-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^xlicense" 'nosort)
-          (setq xlicense-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^vc-fossil" 'nosort)
-          (setq vc-fossil-present t))
-      (if (directory-files "~/.emacs.d/elpa/" (not 'absolute) "^yasnippet" 'nosort)
-          (setq yasnippet-present t)))
-  )
 
 ;; Set speller to aspell
 (setq-default ispell-program-name "aspell")
@@ -344,7 +282,7 @@
 ;; Define a basic hook for enabling ac-ispell
 (defun nice-ispell-hook ()
   "Hook for enabling ac-ispell."
-  (if (equal ac-ispell-present t)
+  (if (package-installed-p 'ac-ispell)
       (add-to-list 'ac-sources 'ac-source-ispell))
   )
 
@@ -361,7 +299,7 @@
   (defvar org-mode-map)
   (org-defkey org-mode-map "\C-c[" 'org-time-stamp-inactive)
   (org-ac/setup-current-buffer)
-  (if (equal org-bullets-present t)
+  (if (package-installed-p 'org-bullets)
       (org-bullets-mode t))
   (if (equal (car (split-string org-version ".")) 8)
       (require 'ox-md))
@@ -372,7 +310,7 @@
   "Hook for sane editing of nXML files."
   (if (>= emacs-major-version 23)
       (linum-mode t))
-  (if (equal indent-guide-present t)
+  (if (package-installed-p 'indent-guide)
       (indent-guide-mode t))
   (auto-fill-mode -1)
   )
@@ -381,7 +319,7 @@
 (defun nice-php-hook ()
   "Hook for sane editing of PHP files."
   (c-set-style "cmf")
-  (if (equal payas-mode-present t)
+  (if (package-installed-p 'php-auto-yasnippets)
       (define-key php-mode-map (kbd "C-c C-y") 'yas/create-php-snippet))
   (define-key php-mode-map (kbd "C-x p") 'phpdoc)
   )
@@ -391,9 +329,9 @@
   "Enable some sanity for programming source files."
   (if (>= emacs-major-version 23)
       (linum-mode t))
-  (if (equal ggtags-mode-present t)
+  (if (package-installed-p 'ggtags)
       (ggtags-mode t))
-  (if (equal indent-guide-present t)
+  (if (package-installed-p 'indent-guide)
       (indent-guide-mode t))
   (auto-fill-mode t)
   (eldoc-mode t)
@@ -415,7 +353,7 @@
   (auto-fill-mode t)
   (flyspell-mode t)
   (footnote-mode t)
-  (if (equal auto-complete-present t)
+  (if (package-installed-p 'auto-complete)
       (auto-complete-mode t))
   )
 
@@ -491,7 +429,7 @@
 (add-hook 'nxml-mode-hook     'nice-nxml-hook)
 
 ;; For YAML files
-(if (equal flymake-mode-present t)
+(if (package-installed-p 'flymake-mode)
     (add-hook 'yaml-mode-hook 'flymake-yaml-load))
 
 ;;
@@ -821,6 +759,7 @@
      ("melpa" . "http://melpa.org/packages/"))))
  '(recentf-mode t)
  '(scroll-bar-mode (quote right))
+ '(set-time-zone-rule "America/Los_Angeles")
  '(sh-basic-offset 8)
  '(sh-indent-comment t)
  '(sh-indent-for-case-alt (quote +))
@@ -853,7 +792,7 @@
 (nice-exec-path local-execpaths)
 
 ;; Enable flycheck-mode globally
-(if (equal flycheck-mode-present t)
+(if (package-installed-p 'flycheck-mode)
     (add-hook 'after-init-hook #'global-flycheck-mode))
 
 ;; Library evaluations
@@ -866,7 +805,7 @@
      (ac-config-default)
      (ac-set-trigger-key "TAB")
      (ac-set-trigger-key "<tab>")
-     (if (equal ac-ispell-present t)
+     (if (package-installed-p 'ac-ispell)
          (ac-ispell-setup))))
 
 (eval-after-load "dired"
@@ -879,7 +818,7 @@
 
 (eval-after-load "go-mode"
   '(progn
-     (if (equal flymake-mode-present t)
+     (if (package-installed-p 'flymake-mode)
          '(require 'flymake-go))
      ))
 
@@ -904,15 +843,15 @@
   '(progn
      (setq php-executable "php")
      (add-to-list 'my-package-list 'php-auto-yasnippets t)
-     (if (equal flymake-mode-present t)
+     (if (package-installed-p 'flymake-php)
          (add-hook 'php-mode-hook      'flymake-php-load))
-     (if (equal payas-mode-present nil)
+     (if (package-installed-p 'php-auto-yasnippets)
          (cmf-autoinstall-packages))
      ))
 
 (eval-after-load "sh-mode"
   '(progn
-     (if (equal flymake-mode-present t)
+     (if (package-installed-p 'flymake-shell)
          (add-hook 'sh-set-shell-hook 'flymake-shell-load))
      ))
 
@@ -951,37 +890,37 @@
 ;; Load post-init packages
 (add-hook 'after-init-hook
           #'(lambda ()
-	      (if (equal yasnippet-present t)
+	      (if (package-installed-p 'yasnippet)
                   (require 'yasnippet))
-              (if (equal auto-complete-present t)
+              (if (package-installed-p 'auto-complete)
                   (require 'auto-complete))
-              (if (equal flymake-mode-present t)
+              (if (package-installed-p 'flymake-shell)
                   (progn
                     (require 'flymake)
                     (require 'flymake-shell)))
-              (if (equal geben-present t)
+              (if (package-installed-p 'geben)
                   (autoload 'geben "geben" "DBGp protocol frontend, a script debugger" t))
-              (if (equal go-mode-present t)
+              (if (package-installed-p 'go-direx)
                   (require 'go-direx))
-              (if (equal indent-guide-present t)
+              (if (package-installed-p 'indent-guide)
                   (require 'indent-guide))
-              (if (equal multi-web-present t)
+              (if (package-installed-p 'multi-web-mode)
                   (require 'multi-web-mode))
-              (if (equal org-ac-present t)
+              (if (package-installed-p 'org-ac)
                   (require 'org-ac))
-              (if (equal org-bullets-present t)
+              (if (package-installed-p 'org-bullets)
                   (require 'org-bullets))
-              (if (equal payas-mode-present t)
+              (if (package-installed-p 'php-auto-yasnippets)
                   (require 'php-auto-yasnippets))
-              (if (equal vc-fossil-present t)
+              (if (package-installed-p 'vc-fossil)
                   (require 'vc-fossil))
-              (if (equal xlicense-present t)
+              (if (package-installed-p 'xlicense)
                   (require 'xlicense))
-              (if (equal smart-mode-line-present t)
+              (if (package-installed-p 'smart-mode-line)
                   (sml/setup))
-              (if (equal solarized-theme-present t)
-                  (load-theme 'solarized-dark t))
-	      (if (equal twilight-theme-present t)
+              ;; (if (package-installed-p 'solarized-theme)
+              ;;     (load-theme 'solarized-dark t))
+	      (if (package-installed-p 'twilight-theme)
 		  (load-theme 'twilight))
               ))
 

@@ -1,4 +1,4 @@
-z#+TITLE: ShellPAK README
+#+TITLE: ShellPAK README
 #+AUTHOR: Christopher M. Fuhrman
 #+EMAIL: cfuhrman@pobox.com
 #+OPTIONS: email:t
@@ -30,6 +30,7 @@ z#+TITLE: ShellPAK README
 
     - GNU Bash version 3.2 or greater
     - GNU Emacs 23.1 or greater (Emacs >24.1 preferred)
+    - GNU Make
     - rsync
 
 ** Supported Platforms
@@ -135,4 +136,3 @@ z#+TITLE: ShellPAK README
   All files contained herein can be redistributed and/or modified
   under the terms of the Simplified BSD License (also known as the
   "2-Clause License" or "FreeBSD License".) unless otherwise noted.
-
