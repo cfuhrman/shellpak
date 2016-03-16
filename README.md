@@ -1,3 +1,32 @@
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Description</a>
+<ul>
+<li><a href="#sec-1-1">1.1. Requirements</a></li>
+<li><a href="#sec-1-2">1.2. Supported Platforms</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2. Obtaining ShellPAK</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Alternate Repositories</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. Installation</a>
+<ul>
+<li><a href="#sec-3-1">3.1. Other setup options</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4. Bugs</a></li>
+<li><a href="#sec-5">5. Author</a></li>
+<li><a href="#sec-6">6. Copyright</a></li>
+</ul>
+</div>
+</div>
+
+
+
 # Description<a id="sec-1" name="sec-1"></a>
 
 ShellPAK allows for the automatic installation and configuration of
@@ -18,7 +47,7 @@ will be useful as a reference.
 ## Requirements<a id="sec-1-1" name="sec-1-1"></a>
 
 -   GNU Bash version 3.2 or greater
--   GNU Emacs 23.1 or greater (Emacs >24.1 preferred)
+-   GNU Emacs 24.1 or greater (Emacs 24.4 or greater preferred)
 -   GNU Make
 -   rsync
 
@@ -84,10 +113,6 @@ un-installation (via the `-u` flag)
     # Install into another directory
     $ ./setup.sh -d /path/to/directory
     
-    # Install ShellPAK and automatically download & install
-    # personal set of Emacs packages
-    $ ./setup.sh -p
-    
     # Do not automatically link files during installation
     $ ./setup.sh -n
     
@@ -99,6 +124,10 @@ un-installation (via the `-u` flag)
     
     # List runtime options
     $ ./setup.sh -h
+
+Previous versions of `setup.sh` provided options for installation
+of Emacs packages.  This is no longer required as Emacs will now
+automatically install necessary packages on startup.
 
 # Bugs<a id="sec-4" name="sec-4"></a>
 
@@ -112,7 +141,7 @@ Christopher M. Fuhrman
 
 # Copyright<a id="sec-6" name="sec-6"></a>
 
-Copyright (c) 2000-2015 Christopher M. Fuhrman
+Copyright (c) 2000-2016 Christopher M. Fuhrman
 All rights reserved.
 
 All files contained herein can be redistributed and/or modified

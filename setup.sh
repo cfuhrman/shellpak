@@ -37,7 +37,7 @@ RSYNC=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS="-Ccav --delete --exclude-from=${RSYNC_EXCLUDE}"
 MAKE=make
-COPYRIGHT='Copyright (c) 2000-2015 Christopher M. Fuhrman'
+COPYRIGHT='Copyright (c) 2000-2016 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 DRYRUN=""
 UNINSTALL=0
@@ -80,29 +80,31 @@ else
 fi
 
 # Dot-files to link
-HOMEDOTFILES=('bash_logout'   \
-              'bash_profile'  \
-              'bashrc'        \
-              'emacs.d'       \
-              'gitconfig'     \
-              'indent.pro'    \
-              "mg"            \
-              'perltidyrc'    \
-              'tmux.conf'     \
-              'screenrc'      \
-              'Xresources')
+HOMEDOTFILES=('bash_logout'                     \
+              'bash_profile'                    \
+              'bashrc'                          \
+              'emacs.d'                         \
+              'gitconfig'                       \
+              'indent.pro'                      \
+              "mg"                              \
+              'perltidyrc'                      \
+              'tmux.conf'                       \
+              'screenrc'                        \
+              'Xresources'
+             )
 
 # Use GNU Make if available, otherwise blindly assume that the system
 # make is compatible.
-makepaths=('/usr/pkg/bin/gmake'      \
-           '/usr/local/bin/gmake'    \
-           '/usr/bin/gnumake'        \
-           '/opt/csw/bin/gmake'      \
-           '/usr/sfw/bin/gmake'      \
-           '/opt/freeware/bin/gmake' \
-           '/usr/ccs/bin/make'       \
-           '/opt/csw/bin/make'       \
-           '/usr/bin/make')
+makepaths=('/usr/pkg/bin/gmake'                 \
+           '/usr/local/bin/gmake'               \
+           '/usr/bin/gnumake'                   \
+           '/opt/csw/bin/gmake'                 \
+           '/usr/sfw/bin/gmake'                 \
+           '/opt/freeware/bin/gmake'            \
+           '/usr/ccs/bin/make'                  \
+           '/opt/csw/bin/make'                  \
+           '/usr/bin/make'
+          )
 
 for makeprog in ${makepaths[@]}; do
         if [ -e ${makeprog} ]; then
@@ -295,7 +297,6 @@ usage: ${0##*/} -h This screen                             \\
                 -b (Default:\$HOME/Backup/shell) Location   \\
                    of backup files
                 -n Do _not_ link files                     \\
-                -p Automatically install emacs packages    \\
                 -u Uninstall ShellPAK                      \\
                 -r perform a trial run with no changes made
                    (implies -n)
@@ -309,7 +310,7 @@ STDERR
 
 headerDisplay
 
-args=$(getopt d:b:hpnru $*)
+args=$(getopt d:b:hnru $*)
 
 set -- $args
 
@@ -329,11 +330,6 @@ do
         -n)
                 NOLINK=1
                 inform $L1 $TRUE "Shell-related files will ${UNDERLINE}not${NORMAL} be linked to \$HOME"
-                ;;
-
-        -p)
-                BUILD_EMACS_PACKAGES=1
-                inform $L1 $TRUE 'Emacs packages will automatically be installed'
                 ;;
 
         -r)
@@ -462,23 +458,6 @@ if [[ ${NOLINK} -ne 1 && ! -d ${HOMETMPDIR} ]]; then
         inform $L1 $FALSE "Creating ${HOMETMPDIR}"
         mkdir ${HOMETMPDIR}
         echo -e "${GREEN}done${NORMAL}"
-fi
-
-# Automatically build emacs packages
-if [[ ${BUILD_EMACS_PACKAGES} -eq 1 ]]; then
-
-        inform $L1 $FALSE 'Building Emacs Packages'
-
-        if type emacs >/dev/null; then
-                tmplog=$(mktemp /tmp/${0##*/}.XXXXXX) || exit 1
-                ${MAKE} emacs-packages >${tmplog} 2>&1
-                echo -e "${GREEN}done${NORMAL}"
-                mv $tmplog $EMACS_OUTPUT_LOG
-                inform $L2 $TRUE "Package log located at ${EMACS_OUTPUT_LOG}"
-        else
-                echo -e "${RED}failed${NORMAL}"
-                inform $L2 $TRUE "Unable to locate emacs binary"
-        fi
 fi
 
 # We're done

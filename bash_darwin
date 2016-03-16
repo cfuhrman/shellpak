@@ -17,10 +17,14 @@
 #
 
 # Determine PATH
-paths=('/opt/local/bin'       '/opt/local/sbin'                  \
-       '/usr/pkg/bin'         '/usr/pkg/sbin'                    \
-       '/usr/local/git/bin'   '/usr/pkg/lib/perl5/site_perl/bin' \
-       '/Applications/oracle' '/usr/texbin'                      \
+paths=('/opt/local/bin'                         \
+       '/opt/local/sbin'                        \
+       '/usr/pkg/bin'                           \
+       '/usr/pkg/sbin'                          \
+       '/usr/local/git/bin'                     \
+       '/usr/pkg/lib/perl5/site_perl/bin'       \
+       '/Applications/oracle'                   \
+       '/usr/texbin'                            \
        "${HOME}/perl5/bin"
 )
 

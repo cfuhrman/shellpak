@@ -20,8 +20,10 @@
 MYLOCALE=en_US.UTF-8
 
 # Determine PATH
-paths=('/usr/games'      '/usr/pkg/sbin'     \
-       '/usr/pkg/lib/perl5/site_perl/bin')
+paths=('/usr/games'                             \
+       '/usr/pkg/sbin'                          \
+       '/usr/pkg/lib/perl5/site_perl/bin'
+      )
 
 # Append additional directories if required
 for path in ${paths[@]}; do
@@ -78,9 +80,12 @@ if [[ ${OSTYPE} != 'OpenBSD' ]]; then
                 LC_ALL=${MYLOCALE}
         fi
 
-        export FILE_OPS_FLAGS      FILE_OPS_RM_FLAGS   \
-               LANG LC_COLLATE     LC_MONETARY         \
-               LC_NUMERIC LC_ALL
+        export FILE_OPS_FLAGS                   \
+               FILE_OPS_RM_FLAGS                \
+               LANG LC_COLLATE                  \
+               LC_MONETARY                      \
+               LC_NUMERIC                       \
+               LC_ALL
 
 fi
 
