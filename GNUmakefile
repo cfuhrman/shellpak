@@ -85,15 +85,12 @@ RM_OPTS=$(shell if [ `uname` != "OpenBSD" ]; then echo '-vf'; else echo '-f'; fi
 all: install local remote
 	@echo 'All known hosts updated'
 
-# Convenience target
-install: txt setup.sh
-	@echo 'Executing setup.sh for ShellPAK installation'
-	@${SETUP_BIN} ${DRYRUN_OPT} -p
-
 uninstall: setup.sh VERSION
 	@echo -n 'Removing ShellPAK '
 	@cat VERSION
 	@${SETUP_BIN} ${DRYRUN_OPT} -u
+
+install: update
 
 update: txt setup.sh
 	@echo 'Executing setup.sh for ShellPAK update'
@@ -135,6 +132,10 @@ clean-home-elc:
 	@echo 'Removing installed elc files:'
 	@rm ${RM_OPTS} ${HOME}/.emacs.d/*.elc
 	@rm ${RM_OPTS} ${HOME}/.emacs.d/*~
+	@rm ${RM_OPTS} ${HOME}/.emacs.d/lisp/*.elc
+	@rm ${RM_OPTS} ${HOME}/.emacs.d/lisp/*~
+	@rm ${RM_OPTS} ${HOME}/.emacs.d/thirdparty/*.elc
+	@rm ${RM_OPTS} ${HOME}/.emacs.d/thirdparty/*~
 
 clean-xkcd:
 	@echo 'Removing left-over xkcd comics:'
@@ -155,7 +156,8 @@ clean-dist:
 clean-elpa: clean-elc
 	@rm ${RM_OPTS}r ${HOME}/.emacs.d/elpa/*
 
-public:
+public: readme
+	@rm ${RM_OPTS} docs/README.md
 	@echo 'Syncing with public repository'
 	${RSYNC} ${RSYNC_PUBLIC_OPTS} . ${PUBLICCO}
 
@@ -189,6 +191,9 @@ emacs:
 #
 # Documentation Targets
 #
+
+readme: markdown
+	@cp -rp docs/README.md .
 
 docbook: emacs ${DBKDIRS}
 ${DBKDIRS}:

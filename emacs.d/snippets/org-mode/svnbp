@@ -1,0 +1,24 @@
+# -*- mode: snippet -*-
+# name: Boiler Plate for Org-mode files managed by subversion
+# --
+#+TITLE: $1
+#+AUTHOR: `(user-full-name)`
+#+EMAIL: `(format "%s" user-mail-address)`
+#+OPTIONS: email:t
+#
+#+LATEX_HEADER: \usepackage[today,fancyhdr]{svninfo}
+#+LATEX_HEADER: \pagestyle{fancyplain}
+#+LATEX_HEADER: \usepackage{bookmark}
+#+LATEX_HEADER: \hypersetup{urlcolor=blue}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue}
+#+LATEX_HEADER: \usepackage[backend=bibtex]{biblatex}
+#+LATEX_HEADER: \fancyhead[RE,LO]{\leftmark}
+#+LATEX_HEADER: \fancyhead[LE,RO]{\thepage}
+#+LATEX_HEADER: \svnInfo $Id$
+
+#+LATEX: \thispagestyle{empty}
+
+* Overview
+
+  $0
+

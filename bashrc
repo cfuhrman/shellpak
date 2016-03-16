@@ -67,14 +67,15 @@ setBrowser ()
 {
 
         # Set preferred browsers in order of evaluation
-        browsers=('firefox'   \
-                  'galeon'    \
-                  'epiphany'  \
-                  'konqueror' \
-                  'mozilla'   \
-                  'w3m'       \
-                  'elinks'    \
-                  'lynx')
+        browsers=('firefox'                     \
+                  'galeon'                      \
+                  'epiphany'                    \
+                  'konqueror'                   \
+                  'mozilla'                     \
+                  'w3m'                         \
+                  'elinks'                      \
+                  'lynx'
+                 )
 
         for browser in ${browsers[@]}; do
 
@@ -105,11 +106,12 @@ setEditor ()
 {
 
         # Set preferred editors in order of evaluation
-        editors=('emacs'      \
-                 'mg'         \
-                 'nano'       \
-                 'vim'        \
-                 'vi')
+        editors=('emacs'                        \
+                 'mg'                           \
+                 'nano'                         \
+                 'vim'                          \
+                 'vi'
+                )
 
         for edit in ${editors[@]}; do
 
@@ -151,9 +153,10 @@ setPager ()
         else
 
                 # Set preferred pagers in order of evaluation
-                pagers=('less' \
-                        'more' \
-                        'view')
+                pagers=('less'                  \
+                        'more'                  \
+                        'view'
+                       )
 
                 for pagr in ${pagers[@]}; do
 
@@ -195,12 +198,19 @@ if [ "$PS1" ]; then
 fi
 
 # Determine PATH
-paths=('/usr/games'      '/usr/X11R6/bin'    \
-       '/usr/X11R7/bin'  '/usr/sbin'         \
-       '/opt/bin'        '/opt/sbin'         \
-       '/sbin'           '/opt/schily/bin'   \
-       '/usr/local/sbin' "$HOME/bin"         \
-       '.'               "$HOME/.composer/vendor/bin")
+paths=("$HOME/bin"                              \
+       '/usr/games'                             \
+       '/usr/X11R6/bin'                         \
+       '/usr/X11R7/bin'                         \
+       '/usr/sbin'                              \
+       '/opt/bin'                               \
+       '/opt/sbin'                              \
+       '/sbin'                                  \
+       '/opt/schily/bin'                        \
+       '/usr/local/sbin'                        \
+       "$HOME/.composer/vendor/bin"             \
+       '.'
+      )
 
 # Append additional directories if required
 for path in ${paths[@]}; do
