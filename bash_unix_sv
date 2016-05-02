@@ -2,10 +2,10 @@
 # ====================================================================
 #
 # bash_unix_sv
-# 
+#
 # Copyright (c) 2000 Christopher M. Fuhrman
 # All rights reserved.
-# 
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the Simplified BSD License (also
 # known as the "2-Clause License" or "FreeBSD License".)
@@ -23,25 +23,24 @@ stty intr ^C
 
 # Determine PATH
 paths=('/usr/local/bin'                         \
-       '/usr/pkg/bin'                           \
-       '/usr/ccs/bin'                           \
-       '/usr/sfw/bin'                           \
-       '/opt/sfw/bin'                           \
-       '/usr/dt/bin'                            \
-       '/opt/csw/sbin'                          \
-       '/opt/csw/bin'                           \
-       '/usr/X11/bin'                           \
-       '/usr/java/bin'                          \
-       '/usr/X/bin'                             \
-       '/usr/ucb'
+       '/usr/pkg/bin'				\
+       '/usr/ccs/bin'				\
+       '/usr/sfw/bin'				\
+       '/opt/sfw/bin'				\
+       '/usr/dt/bin'				\
+       '/opt/csw/sbin'				\
+       '/opt/csw/bin'				\
+       '/usr/X11/bin'				\
+       '/usr/java/bin'				\
+       '/usr/X/bin'
       )
 
-# Append additional directories if required
+# Pre-pend additional directories if required
 for path in ${paths[@]}; do
 
         # We only want to add the directory if it exists
         if [ -d $path ]; then
-                echo $PATH | egrep '(^|\:)'${path}'(\:|$)' >/dev/null 2>&1 || PATH=$PATH:${path}
+                echo $PATH | egrep '(^|\:)'${path}'(\:|$)' >/dev/null 2>&1 || PATH=${path}:$PATH
         fi
 
 done

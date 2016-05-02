@@ -19,7 +19,7 @@ will be useful as a reference.
 ## Requirements<a id="sec-1-1" name="sec-1-1"></a>
 
 -   GNU Bash version 3.2 or greater
--   GNU Emacs 24.1 or greater (Emacs 24.4 or greater preferred)
+-   GNU Emacs 24.1 or greater (Emacs >24.4 preferred)
 -   GNU Make
 -   rsync
 
