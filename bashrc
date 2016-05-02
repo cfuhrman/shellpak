@@ -198,8 +198,7 @@ if [ "$PS1" ]; then
 fi
 
 # Determine PATH
-paths=("$HOME/bin"                              \
-       '/usr/games'                             \
+paths=('/usr/games'                             \
        '/usr/X11R6/bin'                         \
        '/usr/X11R7/bin'                         \
        '/usr/sbin'                              \
@@ -209,15 +208,16 @@ paths=("$HOME/bin"                              \
        '/opt/schily/bin'                        \
        '/usr/local/sbin'                        \
        "$HOME/.composer/vendor/bin"             \
+       "$HOME/bin"                              \
        '.'
       )
 
-# Append additional directories if required
+# Pre-pend additional directories if required
 for path in ${paths[@]}; do
 
         # Determine if this directory is already in $PATH
         if [ -d $path ]; then
-                echo $PATH | egrep '(^|\:)'${path}'(\:|$)' >/dev/null 2>&1 || PATH=$PATH:${path}
+                echo $PATH | egrep '(^|\:)'${path}'(\:|$)' >/dev/null 2>&1 || PATH=${path}:$PATH
         fi
 
 done

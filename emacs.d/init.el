@@ -25,9 +25,6 @@
 
 ;;; Code:
 
-;; Make sure all Emacs Lisp files are byte-compiled for speed
-(byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
-
 ;; Update load paths
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path "~/.emacs.d/thirdparty")
@@ -38,10 +35,10 @@
 
 ;; Variable definitions
 (defvar cmf-full-name "Christopher M. Fuhrman")
-(defvar cmf-mail-address "cfuhrman@pobox.com")
-(defvar cmf-latitude 37.7822)
-(defvar cmf-longitude -122.4167)
-(defvar cmf-location-name "San Francisco, CA")
+(defvar cmf-mail-address "cfuhrman@example.com")
+(defvar cmf-latitude ####)              ; Determine your lat/long at maps.google.com
+(defvar cmf-longitude ####)
+(defvar cmf-location-name "San Jose, CA")
 (defvar cmf-time-zone "America/Los Angeles")
 (defvar cmf-time-zone-short-name "PST")
 (defvar cmf-time-zone-short-name-daylight "PDT")
@@ -102,7 +99,7 @@
  '(forecast-city cmf-location-name)
  '(forecast-country "United States")
  '(forecast-units 'us)
- '(forecast-api-key "bb1192e68c5d975f3a263cddbd18dcd9")
+ '(forecast-api-key "set-your-own-key") ; Get your own key from https://developer.forecast.io/
  '(global-hl-line-mode t)
  '(ivy-use-virtual-buffers t)
  '(ivy-height 10)
@@ -123,6 +120,7 @@
  '(show-paren-mode 1)
  '(sml/modified-char "★")
  '(sml/read-only-char "🔒")
+ '(tramp-default-method "ssh")
  '(transient-mark-mode 1)
  '(twittering-display-remaining t)
  '(twittering-timer-interval 900)
@@ -314,10 +312,12 @@
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (package-initialize)
 
+;; Bootstrap 'use-package' if necessary
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 
+;; Enable use-package
 (eval-when-compile
   (require 'use-package))
 (require 'diminish)
@@ -366,6 +366,17 @@
 
 (setq load-prefer-newer t)
 
+;; beacon mode
+(use-package beacon
+  :ensure t
+
+  :init
+  (require 'beacon)
+
+  :config
+  (beacon-mode 1)
+  )
+
 ;; cc-mode
 (use-package cc-mode
   :config
@@ -401,6 +412,16 @@
   :ensure csv-nav
   :defer t
   :mode ("\\.csv\\'" . csv-nav-mode)
+  )
+
+;; darktooth-theme
+(if (not(equal window-system nil))
+    (use-package darktooth-theme
+      :ensure t
+
+      :init
+      (load-theme 'darktooth t)
+      )
   )
 
 ;; eldoc
@@ -476,6 +497,7 @@
 
   :bind (
          ("C-s"     . swiper)
+         ("C-r"     . swiper)
          ("C-c C-r" . ivy-resume)
          ("M-x"     . counsel-M-x)
          ("C-x C-f" . counsel-find-file)
@@ -484,6 +506,9 @@
          ("<f1> l"  . counsel-load-library)
          ("<f2> i"  . counsel-info-lookup-symbol)
          ("<f2> u"  . counsel-unicode-char)
+         ("C-c g"   . counsel-git)
+         ("C-c j"   . counsel-git-grep)
+         ("C-x l"   . counsel-locate)
          )
 
   :init
@@ -606,6 +631,26 @@
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
   )
 
+;; OSX Modes (Mac OS X only)
+(when (eq system-type 'darwin)
+
+  ;; osx-lib
+  (use-package osx-lib
+    :ensure t
+    )
+
+  ;; osx-trash
+  (use-package osx-trash
+    :ensure t
+
+    :init
+    (setq delete-by-moving-to-trash t)
+
+    :config
+    (osx-trash-setup)
+    )
+  )
+
 ;; php-mode
 (use-package php-mode
   :ensure ac-php
@@ -646,15 +691,19 @@
   )
 
 ;; pretty-lambdada
-(use-package pretty-lambdada
-  :ensure t
-  :defer t
+(if (version< emacs-version "24.4")
+    (use-package pretty-lambdada
+      :ensure t
+      :defer t
 
-  :init
-  (require 'pretty-lambdada)
+      :init
+      (require 'pretty-lambdada)
 
-  :config
-  (pretty-lambda-for-modes)
+      :config
+      (pretty-lambda-for-modes)
+      )
+  ;; Otherwise use built-in prettify mode
+  (global-prettify-symbols-mode t)
   )
 
 ;; ruby-mode
@@ -703,6 +752,11 @@
   (add-hook 'sql-mode-hook 'nice-sql-hook)
   )
 
+;; sudo-edit
+(use-package sudo-edit
+  :ensure t
+  )
+
 ;; tex
 (use-package tex
   :ensure auctex
@@ -711,23 +765,24 @@
 ;; text-mode
 (use-package text-mode
   :mode (
-         ("COMMIT"     . nice-msg-mode)
+         ("COMMIT.*"   . nice-msg-mode)
          ("ci-comment" . nice-msg-mode)
          ("bzr_log\\." . nice-msg-mode)
          ("pico\\."    . nice-msg-mode)
          )
 
-  :config
+  :init
   (add-hook 'text-mode-hook     'nice-text-hook)
-  (add-hook 'log-edit-mode-hook 'ac-emoji-setup)
   )
 
 ;; twilight-theme
-(use-package twilight-theme
-  :ensure t
+(if (equal window-system nil)
+    (use-package twilight-theme
+      :ensure t
 
-  :init
-  (load-theme 'twilight t)
+      :init
+      (load-theme 'twilight t)
+      )
   )
 
 ;; twittering-mode
@@ -766,6 +821,14 @@
   :config
   (custom-set-faces
    '(which-func ((t (:foreground "goldenrod")))))
+  )
+
+;; with-editor
+(use-package with-editor
+  :no-require t
+  :config
+  (add-hook 'with-editor-mode-hook 'nice-text-hook)
+  (add-hook 'with-editor-mode-hook 'turn-on-orgstruct++)
   )
 
 ;; xkcd
@@ -832,5 +895,9 @@
 (diminish 'ivy-mode "")
 (diminish 'yas-minor-mode " Y")
 (diminish 'undo-tree-mode " UT")
+
+;; Do some byte recompilation
+(byte-recompile-directory (expand-file-name "~/.emacs.d/thirdparty") 0)
+(byte-recompile-directory (expand-file-name "~/.emacs.d/lisp") 0)
 
 ;;; init.el ends here

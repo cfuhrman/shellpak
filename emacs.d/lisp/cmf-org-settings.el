@@ -154,7 +154,7 @@
     (org-agenda-files "~/org/notes.org" "~/org/journal.org" "~/org/incubate.org" "~/org/ideas.org")))
  '(org-log-note-clock-out t)
  '(org-refile-targets (quote ((org-agenda-files :maxlevel . 2) ("~/org/incubate.org" :maxlevel . 1) ("~/org/ideas.org" :maxlevel . 1))))
- '(org-refile-use-outline-path t)
+ '(org-refile-use-outline-path nil)
  '(org-src-fontify-natively t)
  '(org-stuck-projects
    (quote
