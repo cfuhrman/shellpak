@@ -29,7 +29,7 @@
 ** Requirements
 
     - GNU Bash version 3.2 or greater
-    - GNU Emacs 23.1 or greater (Emacs >24.1 preferred)
+    - GNU Emacs 24.1 or greater (Emacs 24.4 or greater preferred)
     - GNU Make
     - rsync
 
@@ -100,15 +100,17 @@
    # Install into another directory
    $ ./setup.sh -d /path/to/directory
 
-   # Install ShellPAK and automatically download & install
-   # personal set of Emacs packages
-   $ ./setup.sh -p
-
    # Do not automatically link files during installation
    $ ./setup.sh -n
 
+   # Set up go programming environment
+   $ ./setup.sh -g
+
    # Remove ShellPAK
    $ ./setup.sh -u
+
+   # Remove ShellPAK & go environment
+   $ ./setup.sh -u -g
 
    # Change backup directory
    $ ./setup.sh -b /path/to/directory
@@ -117,6 +119,9 @@
    $ ./setup.sh -h
    #+end_src
 
+   Previous versions of =setup.sh= provided options for installation
+   of Emacs packages.  This is no longer required as Emacs will now
+   automatically install necessary packages on startup.
 
 * Bugs
 
@@ -130,7 +135,7 @@
 
 * Copyright
 
-  Copyright (c) 2000-2015 Christopher M. Fuhrman
+  Copyright (c) 2000-2016 Christopher M. Fuhrman
   All rights reserved.
 
   All files contained herein can be redistributed and/or modified
