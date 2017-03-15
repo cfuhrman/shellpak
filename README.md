@@ -19,7 +19,7 @@ will be useful as a reference.
 ## Requirements<a id="sec-1-1" name="sec-1-1"></a>
 
 -   GNU Bash version 3.2 or greater
--   GNU Emacs 24.1 or greater (Emacs >24.4 preferred)
+-   GNU Emacs 24.1 or greater (Emacs 24.4 or greater preferred)
 -   GNU Make
 -   rsync
 
@@ -88,8 +88,14 @@ un-installation (via the `-u` flag)
     # Do not automatically link files during installation
     $ ./setup.sh -n
     
+    # Set up go programming environment
+    $ ./setup.sh -g
+    
     # Remove ShellPAK
     $ ./setup.sh -u
+    
+    # Remove ShellPAK & go environment
+    $ ./setup.sh -u -g
     
     # Change backup directory
     $ ./setup.sh -b /path/to/directory
