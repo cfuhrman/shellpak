@@ -49,7 +49,7 @@ PINE_REMOTE_CONFIG="{mail.example.com/ssl/novalidate-cert/user=cfuhrman@example.
 
 # ----------------------------------------------------------------------
 
-# Function: setBrowser
+# Function: __sp_bashrc_set_browser
 #
 # Sets BROWSER environment variable
 #
@@ -63,7 +63,7 @@ PINE_REMOTE_CONFIG="{mail.example.com/ssl/novalidate-cert/user=cfuhrman@example.
 #  * elinks
 #  * lynx
 
-setBrowser ()
+__sp_bashrc_set_browser ()
 {
 
         # Set preferred browsers in order of evaluation
@@ -88,9 +88,9 @@ setBrowser ()
 
         export BROWSER
 
-} # setBrowser()
+} # __sp_bashrc_set_browser()
 
-# Function: setEditor
+# Function: __sp_bashrc_set_editor
 #
 # Sets EDITOR environment variable
 #
@@ -102,7 +102,7 @@ setBrowser ()
 #  * vim
 #  * vi (if all else fails)
 
-setEditor ()
+__sp_bashrc_set_editor ()
 {
 
         # Set preferred editors in order of evaluation
@@ -131,9 +131,9 @@ setEditor ()
                 EDITOR='emacs -nw'
         fi
 
-} # setEditor()
+} # __sp_bashrc_set_editor()
 
-# Function: setPager
+# Function: __sp_bashrc_set_pager
 #
 # Sets PAGER environment variable
 #
@@ -143,7 +143,7 @@ setEditor ()
 #  * view
 #  * more
 
-setPager ()
+__sp_bashrc_set_pager ()
 {
 
         # Should this be an emacs terminal, then set $PAGER to 'cat' since
@@ -171,7 +171,7 @@ setPager ()
 
         export PAGER
 
-} # setPager()
+} # __sp_bashrc_set_pager()
 
 # ----------------------------------------------------------------------
 
@@ -331,17 +331,26 @@ if type -p fossil >/dev/null; then
         alias fl="fossil"
 fi
 
+# Aliases for PHP CodeSniffer
+if type -p phpcs >/dev/null; then
+	alias phpcs='phpcs --standard=PSR2'
+fi
+
+if type -p phpcbf >/dev/null; then
+	alias phpcbf='phpcbf --standard=PSR2'
+fi
+
 # Program defaults
 # --------------------------------------------------------------------
 
 # Determine browser
-setBrowser
+__sp_bashrc_set_browser
 
 # Determine editor
-setEditor
+__sp_bashrc_set_editor
 
 # Determine pager
-setPager
+__sp_bashrc_set_pager
 
 # Bash Command History
 # --------------------------------------------------------------------
