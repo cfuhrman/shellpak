@@ -42,6 +42,10 @@
        (todo "WAITING"
              ((org-agenda-files
                (quote
+                ("~/org/from-mobile.org" "~/org/refile.org")))))
+       (todo "DELEGATED"
+             ((org-agenda-files
+               (quote
                 ("~/org/from-mobile.org" "~/org/refile.org")))))))
      ("B" "GTD (B)lock Agenda"
       ((tags-todo "OFFICE")
@@ -66,7 +70,9 @@
       ((org-agenda-tag-filter-preset
         (quote
          ("+GGG"))))))))
- '(org-agenda-files (quote ("~/org/tasks.org")))
+ '(org-agenda-files
+   (quote
+    ("~/org/tasks.org" "~/org/refile.org" "~/org/notes.org")))
  '(org-ascii-charset (quote utf-8))
  '(org-archive-location "~/org/archive/%s_archive::datetree/")
  '(org-capture-templates

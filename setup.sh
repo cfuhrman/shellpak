@@ -41,6 +41,8 @@ COPYRIGHT='Copyright (c) 2000-2016 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 DRYRUN=""
 UNINSTALL=0
+GOINSTALL=0
+GOPATH=${HOME}/go
 BUILD_EMACS_PACKAGES=0
 EMACS_OUTPUT_LOG=${HOME}/tmp/emacs-pkg-install-$$-`date +%y%m%d`.log
 NOLINK=0            # If set to 1 (true), then the following apply:
@@ -142,9 +144,18 @@ doUninstall ()
 You are about to uninstall ShellPAK.  Are you SURE you want to do
 this?
 
-====================================================================
+EOF
+
+	if [[ -d ${GOPATH} && $GOINSTALL -ne 0 ]]; then
+		cat <<EOF
+Note that contents in ${GOPATH} will be removed as well!!!!
+Better save it before continuing!
 
 EOF
+	fi
+
+	echo '===================================================================='
+	echo ''
 
         select opt in Yes No
         do
@@ -203,6 +214,14 @@ EOF
 
         done
 
+	if [ $GOINSTALL -ne 0 ]; then
+		inform $L2 $FALSE \
+		       "Removing go environment"
+
+		rm -rf ${GOPATH}
+		echo "${GREEN}done${NORMAL}"
+	fi
+
         # Restore .emacs file if it exists
         if [ -f ${BACKUPDIR}/.emacs ]; then
             inform $L2 $FALSE "Restoring original .emacs"
@@ -225,6 +244,46 @@ EOF
         echo "${BOLD}ShellPAK${NORMAL} removed from the home directory of ${USER} on ${CYAN}${HOSTNAME}${NORMAL}!"
 
 } # doUninstall()
+
+# Function: goSetup
+#
+# Sets up directory structure for the go programming language
+
+goSetup ()
+{
+	local GOBIN=${GOPATH}/bin
+	local GOSRC=${GOPATH}/src
+	local GOGITHUB=${GOSRC}/github.com
+
+	if [ -d $GOPATH ]; then
+		inform $L1 $TRUE \
+		       "Go development has already been set up"
+		return
+	fi
+
+	inform $L1 $TRUE "Setting up development environment for golang"
+
+	# Note we assume the github username is the same as the login
+	# name.
+	local goSetup_git_user=${GITHUB_USER_NAME:=${USER}}
+
+	# Create the directories
+	for goDir in $GOPATH $GOBIN $GOSRC $GOGITHUB
+	do
+		mkdir -p $goDir
+	done
+
+	if [ ! -d ${GOGITHUB}/$goSetup_git_user ]; then
+		mkdir ${GOGITHUB}/$goSetup_git_user
+	fi
+
+	inform $L2 $TRUE "Environment set up for golang"
+
+	if ! type -p go >/dev/null; then
+		inform $L2 $TRUE \
+		       "${BOLD}$YELLOW}NOTICE:${NORMAL} Go binary not found in path"
+	fi
+}
 
 # Function: headerDisplay
 #
@@ -297,6 +356,7 @@ usage: ${0##*/} -h This screen                             \\
                 -b (Default:\$HOME/Backup/shell) Location   \\
                    of backup files
                 -n Do _not_ link files                     \\
+                -g Set up/remove GoLang Development        \\
                 -u Uninstall ShellPAK                      \\
                 -r perform a trial run with no changes made
                    (implies -n)
@@ -310,7 +370,7 @@ STDERR
 
 headerDisplay
 
-args=$(getopt d:b:hnru $*)
+args=$(getopt d:b:hnrgu $*)
 
 set -- $args
 
@@ -342,6 +402,10 @@ do
                 BACKUPDIR=$2; shift;
                 inform $L1 $TRUE "Existing files to be backed up in ${BACKUPDIR}"
                 ;;
+
+	-g)
+		GOINSTALL=1
+		;;
 
         -u)
                 UNINSTALL=1
@@ -430,6 +494,11 @@ if [[ ${SHELLDIR#$(dirname "$(dirname "$SHELLDIR")")/} != ${PWD#$(dirname "$(dir
 
 else
         inform $L1 $TRUE 'Synchronization not necessary'
+fi
+
+# Do we want to set up our environment for golang development?
+if [ ${GOINSTALL} -ne 0 ]; then
+	goSetup
 fi
 
 # Set up appropriate symlinks

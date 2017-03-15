@@ -18,5 +18,7 @@ ext/
 ido.last
 org-clock-save.el
 recentf
+network-security.data/
+tramp/
 url/
 xkcd/

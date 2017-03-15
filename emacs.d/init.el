@@ -87,13 +87,14 @@
  '(diff-switches "-u")
  '(dired-listing-switches "-alh")
  '(dired-use-ls-dired (quote unspecified))
- '(flycheck-disabled-checkers (quote (php-phpcs)))
  '(display-time-mode t)
  '(emerge-combine-versions-template "
 %b
 %a
 ")
+ '(flycheck-disabled-checkers (quote (php-phpcs)))
  '(flycheck-highlighting-mode 'lines)
+ '(flycheck-phpcs-standard "PSR2")
  '(forecast-latitude cmf-latitude)
  '(forecast-longitude cmf-longitude)
  '(forecast-city cmf-location-name)
@@ -151,6 +152,13 @@
 
 ;; Programming styles
 ;; --------------------------------------------------------------------
+
+;; Shipwire Coding Style
+(c-add-style "psr2"
+            '("psr2"
+              (c-offsets-alist . (
+                                  (statement-cont . (first c-lineup-cascaded-calls +))
+                                  ))))
 
 ;; OpenBSD Coding Style
 (c-add-style "openbsd"
@@ -255,10 +263,10 @@
 ;; --------------------------------------------------------------------
 
 (fset 'align-on-equal
-      (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217848 97 108 105 103 110 45 114 101 103 101 120 112 return 61 return] 0 "%d")) arg)))
+   [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g tab return ?= return])
 
 (fset 'align-on-hash-arrow
-      (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217848 97 108 105 103 110 45 114 101 103 101 120 return 61 62 return] 0 "%d")) arg)))
+   [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g tab return ?= ?> return])
 
 
 ;; Keyboard Bindings
@@ -326,6 +334,54 @@
 ;; Packages loaded through external files
 (require 'cmf-org-settings)
 
+;;
+;; OSX Modes (Mac OS X only)
+;;
+
+(when (eq system-type 'darwin)
+
+  ;; osx-location
+  (use-package osx-location
+    :ensure t
+
+    :config
+    (osx-location-watch)
+    (add-hook 'osx-location-changed-hook
+              (lambda ()
+                (setq calendar-latitude osx-location-latitude
+                      calendar-longitude osx-location-longitude
+                      calendar-location-name (format "%s, %s" osx-location-latitude osx-location-longitude)
+                      forecast-latitude osx-location-latitude
+                      forecast-longitude osx-location-longitude
+                      forecast-city (format "%s, %s" osx-location-latitude osx-location-longitude)
+                      )
+                )
+              )
+    )
+
+  ;; osx-lib
+  (use-package osx-lib
+    :ensure t
+    )
+
+  ;; osx-trash
+  (use-package osx-trash
+    :ensure t
+
+    :init
+    (setq delete-by-moving-to-trash t)
+
+    :config
+    (osx-trash-setup)
+    )
+  )
+
+;;
+;; Generic Packages
+;;
+;; For use on all operating systems
+;;
+
 ;; apache-mode
 (use-package apache-mode
   :ensure t
@@ -384,7 +440,7 @@
   (add-hook 'c-mode-common-hook
             (lambda ()
               (font-lock-add-keywords nil
-                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\):" 1 font-lock-warning-face t)))))
+                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\):" 1 font-lock-warning-face t)))))
   )
 
 ;; [c]perl-mode
@@ -394,7 +450,7 @@
   (add-hook 'cperl-mode-hook
             (lambda ()
               (font-lock-add-keywords nil
-                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\):" 1 font-lock-warning-face t)))))
+                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\):" 1 font-lock-warning-face t)))))
 
   :mode ("\\.cgi\\'" . cperl-mode)
   )
@@ -515,6 +571,23 @@
   (ivy-mode 1)
   )
 
+;; jinja2-mode
+(use-package jinja2-mode
+  :ensure t
+  :defer t
+  :mode ("\\.j2\\'" . jinja2-mode)
+  
+  )
+
+;; json-mode
+(use-package json-mode
+  :ensure t
+
+  :config
+  ;; Associated JSON files with nice-prog-hook
+  (add-hook 'json-mode-hook 'nice-prog-hook)
+  )
+
 ;; lisp-mode
 (use-package lisp-mode
   :config
@@ -529,7 +602,7 @@
   (add-hook 'emacs-lisp-mode-hook
             (lambda ()
               (font-lock-add-keywords nil
-                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\):" 1 font-lock-warning-face t)))))
+                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\):" 1 font-lock-warning-face t)))))
   )
 
 ;; log-edit-mode
@@ -631,30 +704,9 @@
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
   )
 
-;; OSX Modes (Mac OS X only)
-(when (eq system-type 'darwin)
-
-  ;; osx-lib
-  (use-package osx-lib
-    :ensure t
-    )
-
-  ;; osx-trash
-  (use-package osx-trash
-    :ensure t
-
-    :init
-    (setq delete-by-moving-to-trash t)
-
-    :config
-    (osx-trash-setup)
-    )
-  )
-
 ;; php-mode
 (use-package php-mode
   :ensure ac-php
-  :ensure mmm-mode
   :ensure php-mode
   :ensure php-auto-yasnippets
   :ensure php-eldoc
@@ -669,24 +721,21 @@
   ;; Define a nice hook for editing php files
   (defun nice-php-hook()
     "Hook for sane editing of PHP files."
-    (c-set-style "cmf")
+    (c-set-style "psr2")
     (if (package-installed-p 'php-auto-yasnippets)
         (define-key php-mode-map (kbd "C-c C-y") 'yas/create-php-snippet))
-    (if (package-installed-p 'mmm-mode)
-        (mmm-mode t))
     (define-key php-mode-map (kbd "C-x p") 'phpdoc)
     )
 
   ;; For PHP files
   (add-hook 'php-mode-hook 'nice-php-hook)
+  (add-hook 'php-mode-hook
+            (lambda ()
+              (font-lock-add-keywords nil
+                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\)" 1 font-lock-warning-face t)))))
 
   ;; Load phpdocumentor
   (load-file "~/.emacs.d/thirdparty/phpdocumentor.el")
-
-  ;; Set up mmm-mode
-  (require 'mmm-auto)
-  (setq mmm-global-mode 'maybe)
-  (mmm-add-mode-ext-class 'html-mode "\\.php\\'" 'html-php)
 
   )
 
@@ -734,17 +783,22 @@
   (add-hook 'sh-mode-hook
             (lambda ()
               (font-lock-add-keywords nil
-                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\):" 1 font-lock-warning-face t)))))
+                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\):" 1 font-lock-warning-face t)))))
   )
 
 ;; sql
 (use-package sql
+  :mode (
+         ("sql*" . sql-mode))
+
   :config
   ;; Define a nice hook for editing SQL files
   (defun nice-sql-hook ()
     "Hook for sane editing of SQL files."
     (if (>= emacs-major-version 23)
         (linum-mode t))
+    (if (package-installed-p 'undo-tree)
+        (undo-tree-mode t))
     (auto-fill-mode t)
     (electric-pair-mode t)
     )
@@ -804,15 +858,17 @@
   )
 
 ;; vc-fossil
-(use-package vc-fossil
-  :ensure t
-  :defer t
+(if (< emacs-major-version 25)
+    (use-package vc-fossil
+      :ensure t
+      :defer t
 
-  :init
-  (require 'vc-fossil)
+      :init
+      (require 'vc-fossil)
 
-  :config
-  (add-to-list 'vc-handled-backends 'Fossil)
+      :config
+      (add-to-list 'vc-handled-backends 'Fossil)
+      )
   )
 
 ;; which-func
@@ -839,7 +895,6 @@
 ;; yaml-mode
 (use-package yaml-mode
   :ensure t
-  :defer t
 
   :mode ("\\.sls\\'" . yaml-mode)
   :config
@@ -890,6 +945,10 @@
   ;; Wrap around region
   (setq yas-wrap-around-region t)
   )
+
+
+;; Miscellany
+;; --------------------------------------------------------------------
 
 ;; Diminished functions
 (diminish 'ivy-mode "")
