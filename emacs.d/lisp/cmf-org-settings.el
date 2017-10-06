@@ -73,8 +73,8 @@
  '(org-agenda-files
    (quote
     ("~/org/tasks.org" "~/org/refile.org" "~/org/notes.org")))
- '(org-ascii-charset (quote utf-8))
  '(org-archive-location "~/org/archive/%s_archive::datetree/")
+ '(org-ascii-charset (quote utf-8))
  '(org-capture-templates
    (quote
     (("t" "Task" entry
@@ -108,13 +108,10 @@
   %?" :empty-lines 1)
      ("j" "Journal Entry" entry
       (file+datetree "~/org/journal.org")
-      "** %^{Heading}
+      "** %^{Heading} %^G
   Added: %U
 
   %?" :empty-lines 1)
-     ("K" "Kawasaki Riding Log Entry" table-line
-      (file+headline "~/org/journal.org" "Kawasaki Riding Log")
-      " | %^u | %^{Miles} |")
      ("B" "Blood Pressure Log Entry" table-line
       (file+headline "~/org/journal.org" "Blood Pressure Log")
       "| %^u | %^{Systolic} | %^{Diastolic} |")
@@ -140,26 +137,76 @@
 ** Tasks
 
   " :prepend t :empty-lines 1))))
- '(org-clock-persist 'history)
+ '(org-clock-persist (quote history))
  '(org-clock-persist-file "~/.org-clock-save.el")
  '(org-complete-tags-always-offer-all-agenda-tags t)
  '(org-default-notes-file "~/org/notes.org")
  '(org-directory "~/org")
+ '(org-export-backends (quote (ascii html icalendar latex md texinfo)))
  '(org-export-latex-listings t)
  '(org-export-latex-packages-alist (quote (("" "listings") ("" "color"))))
  '(org-export-with-tags nil)
  '(org-fast-tag-selection-single-key t)
+ '(org-latex-classes
+   (quote
+    (("koma-article" "\\documentclass{scrartcl}"
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+      ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+     ("article" "\\documentclass[11pt]{article}"
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+      ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+     ("report" "\\documentclass[11pt]{report}"
+      ("\\part{%s}" . "\\part*{%s}")
+      ("\\chapter{%s}" . "\\chapter*{%s}")
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+     ("book" "\\documentclass[11pt]{book}"
+      ("\\part{%s}" . "\\part*{%s}")
+      ("\\chapter{%s}" . "\\chapter*{%s}")
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))))
+ '(org-latex-default-packages-alist
+   (quote
+    (("AUTO" "inputenc" t)
+     ("T1" "fontenc" t)
+     ("" "fixltx2e" nil)
+     ("" "graphicx" t)
+     ("" "longtable" nil)
+     ("" "float" nil)
+     ("" "wrapfig" nil)
+     ("" "rotating" nil)
+     ("normalem" "ulem" t)
+     ("" "amsmath" t)
+     ("" "textcomp" t)
+     ("" "marvosym" t)
+     ("" "wasysym" t)
+     ("" "amssymb" t)
+     ("" "hyperref" t)
+     "\\tolerance=1000")))
+ '(org-latex-packages-alist nil)
  '(org-latex-pdf-process
    (quote
-    ("pdflatex -interaction nonstopmode -output-directory %o %f" "bibtex %b" "pdflatex -interaction nonstopmode -output-directory %o %f" "pdflatex -interaction nonstopmode -output-directory %o %f")))
+    ("latexmk -pdflatex='lualatex -shell-excape -interaction nonstopmode' -pdf -f %f" "bibtex %b")))
  '(org-log-done (quote note))
+ '(org-log-note-clock-out t)
  '(org-log-refile (quote time))
  '(org-mobile-directory "~/Dropbox/MobileOrg")
  '(org-mobile-files
    (quote
     (org-agenda-files "~/org/notes.org" "~/org/journal.org" "~/org/incubate.org" "~/org/ideas.org")))
- '(org-log-note-clock-out t)
- '(org-refile-targets (quote ((org-agenda-files :maxlevel . 2) ("~/org/incubate.org" :maxlevel . 1) ("~/org/ideas.org" :maxlevel . 1))))
+ '(org-refile-targets
+   (quote
+    ((org-agenda-files :maxlevel . 2)
+     ("~/org/incubate.org" :maxlevel . 1)
+     ("~/org/ideas.org" :maxlevel . 1))))
  '(org-refile-use-outline-path nil)
  '(org-src-fontify-natively t)
  '(org-stuck-projects

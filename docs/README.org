@@ -7,7 +7,6 @@
 #+LATEX_HEADER: \pagestyle{fancyplain}
 
 #+LATEX: \thispagestyle{empty}
-# [TABLE-OF-CONTENTS]
 
 * Description
 

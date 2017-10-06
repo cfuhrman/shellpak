@@ -205,11 +205,9 @@ paths=('/usr/games'                             \
        '/opt/bin'                               \
        '/opt/sbin'                              \
        '/sbin'                                  \
-       '/opt/schily/bin'                        \
        '/usr/local/sbin'                        \
        "$HOME/.composer/vendor/bin"             \
-       "$HOME/bin"                              \
-       '.'
+       "$HOME/bin"
       )
 
 # Pre-pend additional directories if required
@@ -221,6 +219,12 @@ for path in ${paths[@]}; do
         fi
 
 done
+
+# Note we want to append /opt/schily/bin since sometimes that contains a version
+# of tar that doesn't support the -z option
+if [ -d /opt/schily/bin ]; then
+	PATH=$PATH:/opt/schily/bin
+fi
 
 # Get rid of pre-pended ':' and double colons
 PATH=${PATH#:}
@@ -270,8 +274,6 @@ Darwin)
 
 Linux )
         source $SHELLDIR/bash_linux
-        hasBrokenYaST
-        YASTISBROKEN=$?
         ;;
 
 [uU][nN][iI][xX]* )

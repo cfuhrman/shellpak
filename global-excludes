@@ -13,6 +13,7 @@ bookmarks
 config/
 docs/*.org
 elpa/
+emojis/
 eshell/
 ext/
 ido.last

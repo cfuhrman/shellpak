@@ -82,7 +82,6 @@
  '(cperl-font-lock t)
  '(cperl-highlight-variables-indiscriminately t)
  '(cperl-indent-level 8)
- '(custom-enabled-themes (quote (twilight)))
  '(delete-selection-mode nil)
  '(diff-switches "-u")
  '(dired-listing-switches "-alh")
@@ -143,12 +142,25 @@
 (if (equal window-system nil)
     (if (or (string-match "term-256" (getenv "TERM"))
             (string-match "screen-256" (getenv "TERM")))
-        (setq custom-file "~/.emacs.d/custom-nox256.el")
-      (setq custom-file "~/.emacs.d/custom-nox.el"))
-  (setq custom-file "~/.emacs.d/custom.el"))
+        (defvar cmf-console-colors 256)
+      (defvar cmf-console-colors 16))
+  (defvar cmf-console-colors nil)
+  )
+
+(cond ((equal cmf-console-colors 256)
+       (setq custom-file "~/.emacs.d/custom-nox256.el"))
+      ((equal cmf-console-colors 16)
+       (setq custom-file "~/.emacs.d/custom-nox.el"))
+      ((setq custom-file "~/.emacs.d/custom.el"))
+      )
 
 (load custom-file)
 
+;; Fix for bug involving enriched text mode
+(if (version< emacs-version "25.3")
+    (eval-after-load "enriched"
+      '(defun enriched-decode-display-prop (start end &optional param)
+         (list start end))))
 
 ;; Programming styles
 ;; --------------------------------------------------------------------
@@ -180,7 +192,6 @@
                (c-offsets-alist
                 (statement-cont . (first c-lineup-cascaded-calls +)))))
 
-
 ;; Functions
 ;; --------------------------------------------------------------------
 
@@ -206,6 +217,28 @@
     (add-to-list 'exec-path path)
     (setenv "PATH" (concat (getenv "PATH") ":" path)))
   )
+
+;; Override stock use-fancy-splash-screens-p ()
+(if (version< emacs-version "25.2.1")
+    (defun use-fancy-splash-screens-p ()
+      "Return t if fancy splash screens should be used."
+      (when (and (display-graphic-p)
+                 (or (and (display-color-p)
+                          (image-type-available-p 'xpm))
+                     (image-type-available-p 'pbm)))
+        (let ((frame (fancy-splash-frame)))
+          (when frame
+            (let* ((img (create-image (fancy-splash-image-file)))
+                   (image-height (and img (cdr (image-size img nil frame))))
+                   ;; We test frame-height so that, if the frame is split
+                   ;; by displaying a warning, that doesn't cause the normal
+                   ;; splash screen to be used.
+                   (frame-height (1- (frame-height frame))))
+              ;; The original value added to the `image-height' for the
+              ;; test was 19; however, that causes the test to fail on X11
+              ;; by about 1.5 -- so use 17 instead.
+              (> frame-height (+ image-height 17))))))
+      ))
 
 
 ;; Defined modes
@@ -315,6 +348,7 @@
 
 (require 'package)
 (setq package-enable-at-startup nil)
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
@@ -333,6 +367,21 @@
 
 ;; Packages loaded through external files
 (require 'cmf-org-settings)
+
+;;
+;; Window-system Modes
+;;
+
+(unless (equal window-system nil)
+
+  ;; Enable emojify
+  (use-package emojify
+    :ensure t
+
+    :config
+    (global-emojify-mode)
+    )
+  )
 
 ;;
 ;; OSX Modes (Mac OS X only)
@@ -381,6 +430,56 @@
 ;;
 ;; For use on all operating systems
 ;;
+
+;; yasnippet
+;;
+;; Note this needs to be loaded first since we want to use the version
+;; from melpa-stable
+(use-package yasnippet
+  :ensure t
+  :pin melpa-stable
+
+  :config
+  ;; Inter-field navigation
+  (defun yas/goto-end-of-active-field ()
+    (interactive)
+    (let* ((snippet (car (yas--snippets-at-point)))
+           (position (yas--field-end (yas--snippet-active-field snippet))))
+      (if (= (point) position)
+          (move-end-of-line 1)
+        (goto-char position))))
+
+  (defun yas/goto-start-of-active-field ()
+    (interactive)
+    (let* ((snippet (car (yas--snippets-at-point)))
+           (position (yas--field-start (yas--snippet-active-field snippet))))
+      (if (= (point) position)
+          (move-beginning-of-line 1)
+        (goto-char position))))
+
+  ;; fix some org-mode + yasnippet conflicts:
+  (defun yas/org-very-safe-expand ()
+    (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+
+  ;; Turn on snippets
+  (yas-global-mode t)
+
+  ;; Keybindings
+  (define-key yas-keymap (kbd "<return>") 'yas-exit-all-snippets)
+  (define-key yas-keymap (kbd "C-e") 'yas/goto-end-of-active-field)
+  (define-key yas-keymap (kbd "C-a") 'yas/goto-start-of-active-field)
+
+  ;; Update org-mode configuration
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (make-variable-buffer-local 'yas/trigger-key)
+              (setq yas/trigger-key [tab])
+              (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+              (define-key yas/keymap [tab] 'yas/next-field)))
+
+  ;; Wrap around region
+  (setq yas-wrap-around-region t)
+  )
 
 ;; apache-mode
 (use-package apache-mode
@@ -443,6 +542,17 @@
                                       '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\):" 1 font-lock-warning-face t)))))
   )
 
+;; calfw
+(use-package calfw
+  :ensure t
+  :ensure calfw-org
+  :pin melpa-stable
+
+  :init
+  (require 'calfw)
+  (require 'calfw-org)
+  )
+
 ;; [c]perl-mode
 (use-package cperl-mode
   :config
@@ -468,16 +578,6 @@
   :ensure csv-nav
   :defer t
   :mode ("\\.csv\\'" . csv-nav-mode)
-  )
-
-;; darktooth-theme
-(if (not(equal window-system nil))
-    (use-package darktooth-theme
-      :ensure t
-
-      :init
-      (load-theme 'darktooth t)
-      )
   )
 
 ;; eldoc
@@ -513,6 +613,17 @@
   :ensure t
   :defer t
   :diminish ggtags-mode " G"
+  )
+
+;; gited - dired for git branches
+(use-package gited
+  :ensure t
+  :defer t
+
+  :bind (
+         ("C-x C-g" . gited-list-branches)
+         )
+
   )
 
 ;; go-mode
@@ -576,7 +687,7 @@
   :ensure t
   :defer t
   :mode ("\\.j2\\'" . jinja2-mode)
-  
+
   )
 
 ;; json-mode
@@ -739,6 +850,16 @@
 
   )
 
+;; planet-theme
+(if (not(equal window-system nil))
+    (use-package planet-theme
+      :ensure t
+
+      :init
+      (load-theme 'planet t)
+      )
+  )
+
 ;; pretty-lambdada
 (if (version< emacs-version "24.4")
     (use-package pretty-lambdada
@@ -761,6 +882,19 @@
   (add-hook 'ruby-mode-hook 'nice-prog-hook)
   )
 
+;; sed-mode
+(use-package sed-mode
+  :ensure t
+
+  :mode (
+         ("*.sed" . sed-mode)
+         )
+
+  :init
+  (add-hook 'sed-mode-hook 'nice-prog-hook)
+
+  )
+
 ;; smart-mode-line
 (use-package smart-mode-line
   :ensure t
@@ -773,7 +907,10 @@
   (sml/setup)
 
   :config
-  (sml/apply-theme 'dark)
+  (if (equal cmf-console-colors 16)
+      (sml/apply-theme 'light)
+    (sml/apply-theme 'dark)
+    )
   )
 
 ;; sh-script
@@ -830,7 +967,7 @@
   )
 
 ;; twilight-theme
-(if (equal window-system nil)
+(if (equal cmf-console-colors 256)
     (use-package twilight-theme
       :ensure t
 
@@ -900,52 +1037,6 @@
   :config
   (add-hook 'yaml-mode-hook 'nice-prog-hook)
   )
-
-(use-package yasnippet
-  :ensure t
-
-  :config
-  ;; Inter-field navigation
-  (defun yas/goto-end-of-active-field ()
-    (interactive)
-    (let* ((snippet (car (yas--snippets-at-point)))
-           (position (yas--field-end (yas--snippet-active-field snippet))))
-      (if (= (point) position)
-          (move-end-of-line 1)
-        (goto-char position))))
-
-  (defun yas/goto-start-of-active-field ()
-    (interactive)
-    (let* ((snippet (car (yas--snippets-at-point)))
-           (position (yas--field-start (yas--snippet-active-field snippet))))
-      (if (= (point) position)
-          (move-beginning-of-line 1)
-        (goto-char position))))
-
-  ;; fix some org-mode + yasnippet conflicts:
-  (defun yas/org-very-safe-expand ()
-    (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
-
-  ;; Turn on snippets
-  (yas-global-mode t)
-
-  ;; Keybindings
-  (define-key yas-keymap (kbd "<return>") 'yas-exit-all-snippets)
-  (define-key yas-keymap (kbd "C-e") 'yas/goto-end-of-active-field)
-  (define-key yas-keymap (kbd "C-a") 'yas/goto-start-of-active-field)
-
-  ;; Update org-mode configuration
-  (add-hook 'org-mode-hook
-            (lambda ()
-              (make-variable-buffer-local 'yas/trigger-key)
-              (setq yas/trigger-key [tab])
-              (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
-              (define-key yas/keymap [tab] 'yas/next-field)))
-
-  ;; Wrap around region
-  (setq yas-wrap-around-region t)
-  )
-
 
 ;; Miscellany
 ;; --------------------------------------------------------------------
