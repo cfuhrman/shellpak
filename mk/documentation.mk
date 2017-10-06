@@ -62,6 +62,8 @@ clean :
 	@rm ${RM_OPTS} *-original
 	@rm ${RM_OPTS} *blx.bib
 	@rm ${RM_OPTS} *run.xml
+	@rm -vf *.fdb_latexmk
+	@rm -vf *.fls
 	@rm ${RM_OPTS} *~
 
 # Check dblatex

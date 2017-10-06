@@ -17,49 +17,6 @@
 #
 
 
-# Function: hasBrokenYaST
-#
-# There's a SuSE bug whereby if interactive POSIX mode is enabled,
-# then /etc/bash_completion.d/yast2-completion.sh will throw a syntax
-# error (see https://bugzilla.novell.com/show_bug.cgi?id=504844).
-# This determines if we have a broken version of YaST (< v2.18.16) and
-# returns accordingly
-#
-# Returns:
-#
-#   1 if broken, 0 if not
-
-hasBrokenYaST ()
-{
-
-        # Are we a SuSE box?
-        if [ -f /etc/SuSE-release ] && rpm -q yast2 >/dev/null; then
-
-                # First get the version of yast we're using
-                YAST_VERSION=( `rpm -q yast2 | sed -re 's/^yast2-([0-9]+).([0-9]+).([0-9]+).*$/\1 \2 \3/'` )
-
-                # Bug 504844 fix will be available in yast2 v. 2.18.16
-                if [ ${YAST_VERSION[0]} -lt 2 ]; then
-                        return 1
-                elif [[ ${YAST_VERSION[0]} -eq 2 \
-                    && ${YAST_VERSION[1]} -lt 18 ]]; then
-                        return 1
-                elif [[ ${YAST_VERSION[0]} -eq 2 \
-                    && ${YAST_VERSION[1]} -eq 18 \
-                    && ${YAST_VERSION[2]} -lt 16 ]]; then
-                        return 1
-                fi
-
-        fi
-
-        # We either aren't a SuSE box or else have a non-broken version of
-        # YaST
-        return 0
-
-} # hasBrokenYaST()
-
-# --------------------------------------------------------------------
-
 # This is in case we're not a login shell
 if [ "x$SHLVL" != 'x1' ] && [ -e '/etc/profile.d' ]; then
 

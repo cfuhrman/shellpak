@@ -25,10 +25,20 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
+ '(emojify-emoji-styles (quote (unicode)))
  '(font-use-system-font t)
- '(linum-format "%03d|")
+ '(linum-format "%-3d")
  '(sunshine-show-icons t)
  '(tool-bar-mode nil))
+
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(cfw:face-toolbar-button-off ((t (:foreground "light steel blue" :weight bold))))
+ '(linum ((t (:foreground "LightSteelBlue3"))))
+ '(which-func ((t (:foreground "goldenrod")))))
 
 ;;; custom.el ends here
 

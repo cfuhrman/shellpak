@@ -16,7 +16,6 @@
 #+LATEX_HEADER: \fancyhead[LE,RO]{\thepage}
 
 #+LATEX: \thispagestyle{empty}
-[TABLE-OF-CONTENTS]
 
 * Overview
 

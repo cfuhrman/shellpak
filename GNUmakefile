@@ -55,13 +55,9 @@ FOSSIL_BRANCH=$(shell fossil info | grep "^tags" | awk -F\: '{print $$2}' | sed 
 FOSSIL_REPO=${HOME}/repos/public.fossil
 CKOUT_DATE=$(shell fossil info | grep "^checkout" | awk '{ print $$3 }' | sed 's/[-: ]//g')
 DISTFILE=shellpak-${FOSSIL_BRANCH}-${CKOUT_DATE}.tar.gz
-DISTEXCLUDES=--exclude=.fslckout --exclude=_FOSSIL_ --exclude=.AppleDouble --exclude=config --exclude=ext
 
 # Command options
-EMACS=emacs
-EMACS_INIT=${HOME}/.emacs.d/init.el
-EMACS_INSTALL_PACKAGES=cmf-autoinstall-packages
-RSYNC=rsync
+RSYNC_BIN=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS=-Ccavz --exclude='svn-commit*' --exclude='.AppleDouble' --exclude='*~' --exclude-from=${RSYNC_EXCLUDE} --delete
 RSYNC_CONN_OPTS=-e ssh
@@ -113,9 +109,6 @@ remote: ${REMOTEHOSTS} ${POLARHOSTS}
 disabled: ${DISABLEDHOSTS}
 	@echo 'All disabled hosts updated (Are they working now?)'
 
-emacs-packages:
-	${EMACS} --batch -l ${EMACS_INIT} -f ${EMACS_INSTALL_PACKAGES}
-
 clean: clean-echo ${CLEANDIRS} clean-dist clean-tags
 	@rm ${RM_OPTS} *.bak
 	@rm ${RM_OPTS} *~
@@ -159,7 +152,7 @@ clean-elpa: clean-elc
 public: readme
 	@rm ${RM_OPTS} docs/README.md
 	@echo 'Syncing with public repository'
-	${RSYNC} ${RSYNC_PUBLIC_OPTS} . ${PUBLICCO}
+	${RSYNC_BIN} ${RSYNC_PUBLIC_OPTS} . ${PUBLICCO}
 
 # Target for importing changes from public Fossil repository
 git-import: .git
@@ -173,7 +166,7 @@ dist: ${DISTFILE}
 
 version: VERSION
 
-VERSION:
+VERSION: fossil
 	@fossil info | awk '/^checkout/ { printf "[%s] %s %s\n", substr($$2, 1, 10), $$3, $$4 }' > VERSION
 
 subdirs: ${SUBDIRS}
@@ -187,6 +180,8 @@ ${CLEANDIRS} :
 emacs:
 	@which emacs >/dev/null
 
+fossil:
+	@which fossil >/dev/null
 
 #
 # Documentation Targets
@@ -226,26 +221,16 @@ ${TXIDIRS}:
 
 ${LOCALHOSTS}: txt
 	@echo "Propagating to $@"
-	@${RSYNC} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . ${USER}@$@:${SHELLDIR}
+	@${RSYNC_BIN} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . ${USER}@$@:${SHELLDIR}
 	@${SSH} $@ ${SSH_SETUP_CMD}
 
 ${REMOTEHOSTS}: txt
 	@echo "Propagating to $@"
-	@${RSYNC} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . ${USER}@$@:${SHELLDIR}
+	@${RSYNC_BIN} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . ${USER}@$@:${SHELLDIR}
 	@${SSH} $@ ${SSH_SETUP_CMD}
 
-# Note: This target requires a tar that supports '--exclude' option,
-# such as GNU tar
 ${DISTFILE}: clean clean-tags txt version
-	@if test -f .fslckout || test -f _FOSSIL_ ; then \
-	  echo '--------------------------------------------------------------------'; \
-	  echo "|   Do not forget to run 'fossil up' before running this command   |"; \
-	  echo '--------------------------------------------------------------------'; \
-	fi
-	@mkdir shellpak
-	@${TAR} ${DISTEXCLUDES} --exclude=shellpak -c . | ( cd shellpak ; ${TAR} xf - )
-	@${TAR} --exclude='*.org' --exclude=.AppleDouble -cvzf $@ shellpak
-	@rm -rf shellpak
+	@fossil tarball ${FOSSIL_BRANCH} ${DISTFILE}
 	@echo "Successfully created ${DISTFILE}"
 
 .PHONY: subdirs ${SUBDIRS}

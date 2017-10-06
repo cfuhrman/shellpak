@@ -1,3 +1,31 @@
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Description</a>
+<ul>
+<li><a href="#sec-1-1">1.1. Requirements</a></li>
+<li><a href="#sec-1-2">1.2. Supported Platforms</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2. Obtaining ShellPAK</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Alternate Repositories</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. Installation</a>
+<ul>
+<li><a href="#sec-3-1">3.1. Other setup options</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4. Bugs</a></li>
+<li><a href="#sec-5">5. Author</a></li>
+<li><a href="#sec-6">6. Copyright</a></li>
+</ul>
+</div>
+</div>
+
+
 
 # Description<a id="sec-1" name="sec-1"></a>
 
