@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: Function declarations
+# --
+=head2 $0
+
+$1
+
+=head3 Parameters
+
+=over
+
+$2
+
+=head3 Returns
+
+$3
+
+=cut

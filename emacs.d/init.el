@@ -42,6 +42,9 @@
 (defvar cmf-time-zone "America/Los Angeles")
 (defvar cmf-time-zone-short-name "PST")
 (defvar cmf-time-zone-short-name-daylight "PDT")
+(defvar cmf-custom "~/.emacs.d/custom.el")
+(defvar cmf-custom-16 "~/.emacs.d/custom-nox.el")
+(defvar cmf-custom-256 "~/.emacs.d/custom-nox256.el")
 
 ;; List of paths to search
 (defvar cmf-path-list '("/usr/texbin"
@@ -74,14 +77,6 @@
  '(comment-fill-column 80)
  '(comment-multi-line t)
  '(comment-style (quote indent))
- '(cperl-continued-brace-offset -8)
- '(cperl-continued-statement-offset 4)
- '(cperl-electric-keywords t)
- '(cperl-electric-linefeed t)
- '(cperl-electric-parens nil)
- '(cperl-font-lock t)
- '(cperl-highlight-variables-indiscriminately t)
- '(cperl-indent-level 8)
  '(delete-selection-mode nil)
  '(diff-switches "-u")
  '(dired-listing-switches "-alh")
@@ -91,19 +86,7 @@
 %b
 %a
 ")
- '(flycheck-disabled-checkers (quote (php-phpcs)))
- '(flycheck-highlighting-mode 'lines)
- '(flycheck-phpcs-standard "PSR2")
- '(forecast-latitude cmf-latitude)
- '(forecast-longitude cmf-longitude)
- '(forecast-city cmf-location-name)
- '(forecast-country "United States")
- '(forecast-units 'us)
- '(forecast-api-key "set-your-own-key") ; Get your own key from https://developer.forecast.io/
  '(global-hl-line-mode t)
- '(ivy-use-virtual-buffers t)
- '(ivy-height 10)
- '(ivy-count-format "(%d/%d) ")
  '(linum-delay t)
  '(log-edit-hook (quote (log-edit-show-files)))
  '(mac-option-modifier 'meta)
@@ -122,19 +105,9 @@
  '(sml/read-only-char "🔒")
  '(tramp-default-method "ssh")
  '(transient-mark-mode 1)
- '(twittering-display-remaining t)
- '(twittering-timer-interval 900)
- '(twittering-tinyurl-service (quote tinyurl))
- '(twittering-use-icon-storage t)
- '(twittering-use-master-password t)
- ;; '(twittering-username "your_twitter_account_here")
- '(undo-tree-visualizer-diff t)
- '(undo-tree-visualizer-timestamps t)
  '(use-package-concat t)
  '(user-full-name cmf-full-name)
  '(user-mail-address cmf-mail-address)
- '(which-function-mode t)
- '(yas-snippet-dirs '("~/.emacs.d/snippets"))
  )
 
 ;; Load the appropriate customization file based on if we are running
@@ -142,17 +115,10 @@
 (if (equal window-system nil)
     (if (or (string-match "term-256" (getenv "TERM"))
             (string-match "screen-256" (getenv "TERM")))
-        (defvar cmf-console-colors 256)
-      (defvar cmf-console-colors 16))
-  (defvar cmf-console-colors nil)
+        (setq custom-file cmf-custom-256)
+      (setq custom-file cmf-custom-16))
+  (setq custom-file cmf-custom)
   )
-
-(cond ((equal cmf-console-colors 256)
-       (setq custom-file "~/.emacs.d/custom-nox256.el"))
-      ((equal cmf-console-colors 16)
-       (setq custom-file "~/.emacs.d/custom-nox.el"))
-      ((setq custom-file "~/.emacs.d/custom.el"))
-      )
 
 (load custom-file)
 
@@ -167,10 +133,10 @@
 
 ;; Shipwire Coding Style
 (c-add-style "psr2"
-            '("psr2"
-              (c-offsets-alist . (
-                                  (statement-cont . (first c-lineup-cascaded-calls +))
-                                  ))))
+             '("psr2"
+               (c-offsets-alist . (
+                                   (statement-cont . (first c-lineup-cascaded-calls +))
+                                   ))))
 
 ;; OpenBSD Coding Style
 (c-add-style "openbsd"
@@ -286,6 +252,11 @@
       (auto-complete-mode t))
   )
 
+;; Force fill column for nice-text-hook
+(add-hook 'text-mode-hook
+          (lambda ()
+            (set-fill-column 80)))
+
 ;; Aliases
 ;; --------------------------------------------------------------------
 
@@ -294,6 +265,9 @@
 
 ;; Macros
 ;; --------------------------------------------------------------------
+
+(fset 'yes-or-no-p
+      'y-or-n-p)
 
 (fset 'align-on-equal
    [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g tab return ?= return])
@@ -348,11 +322,18 @@
 
 (require 'package)
 (setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+(setq package-archives
+      '(("melpa" . "https://melpa.org/packages/")
+        ("melpa-stable" . "https://stable.melpa.org/packages/")
+        ("marmalade" . "https://marmalade-repo.org/packages/")
+        ("gnu" . "http://elpa.gnu.org/packages/"))
+      )
 (package-initialize)
+
+;; Boostrap 'diminish' if necessary
+(unless (package-installed-p 'diminish)
+   (package-refresh-contents)
+   (package-install 'diminish))
 
 ;; Bootstrap 'use-package' if necessary
 (unless (package-installed-p 'use-package)
@@ -368,20 +349,6 @@
 ;; Packages loaded through external files
 (require 'cmf-org-settings)
 
-;;
-;; Window-system Modes
-;;
-
-(unless (equal window-system nil)
-
-  ;; Enable emojify
-  (use-package emojify
-    :ensure t
-
-    :config
-    (global-emojify-mode)
-    )
-  )
 
 ;;
 ;; OSX Modes (Mac OS X only)
@@ -434,29 +401,12 @@
 ;; yasnippet
 ;;
 ;; Note this needs to be loaded first since we want to use the version
-;; from melpa-stable
+;; from melpa-stable.
 (use-package yasnippet
   :ensure t
   :pin melpa-stable
 
   :config
-  ;; Inter-field navigation
-  (defun yas/goto-end-of-active-field ()
-    (interactive)
-    (let* ((snippet (car (yas--snippets-at-point)))
-           (position (yas--field-end (yas--snippet-active-field snippet))))
-      (if (= (point) position)
-          (move-end-of-line 1)
-        (goto-char position))))
-
-  (defun yas/goto-start-of-active-field ()
-    (interactive)
-    (let* ((snippet (car (yas--snippets-at-point)))
-           (position (yas--field-start (yas--snippet-active-field snippet))))
-      (if (= (point) position)
-          (move-beginning-of-line 1)
-        (goto-char position))))
-
   ;; fix some org-mode + yasnippet conflicts:
   (defun yas/org-very-safe-expand ()
     (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
@@ -464,21 +414,57 @@
   ;; Turn on snippets
   (yas-global-mode t)
 
-  ;; Keybindings
-  (define-key yas-keymap (kbd "<return>") 'yas-exit-all-snippets)
-  (define-key yas-keymap (kbd "C-e") 'yas/goto-end-of-active-field)
-  (define-key yas-keymap (kbd "C-a") 'yas/goto-start-of-active-field)
+  ;; Bind `C-c y' to `yas-expand' ONLY.
+  (define-key yas-minor-mode-map (kbd "C-c y") #'yas-expand)
 
   ;; Update org-mode configuration
   (add-hook 'org-mode-hook
             (lambda ()
               (make-variable-buffer-local 'yas/trigger-key)
-              (setq yas/trigger-key [tab])
+              (setq yas/trigger-key "C-c y")
               (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
               (define-key yas/keymap [tab] 'yas/next-field)))
 
   ;; Wrap around region
   (setq yas-wrap-around-region t)
+
+  :custom
+  (yas-snippet-dirs '("~/.emacs.d/snippets"))
+  (yas-wrap-around-region t)
+  )
+
+;; ace-window
+(use-package ace-window
+  :ensure t
+  :pin melpa-stable
+
+  :config
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+
+  :bind (
+         ("M-p" . ace-window))
+  )
+
+;; all-the-icons
+(use-package all-the-icons
+  :if window-system
+  :ensure t
+  :ensure all-the-icons-dired
+  :ensure all-the-icons-ivy
+
+  :config
+
+  ;; Install the font files only if we have not already done so
+  (defvar cmf-fonts-installed-file "~/SHELL/emacs.d/.icon-fonts-installed")
+  (unless (file-exists-p cmf-fonts-installed-file)
+    (progn
+      (message "Installing icon fonts")
+      (all-the-icons-install-fonts t)
+      (with-temp-buffer (write-file cmf-fonts-installed-file)))
+    )
+
+  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+  (all-the-icons-ivy-setup)
   )
 
 ;; apache-mode
@@ -512,6 +498,15 @@
   (ac-set-trigger-key "<tab>")
   (if (package-installed-p 'ac-ispell)
       (ac-ispell-setup))
+
+  ;; resetting ac-sources
+  (setq-default ac-sources '(
+                             ac-source-yasnippet
+                             ac-source-abbrev
+                             ac-source-dictionary
+                             ac-source-words-in-same-mode-buffers
+                             ac-source-gtags
+                             ))
   )
 
 ;; auto-compile
@@ -523,6 +518,7 @@
 
 ;; beacon mode
 (use-package beacon
+  :diminish " 💡"
   :ensure t
 
   :init
@@ -563,6 +559,17 @@
                                       '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\):" 1 font-lock-warning-face t)))))
 
   :mode ("\\.cgi\\'" . cperl-mode)
+
+  :custom
+  (cperl-continued-brace-offset -8)
+  (cperl-continued-statement-offset 4)
+  (cperl-electric-keywords t)
+  (cperl-electric-linefeed t)
+  (cperl-electric-parens nil)
+  (cperl-font-lock t)
+  (cperl-highlight-variables-indiscriminately t)
+  (cperl-indent-level 8)
+
   )
 
 ;; crontab-mode
@@ -582,21 +589,41 @@
 
 ;; eldoc
 (use-package eldoc
-  :diminish eldoc-mode " Edoc"
+  :diminish eldoc-mode " 📔"
+  )
+
+;; emojify
+(use-package emojify
+  :if window-system
+  :ensure t
+
+  :config
+  (global-emojify-mode)
+  (global-emojify-mode-line-mode)
   )
 
 ;; flycheck
 (use-package flycheck
   :ensure t
   :defer t
-  :config
-  (add-hook 'after-init-hook  #'global-flycheck-mode)
+
+  :init
+  (global-flycheck-mode)
+
+  :custom
+  (flycheck-disabled-checkers (quote (php-phpcs)))
+  (flycheck-highlighting-mode 'lines)
+  (flycheck-phpcs-standard "PSR2")
+
   )
 
 ;; flyspell
 (use-package flyspell
   :config
   (setq-default ispell-program-name "aspell")
+
+  :custom
+  (flycheck-mode-line-prefix "🦋")
   )
 
 ;; forecast
@@ -605,6 +632,14 @@
   (use-package forecast
     :ensure t
     :defer t
+
+    :custom
+    (forecast-latitude cmf-latitude)
+    (forecast-longitude cmf-longitude)
+    (forecast-city cmf-location-name)
+    (forecast-country "United States")
+    (forecast-units 'us)
+    (forecast-api-key "f78b853ac0c972cccf06e75e21afbe9d")
     )
   )
 
@@ -612,7 +647,7 @@
 (use-package ggtags
   :ensure t
   :defer t
-  :diminish ggtags-mode " G"
+  :diminish ggtags-mode " 🄶"
   )
 
 ;; gited - dired for git branches
@@ -645,6 +680,20 @@
   (add-hook 'go-mode-hook 'nice-prog-hook)
   )
 
+;; highlight-parentheses
+(use-package highlight-parentheses
+  :ensure t
+  :diminish highlight-parentheses-mode
+
+  :config
+  (add-hook 'emacs-lisp-mode-hook
+            (lambda()
+              (highlight-parentheses-mode)
+              ))
+
+  (global-highlight-parentheses-mode)
+  )
+
 ;; html-mode
 (use-package html-mode
   :mode ("\\.tmpl\\'" . html-mode)
@@ -660,6 +709,7 @@
 ;; ivy-mode
 (use-package ivy-mode
   :ensure counsel
+  :ensure flyspell-correct-ivy
   :ensure swiper
 
   :bind (
@@ -671,15 +721,23 @@
          ("<f1> f"  . counsel-describe-function)
          ("<f1> v"  . counsel-describe-variable)
          ("<f1> l"  . counsel-load-library)
+         ("M-i"     . counsel-imenu)
          ("<f2> i"  . counsel-info-lookup-symbol)
          ("<f2> u"  . counsel-unicode-char)
          ("C-c g"   . counsel-git)
          ("C-c j"   . counsel-git-grep)
          ("C-x l"   . counsel-locate)
+         ("C-c ;"   . flyspell-correct-previous-word-generic)
          )
 
   :init
   (ivy-mode 1)
+
+  :custom
+  (ivy-use-virtual-buffers t)
+  (ivy-height 10)
+  (ivy-count-format "(%d/%d) ")
+
   )
 
 ;; jinja2-mode
@@ -845,8 +903,21 @@
               (font-lock-add-keywords nil
                                       '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\)" 1 font-lock-warning-face t)))))
 
+  (add-hook 'php-mode-hook
+            '(lambda ()
+               (require 'ac-php)
+               (setq ac-sources (cons 'ac-source-php ac-sources))
+               (ac-php-core-eldoc-setup ) ;; enable eldoc
+               
+               (define-key php-mode-map  (kbd "C-]") 'ac-php-find-symbol-at-point)   ;goto define
+               (define-key php-mode-map  (kbd "C-t") 'ac-php-location-stack-back)    ;go back
+               ))
+  
   ;; Load phpdocumentor
   (load-file "~/.emacs.d/thirdparty/phpdocumentor.el")
+
+  :custom
+  (phpcbf-standard "PSR2")
 
   )
 
@@ -907,7 +978,7 @@
   (sml/setup)
 
   :config
-  (if (equal cmf-console-colors 16)
+  (if (equal custom-file cmf-custom-16)
       (sml/apply-theme 'light)
     (sml/apply-theme 'dark)
     )
@@ -967,7 +1038,7 @@
   )
 
 ;; twilight-theme
-(if (equal cmf-console-colors 256)
+(if (equal custom-file cmf-custom-256)
     (use-package twilight-theme
       :ensure t
 
@@ -987,25 +1058,36 @@
   :if window-system
   :config
   (twittering-icon-mode t)
+
+  :custom
+  (twittering-display-remaining t)
+  (twittering-timer-interval 900)
+  (twittering-tinyurl-service (quote tinyurl))
+  (twittering-use-icon-storage t)
+  (twittering-use-master-password t)
+  (twittering-username "wulflock")
   )
 
 ;; undo-tree
 (use-package undo-tree
+  :diminish " 🌲"
   :ensure t
+
+  :custom
+  (undo-tree-visualizer-diff t)
+  (undo-tree-visualizer-timestamps t)
   )
 
 ;; vc-fossil
-(if (< emacs-major-version 25)
-    (use-package vc-fossil
-      :ensure t
-      :defer t
+(use-package vc-fossil
+  :ensure t
+  :defer t
 
-      :init
-      (require 'vc-fossil)
+  :init
+  (require 'vc-fossil)
 
-      :config
-      (add-to-list 'vc-handled-backends 'Fossil)
-      )
+  :config
+  (add-to-list 'vc-handled-backends 'Fossil)
   )
 
 ;; which-func
@@ -1014,6 +1096,18 @@
   :config
   (custom-set-faces
    '(which-func ((t (:foreground "goldenrod")))))
+
+  :custom
+  (which-function-mode t)
+  )
+
+;; which-key
+(use-package which-key
+  :ensure t
+  :pin melpa-stable
+
+  :config
+  (which-key-mode)
   )
 
 ;; with-editor
@@ -1043,8 +1137,7 @@
 
 ;; Diminished functions
 (diminish 'ivy-mode "")
-(diminish 'yas-minor-mode " Y")
-(diminish 'undo-tree-mode " UT")
+(diminish 'yas-minor-mode " 🅈")
 
 ;; Do some byte recompilation
 (byte-recompile-directory (expand-file-name "~/.emacs.d/thirdparty") 0)
