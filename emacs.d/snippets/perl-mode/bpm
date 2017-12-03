@@ -1,0 +1,24 @@
+# -*- mode: snippet -*-
+# name: Boiler Plate for Perl Modules
+# --
+=head1 NAME
+
+$0
+
+=head1 SYNOPSIS
+
+  # Fill me in!
+  
+
+=head1 DESCRIPTION
+
+=cut
+
+$1
+
+=head COPYRIGHT
+
+Copyright(c) `(format-time-string "%Y")` `(user-full-name)`
+All rights reserved
+
+1;

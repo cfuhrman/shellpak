@@ -147,7 +147,7 @@ Christopher M. Fuhrman
 
 # Copyright<a id="sec-6" name="sec-6"></a>
 
-Copyright (c) 2000-2016 Christopher M. Fuhrman
+Copyright (c) 2000-2017 Christopher M. Fuhrman
 All rights reserved.
 
 All files contained herein can be redistributed and/or modified

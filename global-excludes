@@ -1,5 +1,6 @@
 *.tar.gz
 *~
+.icon-fonts-installed
 .fslckout
 .org-id-locations
 GPATH
