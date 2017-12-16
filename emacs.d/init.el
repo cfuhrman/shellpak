@@ -89,7 +89,6 @@
  '(global-hl-line-mode t)
  '(linum-delay t)
  '(log-edit-hook (quote (log-edit-show-files)))
- '(mac-option-modifier 'meta)
  '(mark-even-if-inactive t)
  '(mark-holidays-in-calendar t)
  '(recentf-mode t)
@@ -101,8 +100,6 @@
  '(sh-indent-for-continuation 4)
  '(sh-indentation 8)
  '(show-paren-mode 1)
- '(sml/modified-char "★")
- '(sml/read-only-char "🔒")
  '(tramp-default-method "ssh")
  '(transient-mark-mode 1)
  '(use-package-concat t)
@@ -122,21 +119,9 @@
 
 (load custom-file)
 
-;; Fix for bug involving enriched text mode
-(if (version< emacs-version "25.3")
-    (eval-after-load "enriched"
-      '(defun enriched-decode-display-prop (start end &optional param)
-         (list start end))))
 
 ;; Programming styles
 ;; --------------------------------------------------------------------
-
-;; Shipwire Coding Style
-(c-add-style "psr2"
-             '("psr2"
-               (c-offsets-alist . (
-                                   (statement-cont . (first c-lineup-cascaded-calls +))
-                                   ))))
 
 ;; OpenBSD Coding Style
 (c-add-style "openbsd"
@@ -158,23 +143,9 @@
                (c-offsets-alist
                 (statement-cont . (first c-lineup-cascaded-calls +)))))
 
+
 ;; Functions
 ;; --------------------------------------------------------------------
-
-;; Functions for perltidy
-(defun cmf/perltidy-region ()
-  "Run perltidy on the current region."
-  (interactive)
-  (save-excursion
-    (shell-command-on-region (point) (mark) "perltidy -q" nil t))
-  )
-
-(defun cmf/perltidy-defun ()
-  "Run perltidy on the current defun."
-  (interactive)
-  (save-excursion (mark-defun)
-                  (perltidy-region))
-  )
 
 ;; Function for loading exec paths
 (defun cmf/update-exec-path (pathlist)
@@ -206,19 +177,11 @@
               (> frame-height (+ image-height 17))))))
       ))
 
-
-;; Defined modes
-;; --------------------------------------------------------------------
-
-(define-derived-mode nice-msg-mode
-  text-mode "Nice"
-  "Major mode for editing text documents."
-  )
-
-;; Apply hooks as appropriate
-(add-hook 'nice-msg-mode-hook 'nice-text-hook)
-(add-hook 'nice-msg-mode-hook 'turn-on-orgstruct++)
-(add-hook 'nice-msg-mode-hook 'ac-emoji-setup)
+;; Fix for bug involving enriched text mode
+(if (version< emacs-version "25.3")
+    (eval-after-load "enriched"
+      '(defun enriched-decode-display-prop (start end &optional param)
+         (list start end))))
 
 
 ;; Hooks
@@ -229,38 +192,26 @@
   "Enable some sanity for programming source files."
   (if (>= emacs-major-version 23)
       (linum-mode t))
-  (if (package-installed-p 'ggtags)
-      (ggtags-mode t))
-  (if (package-installed-p 'indent-guide)
-      (indent-guide-mode t))
-  (if (package-installed-p 'undo-tree)
-      (undo-tree-mode t))
   (auto-fill-mode t)
   (eldoc-mode t)
   (electric-pair-mode t)
+  (font-lock-add-keywords nil
+                          '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\):" 1 font-lock-warning-face t)))
   )
 
 ;; Define a basic hook for sane editing of text documents
 (defun nice-text-hook ()
-  "Hook for sane editing of text (ASCII) documents."
+  "Hook for sane editing of text documents."
   (auto-fill-mode t)
-  (flyspell-mode t)
   (footnote-mode t)
-  (if (package-installed-p 'undo-tree)
-      (undo-tree-mode t))
-  (if (package-installed-p 'auto-complete)
-      (auto-complete-mode t))
   )
 
-;; Force fill column for nice-text-hook
+;; Apply hooks as appropriate
+(add-hook 'prog-mode-hook 'nice-prog-hook)
+(add-hook 'text-mode-hook 'nice-text-hook)
 (add-hook 'text-mode-hook
           (lambda ()
             (set-fill-column 80)))
-
-;; Aliases
-;; --------------------------------------------------------------------
-
-(defalias 'perl-mode 'cperl-mode)
 
 
 ;; Macros
@@ -320,6 +271,10 @@
 ;; Package configuration
 ;; --------------------------------------------------------------------
 
+;;
+;; package.el installation and configuration
+;;
+
 (require 'package)
 (setq package-enable-at-startup nil)
 (setq package-archives
@@ -332,8 +287,8 @@
 
 ;; Boostrap 'diminish' if necessary
 (unless (package-installed-p 'diminish)
-   (package-refresh-contents)
-   (package-install 'diminish))
+  (package-refresh-contents)
+  (package-install 'diminish))
 
 ;; Bootstrap 'use-package' if necessary
 (unless (package-installed-p 'use-package)
@@ -346,22 +301,27 @@
 (require 'diminish)
 (require 'bind-key)
 
-;; Packages loaded through external files
-(require 'cmf-org-settings)
-
-
 ;;
 ;; OSX Modes (Mac OS X only)
 ;;
 
 (when (eq system-type 'darwin)
 
+  ;; Set up mac-specific parameters here
+  (setq delete-by-moving-to-trash t
+	mac-option-modifier 'meta
+	trash-directory "~/.Trash/emacs"
+	)
+
+  ;; Make sure backup directory exists
+  (if (not (file-exists-p trash-directory))
+      (make-directory trash-directory))
+
   ;; osx-location
   (use-package osx-location
     :ensure t
 
-    :config
-    (osx-location-watch)
+    :init
     (add-hook 'osx-location-changed-hook
               (lambda ()
                 (setq calendar-latitude osx-location-latitude
@@ -373,22 +333,10 @@
                       )
                 )
               )
-    )
-
-  ;; osx-lib
-  (use-package osx-lib
-    :ensure t
-    )
-
-  ;; osx-trash
-  (use-package osx-trash
-    :ensure t
-
-    :init
-    (setq delete-by-moving-to-trash t)
 
     :config
-    (osx-trash-setup)
+    (osx-location-watch)
+
     )
   )
 
@@ -398,38 +346,44 @@
 ;; For use on all operating systems
 ;;
 
-;; yasnippet
-;;
-;; Note this needs to be loaded first since we want to use the version
-;; from melpa-stable.
-(use-package yasnippet
+;; auto-complete
+(use-package auto-complete
   :ensure t
+  :ensure ac-ispell
+  :ensure fuzzy
+
   :pin melpa-stable
 
+  :demand
+
+  :bind (:map ac-complete-mode-map
+              ("\C-n" . ac-next)
+              ("\C-p" . ac-previous)
+	      )
+
+  :init
+  (add-hook 'text-mode-hook 'ac-ispell-ac-setup)
+  (add-hook 'log-mode-hook  'ac-ispell-ac-setup)
+
   :config
-  ;; fix some org-mode + yasnippet conflicts:
-  (defun yas/org-very-safe-expand ()
-    (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
-
-  ;; Turn on snippets
-  (yas-global-mode t)
-
-  ;; Bind `C-c y' to `yas-expand' ONLY.
-  (define-key yas-minor-mode-map (kbd "C-c y") #'yas-expand)
-
-  ;; Update org-mode configuration
-  (add-hook 'org-mode-hook
-            (lambda ()
-              (make-variable-buffer-local 'yas/trigger-key)
-              (setq yas/trigger-key "C-c y")
-              (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
-              (define-key yas/keymap [tab] 'yas/next-field)))
-
-  ;; Wrap around region
-  (setq yas-wrap-around-region t)
+  (ac-config-default)
+  (ac-ispell-setup)
+  (setq ac-fuzzy-enable 1 )
 
   :custom
-  (yas-snippet-dirs '("~/.emacs.d/snippets"))
+  (ac-dwim t)
+  )
+
+;; yasnippet
+(use-package yasnippet
+  :ensure t
+  :ensure yasnippet-snippets
+  :pin melpa-stable
+
+  :init
+  (yas-global-mode 1)
+
+  :custom
   (yas-wrap-around-region t)
   )
 
@@ -442,7 +396,7 @@
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 
   :bind (
-         ("M-p" . ace-window))
+         ("C-x o" . ace-window))
   )
 
 ;; all-the-icons
@@ -477,50 +431,34 @@
          ("httpd\\.conf\\'"                  . apache-mode)
          ("sites-\\(available\\|enabled\\)/" . apache-mode)
          ("srm\\.conf\\'"                    . apache-mode))
-  :config
+
+  :init
   (add-hook 'apache-mode-hook 'nice-prog-hook)
   )
 
-;; auto-complete
-(use-package auto-complete
-  :ensure auto-complete
-  :ensure ac-emoji
-  :ensure ac-ispell
+;; arjen-grey-theme
+(use-package arjen-grey-theme
+  :ensure t
+  :if window-system
 
   :init
-  (require 'auto-complete)
-
-  :config
-  (require 'auto-complete-config)
-  (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-  (ac-config-default)
-  (ac-set-trigger-key "TAB")
-  (ac-set-trigger-key "<tab>")
-  (if (package-installed-p 'ac-ispell)
-      (ac-ispell-setup))
-
-  ;; resetting ac-sources
-  (setq-default ac-sources '(
-                             ac-source-yasnippet
-                             ac-source-abbrev
-                             ac-source-dictionary
-                             ac-source-words-in-same-mode-buffers
-                             ac-source-gtags
-                             ))
+  (add-to-list 'custom-safe-themes
+	       "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223")
+  (load-theme 'arjen-grey t)
   )
 
-;; auto-compile
-(use-package auto-compile
+;; auctex
+(use-package auctex
   :ensure t
-  :config (auto-compile-on-load-mode))
-
-(setq load-prefer-newer t)
+  :no-require t
+  )
 
 ;; beacon mode
 (use-package beacon
-  :diminish " 💡"
   :ensure t
+  :pin melpa-stable
 
+  :diminish " 🄱"
   :init
   (require 'beacon)
 
@@ -528,37 +466,30 @@
   (beacon-mode 1)
   )
 
-;; cc-mode
-(use-package cc-mode
-  :config
-  (add-hook 'c-mode-common-hook 'nice-prog-hook)
-  (add-hook 'c-mode-common-hook
-            (lambda ()
-              (font-lock-add-keywords nil
-                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\):" 1 font-lock-warning-face t)))))
-  )
-
-;; calfw
-(use-package calfw
-  :ensure t
-  :ensure calfw-org
-  :pin melpa-stable
-
-  :init
-  (require 'calfw)
-  (require 'calfw-org)
-  )
-
 ;; [c]perl-mode
 (use-package cperl-mode
-  :config
-  (add-hook 'cperl-mode-hook 'nice-prog-hook)
-  (add-hook 'cperl-mode-hook
-            (lambda ()
-              (font-lock-add-keywords nil
-                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\):" 1 font-lock-warning-face t)))))
-
   :mode ("\\.cgi\\'" . cperl-mode)
+
+  :init
+  (defalias 'perl-mode 'cperl-mode)
+  (add-to-list 'exec-path
+	       "~/perl5/bin")
+
+  :config
+  ;; Functions for perltidy
+  (defun cmf/perltidy-region ()
+    "Run perltidy on the current region."
+    (interactive)
+    (save-excursion
+      (shell-command-on-region (point) (mark) "perltidy -q" nil t))
+    )
+
+  (defun cmf/perltidy-defun ()
+    "Run perltidy on the current defun."
+    (interactive)
+    (save-excursion (mark-defun)
+		    (perltidy-region))
+    )
 
   :custom
   (cperl-continued-brace-offset -8)
@@ -569,43 +500,39 @@
   (cperl-font-lock t)
   (cperl-highlight-variables-indiscriminately t)
   (cperl-indent-level 8)
-
   )
 
 ;; crontab-mode
 (use-package crontab-mode
   :ensure t
-  :defer t
+  :no-require t
+
   :mode (("\\.cron\\(tab\\)?\\'" . crontab-mode)
          ("cron\\(tab\\)?\\."    . crontab-mode))
   )
 
-;; csv-nav-mode
-(use-package csv-nav-mode
-  :ensure csv-nav
-  :defer t
-  :mode ("\\.csv\\'" . csv-nav-mode)
-  )
-
 ;; eldoc
 (use-package eldoc
-  :diminish eldoc-mode " 📔"
+  :diminish eldoc-mode " Doc"
   )
 
 ;; emojify
 (use-package emojify
-  :if window-system
+  ;; While the melpa version of emojify supports an experimental
+  ;; version of global-emojify-mode-line-mode, enabling this causes
+  ;; issues with cutting & pasting text, so will revisit that option
+  ;; when it becomes more stable.
   :ensure t
+  :if window-system
+  :pin melpa-stable
 
   :config
   (global-emojify-mode)
-  (global-emojify-mode-line-mode)
   )
 
 ;; flycheck
 (use-package flycheck
   :ensure t
-  :defer t
 
   :init
   (global-flycheck-mode)
@@ -614,16 +541,24 @@
   (flycheck-disabled-checkers (quote (php-phpcs)))
   (flycheck-highlighting-mode 'lines)
   (flycheck-phpcs-standard "PSR2")
-
   )
 
 ;; flyspell
 (use-package flyspell
+  :ensure t
+  :ensure flyspell-correct-ivy
+
+  :bind (:map flyspell-mode-map
+	      ("C-c ;" . flyspell-correct-previous-word-generic))
+
+  :init
+  (require 'flyspell-correct-ivy)
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+  (add-hook 'text-mode-hook 'flyspell-mode)
+
   :config
   (setq-default ispell-program-name "aspell")
-
-  :custom
-  (flycheck-mode-line-prefix "🦋")
+  (ac-flyspell-workaround)
   )
 
 ;; forecast
@@ -631,7 +566,7 @@
     (message "Forecast requires Emacs version 24.4 or later.  Unable to install")
   (use-package forecast
     :ensure t
-    :defer t
+    :no-require t
 
     :custom
     (forecast-latitude cmf-latitude)
@@ -643,17 +578,10 @@
     )
   )
 
-;; ggtags
-(use-package ggtags
-  :ensure t
-  :defer t
-  :diminish ggtags-mode " 🄶"
-  )
-
 ;; gited - dired for git branches
 (use-package gited
   :ensure t
-  :defer t
+  :no-require t
 
   :bind (
          ("C-x C-g" . gited-list-branches)
@@ -661,23 +589,16 @@
 
   )
 
-;; go-mode
-(use-package go-mode
-  :no-require t
+;; ggtags
+(use-package ggtags
+  :ensure t
 
-  :ensure go-mode
-  :ensure go-autocomplete
-  :ensure go-direx
-  :ensure go-eldoc
-  :ensure go-mode
-  :ensure go-snippets
+  :diminish ggtags-mode " 🄶"
 
-  :defer t
-
-  :mode ("\\.go\\'" . go-mode)
-
-  :config
-  (add-hook 'go-mode-hook 'nice-prog-hook)
+  :init
+  (add-hook 'prog-mode-hook
+            (lambda ()
+              (ggtags-mode t)))
   )
 
 ;; highlight-parentheses
@@ -686,11 +607,6 @@
   :diminish highlight-parentheses-mode
 
   :config
-  (add-hook 'emacs-lisp-mode-hook
-            (lambda()
-              (highlight-parentheses-mode)
-              ))
-
   (global-highlight-parentheses-mode)
   )
 
@@ -699,18 +615,11 @@
   :mode ("\\.tmpl\\'" . html-mode)
   )
 
-;; indent-guide
-(use-package indent-guide
-  :ensure t
-  :defer t
-  :diminish indent-guide-mode
-  )
-
-;; ivy-mode
-(use-package ivy-mode
+;; ivy
+(use-package ivy
   :ensure counsel
-  :ensure flyspell-correct-ivy
   :ensure swiper
+  :diminish ivy-mode
 
   :bind (
          ("C-s"     . swiper)
@@ -727,7 +636,6 @@
          ("C-c g"   . counsel-git)
          ("C-c j"   . counsel-git-grep)
          ("C-x l"   . counsel-locate)
-         ("C-c ;"   . flyspell-correct-previous-word-generic)
          )
 
   :init
@@ -737,7 +645,6 @@
   (ivy-use-virtual-buffers t)
   (ivy-height 10)
   (ivy-count-format "(%d/%d) ")
-
   )
 
 ;; jinja2-mode
@@ -752,30 +659,20 @@
 (use-package json-mode
   :ensure t
 
-  :config
+  :init
   ;; Associated JSON files with nice-prog-hook
   (add-hook 'json-mode-hook 'nice-prog-hook)
   )
 
-;; lisp-mode
-(use-package lisp-mode
-  :config
-  ;; Define a basic hook for Emacs lisp files
-  (defun nice-elisp-hook ()
-    "Hook for sane editing of Lisp files."
-    (setq indent-tabs-mode nil)
-    )
-
-  (add-hook 'emacs-lisp-mode-hook 'nice-prog-hook)
-  (add-hook 'emacs-lisp-mode-hook 'nice-elisp-hook)
-  (add-hook 'emacs-lisp-mode-hook
-            (lambda ()
-              (font-lock-add-keywords nil
-                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\):" 1 font-lock-warning-face t)))))
-  )
-
 ;; log-edit-mode
 (use-package log-edit
+  :mode (
+         ("COMMIT.*"   . log-edit-mode)
+         ("ci-comment" . log-edit-mode)
+         ("bzr_log\\." . log-edit-mode)
+         ("pico\\."    . log-edit-mode)
+         )
+
   :init
   (add-hook 'log-edit-mode-hook 'nice-text-hook)
   (add-hook 'log-edit-mode-hook 'turn-on-orgstruct++)
@@ -795,41 +692,36 @@
 ;; make-mode
 (use-package make-mode
   :mode ("[Mm]akefile\\." . makefile-mode)
-
-  :config
-  ;; Define a basic hook for sane editing of makefiles
-  (defun nice-makefile-hook ()
-    "Hook for sane editing of Makefiles."
-    (if (>= emacs-major-version 23)
-        (linum-mode t))
-    )
-
-  (add-hook 'makefile-mode-hook 'nice-makefile-hook)
-  )
-
-;; markdown-mode
-(use-package markdown-mode
-  :ensure t
-  :defer t
   )
 
 ;; nxml-mode
 (use-package nxml-mode
+  :ensure auto-complete-nxml
+
   :mode (("\\.xsd\\'"  . xml-mode)
          ("\\.wsdl\\'" . xml-mode))
 
   :config
-  ;; Define a nice hook for editing nXML files
+  ;; Under normal circumstances, I would add nice-prog-hook to nxml
+  ;; mode and be done with it.  The issue here is that nice-prog-hook
+  ;; includes enabling auto-fill-mode, which wrecks havoc when editing
+  ;; XML files at work.  So, create my own hook explicitly disabling
+  ;; auto-fill-mode
   (defun nice-nxml-hook ()
-    "Hook for sane editing of nXML files."
+    "Hook for sane editing of XML files."
     (if (>= emacs-major-version 23)
-        (linum-mode t))
-    (if (package-installed-p 'indent-guide)
-        (indent-guide-mode t))
+	(linum-mode t))
     (auto-fill-mode -1)
     )
 
+  ;; Apply hook
   (add-hook 'nxml-mode-hook 'nice-nxml-hook)
+
+  ;; Keystroke for popup help about something at point.
+  (setq auto-complete-nxml-popup-help-key "C-:")
+
+  ;; Keystroke for toggle on/off automatic completion.
+  (setq auto-complete-nxml-toggle-automatic-key "C-c C-t")
   )
 
 ;; org-mode
@@ -837,8 +729,6 @@
   :ensure org-ac
   :ensure org-bullets
   :ensure ox-twbs
-
-  :defer t
 
   :bind (
          ("C-c l" . org-store-link)
@@ -852,6 +742,9 @@
   (require 'org-bullets)
 
   :config
+
+  ;; Org-mode settings are kept in a different file
+  (require 'cmf-org-settings)
   ;; Define a basic hook for sane editing of org-mode documents
   (defun nice-org-hook ()
     "Hook for sane editing of 'org-mode' documents."
@@ -859,8 +752,6 @@
     (org-ac/setup-current-buffer)
     (if (equal (car (split-string org-version ".")) 8)
         (require 'ox-md))
-    (if (package-installed-p 'undo-tree)
-        (undo-tree-mode t))
     )
 
   ;; Persist org-clock appropriately
@@ -869,73 +760,48 @@
   ;; Org-mode hooks
   (add-hook 'org-mode-hook 'nice-text-hook)
   (add-hook 'org-mode-hook 'nice-org-hook)
-  (add-hook 'org-mode-hook 'ac-emoji-setup)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
   )
 
 ;; php-mode
 (use-package php-mode
-  :ensure ac-php
-  :ensure php-mode
+  :ensure t
   :ensure php-auto-yasnippets
   :ensure php-eldoc
   :ensure php-extras
   :ensure phpcbf
   :ensure phpunit
 
-  :defer t
+  :no-require t
+
   :mode ("\\.php\\'" . php-mode)
 
+  :bind (:map php-mode-map
+	      ("C-c C--" . php-current-class)
+	      ("C-c C-=" . php-current-namespace)
+	      ("C-c C-y" . 'yas/create-php-snippet)
+	      ("C-x p" . 'phpdoc)
+	      )
+
+  :init
+  (require 'php-ext)
+  (add-hook 'php-mode-hook 'nice-prog-hook)
+  (add-hook 'php-mode-hook (lambda () (subword-mode 1)))
+
   :config
-  ;; Define a nice hook for editing php files
-  (defun nice-php-hook()
-    "Hook for sane editing of PHP files."
-    (c-set-style "psr2")
-    (if (package-installed-p 'php-auto-yasnippets)
-        (define-key php-mode-map (kbd "C-c C-y") 'yas/create-php-snippet))
-    (define-key php-mode-map (kbd "C-x p") 'phpdoc)
-    )
-
-  ;; For PHP files
-  (add-hook 'php-mode-hook 'nice-php-hook)
-  (add-hook 'php-mode-hook
-            (lambda ()
-              (font-lock-add-keywords nil
-                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\)" 1 font-lock-warning-face t)))))
-
-  (add-hook 'php-mode-hook
-            '(lambda ()
-               (require 'ac-php)
-               (setq ac-sources (cons 'ac-source-php ac-sources))
-               (ac-php-core-eldoc-setup ) ;; enable eldoc
-               
-               (define-key php-mode-map  (kbd "C-]") 'ac-php-find-symbol-at-point)   ;goto define
-               (define-key php-mode-map  (kbd "C-t") 'ac-php-location-stack-back)    ;go back
-               ))
-  
-  ;; Load phpdocumentor
+  ;; Load php documentor
   (load-file "~/.emacs.d/thirdparty/phpdocumentor.el")
 
   :custom
+  (php-mode-coding-style (quote psr2))
+  ;; (php-lineup-cascaded-calls t)
   (phpcbf-standard "PSR2")
-
-  )
-
-;; planet-theme
-(if (not(equal window-system nil))
-    (use-package planet-theme
-      :ensure t
-
-      :init
-      (load-theme 'planet t)
-      )
   )
 
 ;; pretty-lambdada
 (if (version< emacs-version "24.4")
     (use-package pretty-lambdada
       :ensure t
-      :defer t
 
       :init
       (require 'pretty-lambdada)
@@ -956,14 +822,11 @@
 ;; sed-mode
 (use-package sed-mode
   :ensure t
+  :no-require t
 
   :mode (
          ("*.sed" . sed-mode)
          )
-
-  :init
-  (add-hook 'sed-mode-hook 'nice-prog-hook)
-
   )
 
 ;; smart-mode-line
@@ -971,27 +834,21 @@
   :ensure t
 
   :init
-  (add-to-list 'custom-safe-themes
-               "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa")
-  (add-to-list 'custom-safe-themes
-               "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e")
+  (setq sml/no-confirm-load-theme t)
   (sml/setup)
 
   :config
-  (if (equal custom-file cmf-custom-16)
-      (sml/apply-theme 'light)
-    (sml/apply-theme 'dark)
-    )
-  )
+  (if (equal window-system nil)
+      (progn
+	(sml/apply-theme 'dark)
+	(setq sml/read-only-char " 🔒"))
+    (progn
+      (sml/apply-theme 'dark)
+      (setq sml/read-only-char " 🅛"))
+    (sml/apply-theme 'respectful))
 
-;; sh-script
-(use-package sh-script
-  :config
-  (add-hook 'sh-mode-hook 'nice-prog-hook)
-  (add-hook 'sh-mode-hook
-            (lambda ()
-              (font-lock-add-keywords nil
-                                      '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\):" 1 font-lock-warning-face t)))))
+  :custom
+  (sml/modified-char "★")
   )
 
 ;; sql
@@ -999,65 +856,36 @@
   :mode (
          ("sql*" . sql-mode))
 
-  :config
-  ;; Define a nice hook for editing SQL files
-  (defun nice-sql-hook ()
-    "Hook for sane editing of SQL files."
-    (if (>= emacs-major-version 23)
-        (linum-mode t))
-    (if (package-installed-p 'undo-tree)
-        (undo-tree-mode t))
-    (auto-fill-mode t)
-    (electric-pair-mode t)
-    )
-
-  (add-hook 'sql-mode-hook 'nice-sql-hook)
+  :init
+  (add-hook 'sql-mode-hook 'nice-prog-hook)
   )
 
 ;; sudo-edit
 (use-package sudo-edit
   :ensure t
-  )
-
-;; tex
-(use-package tex
-  :ensure auctex
-  )
-
-;; text-mode
-(use-package text-mode
-  :mode (
-         ("COMMIT.*"   . nice-msg-mode)
-         ("ci-comment" . nice-msg-mode)
-         ("bzr_log\\." . nice-msg-mode)
-         ("pico\\."    . nice-msg-mode)
-         )
-
-  :init
-  (add-hook 'text-mode-hook     'nice-text-hook)
+  :no-require t
   )
 
 ;; twilight-theme
-(if (equal custom-file cmf-custom-256)
-    (use-package twilight-theme
-      :ensure t
-
-      :init
-      (load-theme 'twilight t)
-      )
+(use-package twilight-theme
+  :ensure t
+  :if (equal custom-file cmf-custom-256)
+  :init
+  (load-theme 'twilight t)
   )
 
 ;; twittering-mode
 (use-package twittering-mode
   :ensure t
-  :defer t
+  :no-require t
 
-  :config
+  :init
   (add-hook 'twittering-edit-mode-hook 'nice-text-hook)
 
-  :if window-system
   :config
-  (twittering-icon-mode t)
+  (unless (equal window-system nil)
+    (setq twittering-icon-mode t)
+    )
 
   :custom
   (twittering-display-remaining t)
@@ -1070,19 +898,26 @@
 
 ;; undo-tree
 (use-package undo-tree
-  :diminish " 🌲"
   :ensure t
+  :diminish " 🆃"
+
+  :init
+  (add-hook 'prog-mode-hook
+            (lambda ()
+              (undo-tree-mode t)))
+  (add-hook 'text-mode-hook
+            (lambda ()
+              (undo-tree-mode t)))
 
   :custom
   (undo-tree-visualizer-diff t)
   (undo-tree-visualizer-timestamps t)
   )
 
+
 ;; vc-fossil
 (use-package vc-fossil
   :ensure t
-  :defer t
-
   :init
   (require 'vc-fossil)
 
@@ -1093,9 +928,6 @@
 ;; which-func
 (use-package which-func
   :no-require t
-  :config
-  (custom-set-faces
-   '(which-func ((t (:foreground "goldenrod")))))
 
   :custom
   (which-function-mode t)
@@ -1113,7 +945,8 @@
 ;; with-editor
 (use-package with-editor
   :no-require t
-  :config
+
+  :init
   (add-hook 'with-editor-mode-hook 'nice-text-hook)
   (add-hook 'with-editor-mode-hook 'turn-on-orgstruct++)
   )
@@ -1121,22 +954,25 @@
 ;; xkcd
 (use-package xkcd
   :ensure t
+  :if window-system
+  :no-require t
   )
 
 ;; yaml-mode
 (use-package yaml-mode
   :ensure t
+  :no-require t
 
   :mode ("\\.sls\\'" . yaml-mode)
-  :config
-  (add-hook 'yaml-mode-hook 'nice-prog-hook)
+  :init
+  (add-hook 'yaml-mode-hook 'prog-mode-hook)
   )
 
 ;; Miscellany
 ;; --------------------------------------------------------------------
 
-;; Diminished functions
-(diminish 'ivy-mode "")
+;; Diminished modes that we have to put here as :diminish doesn't seem
+;; to want to work :/
 (diminish 'yas-minor-mode " 🅈")
 
 ;; Do some byte recompilation
