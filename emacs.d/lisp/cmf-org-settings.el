@@ -108,7 +108,7 @@
   %?" :empty-lines 1)
      ("j" "Journal Entry" entry
       (file+datetree "~/org/journal.org")
-      "** %^{Heading} %^G
+      "** %^{Heading} :JOURNAL:%^G
   Added: %U
 
   %?" :empty-lines 1)

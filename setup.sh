@@ -37,7 +37,7 @@ RSYNC=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS="-Ccav --delete --exclude-from=${RSYNC_EXCLUDE}"
 MAKE=make
-COPYRIGHT='Copyright (c) 2000-2017 Christopher M. Fuhrman'
+COPYRIGHT='Copyright (c) 2000-2018 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 DRYRUN=""
 UNINSTALL=0
@@ -282,6 +282,18 @@ goSetup ()
 	if ! type -p go >/dev/null; then
 		inform $L2 $TRUE \
 		       "${BOLD}$YELLOW}NOTICE:${NORMAL} Go binary not found in path"
+	fi
+
+	# Install gocode for auto-completion
+	if [ ! -f {$GOBIN}/gocode ]; then
+		inform $L2 $TRUE "Installing gocode"
+		go get -u github.com/nsf/gocode
+	fi
+
+	# Install gotags for go-direx
+	if [ ! -f {$GOBIN}/gotags ]; then
+		inform $L2 $TRUE "Installing gotags"
+		go get -u github.com/jstemmer/gotags
 	fi
 }
 

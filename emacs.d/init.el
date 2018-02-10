@@ -51,6 +51,7 @@
                         "/usr/pkg/bin"
                         "/usr/local/bin"
                         "~/.composer/vendor/bin"
+                        "~/go/bin"
                         "/Library/TeX/texbin"))
 
 ;; Customize generic variables
@@ -387,6 +388,17 @@
   (yas-wrap-around-region t)
   )
 
+;; popwin
+(use-package popwin
+  :ensure t
+
+  :config
+  (setq display-buffer-function 'popwin:display-buffer)
+
+  :custom
+  (popwin-mode t)
+  )
+
 ;; ace-window
 (use-package ace-window
   :ensure t
@@ -403,8 +415,7 @@
 (use-package all-the-icons
   :if window-system
   :ensure t
-  :ensure all-the-icons-dired
-  :ensure all-the-icons-ivy
+  :pin melpa-stable
 
   :config
 
@@ -416,8 +427,31 @@
       (all-the-icons-install-fonts t)
       (with-temp-buffer (write-file cmf-fonts-installed-file)))
     )
+  )
+
+;; all-the-icons-dired
+(use-package all-the-icons-dired
+  :if window-system
+  :ensure t
+  :after all-the-icons
+
+  :config
+  (defun nice-all-the-icons-dired-hook ()
+    "Hook for disabling font-lock-mode for dired buffers w/ all-the-icons"
+    (font-lock-mode 0)
+    )
 
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+  (add-hook 'dired-mode-hook 'nice-all-the-icons-dired-hook)
+  )
+
+(use-package all-the-icons-ivy
+  :if window-system
+  :ensure t
+  :after all-the-icons
+  :pin melpa-stable
+
+  :config
   (all-the-icons-ivy-setup)
   )
 
@@ -445,6 +479,9 @@
   (add-to-list 'custom-safe-themes
 	       "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223")
   (load-theme 'arjen-grey t)
+
+  :custom-face
+  (highlight ((t (:distant-foreground "LightYellow3" :background "DarkOliveGreen"))))
   )
 
 ;; auctex
@@ -464,6 +501,36 @@
 
   :config
   (beacon-mode 1)
+  )
+
+;; calfw
+(use-package calfw
+  :ensure t
+  :ensure calfw-gcal
+  :ensure calfw-ical
+  :ensure calfw-org
+  :pin melpa-stable
+
+  :init
+  (require 'calfw)
+  (require 'calfw-ical)
+  (require 'calfw-org)
+
+  ;; See https://github.com/kiwanami/emacs-calfw for setting up your
+  ;; own calendars
+  :config
+  (defun cmf-open-calendar ()
+    (interactive)
+    (cfw:open-calendar-buffer :contents-sources
+			      (list
+			       (cfw:org-create-source "Green")  ; orgmode source
+			       (cfw:ical-create-source "Google Calendar"
+						       "https://calendar.google.com/calendar/ical/jsmith%40example.com/private-set-me-up/basic.ics"
+						       "Orange")
+			       (cfw:ical-create-source "Trips via Kayak"
+			       			       "https://www.kayak.com/trips/ical/tf/blahblah/blahblah/calendar.ics"
+			       			       "SteelBlue")
+    )
   )
 
 ;; [c]perl-mode
@@ -511,6 +578,17 @@
          ("cron\\(tab\\)?\\."    . crontab-mode))
   )
 
+;; diff-mode
+(use-package diff
+  :config
+  (push '("[Dd]iff"
+	  :regexp   t
+	  :noselect t
+	  :position right
+	  :width    0.40)
+	popwin:special-display-config)
+  )
+
 ;; eldoc
 (use-package eldoc
   :diminish eldoc-mode " Doc"
@@ -538,7 +616,7 @@
   (global-flycheck-mode)
 
   :custom
-  (flycheck-disabled-checkers (quote (php-phpcs)))
+  (flycheck-disabled-checkers (quote (php-phpcs go-build)))
   (flycheck-highlighting-mode 'lines)
   (flycheck-phpcs-standard "PSR2")
   )
@@ -578,6 +656,13 @@
     )
   )
 
+;; geben
+(use-package geben
+  :ensure t
+  :pin melpa-stable
+  :no-require t
+  )
+
 ;; gited - dired for git branches
 (use-package gited
   :ensure t
@@ -599,6 +684,37 @@
   (add-hook 'prog-mode-hook
             (lambda ()
               (ggtags-mode t)))
+  )
+
+;; go-mode
+(use-package go-mode
+  :ensure t
+  :ensure go-autocomplete
+  :ensure go-direx
+  :ensure go-eldoc
+  :ensure go-snippets
+
+  :pin melpa-stable
+  :no-require t
+
+  :mode ("\\.go\\'" . go-mode)
+
+  :bind (:map go-mode-map
+	      ("C-c C-j" . go-direx-pop-to-buffer))
+
+  :init
+  (add-hook 'go-mode-hook 'nice-prog-hook)
+  (add-hook 'go-mode-hook 'go-eldoc-setup)
+  (add-hook 'go-mode-hook (lambda () (subword-mode 1)))
+
+  :config
+  (push '("^\*go-direx:"
+	  :regexp    t
+	  :position  left
+	  :width     0.2
+	  :dedicated t
+	  :stick     t)
+	popwin:special-display-config)
   )
 
 ;; highlight-parentheses
@@ -763,6 +879,11 @@
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
   )
 
+;; org-gcal
+;;
+;; LATER: When org-gcal is compliant with version 8.2.10 (Default
+;; under Emacs 25.3)
+
 ;; php-mode
 (use-package php-mode
   :ensure t
@@ -780,10 +901,11 @@
 	      ("C-c C--" . php-current-class)
 	      ("C-c C-=" . php-current-namespace)
 	      ("C-c C-y" . 'yas/create-php-snippet)
-	      ("C-x p" . 'phpdoc)
+	      ("C-x p"   . php-insert-doc-block)
 	      )
 
   :init
+  (require 'php-doc)
   (require 'php-ext)
   (add-hook 'php-mode-hook 'nice-prog-hook)
   (add-hook 'php-mode-hook (lambda () (subword-mode 1)))
@@ -872,6 +994,9 @@
   :if (equal custom-file cmf-custom-256)
   :init
   (load-theme 'twilight t)
+
+  :custom-face
+  (cfw:face-toolbar-button-off ((t (:foreground "grey65" :weight bold))))
   )
 
 ;; twittering-mode
