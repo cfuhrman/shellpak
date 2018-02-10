@@ -57,9 +57,9 @@ The following operating systems are known to be supported:
 
 -   Mac OS X 10.9 (Darwin)
 -   NetBSD 6.1.x
--   OpenBSD 5.4
+-   OpenBSD 5.8
 -   CentOS 6.5
--   Debian 7 (Wheezy) and derivatives
+-   Debian 9 (Stretch) and derivatives
 -   SunOS solaris 5.10
 -   AIX 1 7
 
@@ -147,7 +147,7 @@ Christopher M. Fuhrman
 
 # Copyright<a id="sec-6" name="sec-6"></a>
 
-Copyright (c) 2000-2017 Christopher M. Fuhrman
+Copyright (c) 2000-2018 Christopher M. Fuhrman
 All rights reserved.
 
 All files contained herein can be redistributed and/or modified
