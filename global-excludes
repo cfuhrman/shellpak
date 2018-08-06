@@ -1,8 +1,10 @@
 *.tar.gz
 *~
+.abbrev_defs
 .icon-fonts-installed
 .fslckout
 .org-id-locations
+.python-environments
 GPATH
 GRTAGS
 GTAGS
@@ -21,6 +23,6 @@ ido.last
 org-clock-save.el
 recentf
 network-security.data
-tramp/
+tramp
 url/
 xkcd/

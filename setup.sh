@@ -43,12 +43,17 @@ DRYRUN=""
 UNINSTALL=0
 GOINSTALL=0
 GOPATH=${HOME}/go
+PYINSTALL=0
 BUILD_EMACS_PACKAGES=0
 EMACS_OUTPUT_LOG=${HOME}/tmp/emacs-pkg-install-$$-`date +%y%m%d`.log
 NOLINK=0            # If set to 1 (true), then the following apply:
                     #   - Linked files will not be created
                     #   - ~/tmp directory will not be created
                     #   - Existing files in $HOME will not be backed up
+
+# Variables that can be overridden
+: ${PYTHON_VERSION:=3}
+: ${PIP_BIN:=pip3}
 
 # Read only constants
 readonly L1=1
@@ -82,16 +87,17 @@ else
 fi
 
 # Dot-files to link
-HOMEDOTFILES=('bash_logout'                     \
-              'bash_profile'                    \
-              'bashrc'                          \
-              'emacs.d'                         \
-              'gitconfig'                       \
-              'indent.pro'                      \
-              "mg"                              \
-              'perltidyrc'                      \
-              'tmux.conf'                       \
-              'screenrc'                        \
+HOMEDOTFILES=('bash_logout'			\
+              'bash_profile'			\
+              'bashrc'				\
+              'emacs.d'				\
+              'gitconfig'			\
+              'indent.pro'			\
+              "mg"				\
+	      "nanorc"				\
+              'perltidyrc'			\
+              'tmux.conf'			\
+              'screenrc'			\
               'Xresources'
              )
 
@@ -297,6 +303,32 @@ goSetup ()
 	fi
 }
 
+# Function: pySetup
+#
+# Installs the tools necessary for python development
+pySetup ()
+{
+	local PYTHON_PKGS=('jedi'		\
+			   'flake8'		\
+			   'autopep8'		\
+			   'yapf'		\
+			   'virtualenv'
+			  )
+
+	# Make sure that pip is installed
+	if ! type ${PIP_BIN} >/dev/null; then
+		inform $L1 $TRUE "${RED}ERROR${NORMAL}: python ${PIP_BIN} is not installed on this system.  Cowardly aborting!"
+		exit 1
+	fi
+
+	inform $L1 $TRUE "Setting up development environment for python${PYTHON_VERSION}"
+
+	for pyPkg in ${PYTHON_PKGS[@]}; do
+		inform $L2 $TRUE " ${pyPkg}"
+		${PIP_BIN} install --prefix=$HOME $pyPkg
+	done
+}
+
 # Function: headerDisplay
 #
 # Displays a header for the world to see
@@ -369,6 +401,7 @@ usage: ${0##*/} -h This screen                             \\
                    of backup files
                 -n Do _not_ link files                     \\
                 -g Set up/remove GoLang Development        \\
+		-p Set up Python Development               \\
                 -u Uninstall ShellPAK                      \\
                 -r perform a trial run with no changes made
                    (implies -n)
@@ -382,7 +415,7 @@ STDERR
 
 headerDisplay
 
-args=$(getopt d:b:hnrgu $*)
+args=$(getopt d:b:hnrpgu $*)
 
 set -- $args
 
@@ -417,6 +450,10 @@ do
 
 	-g)
 		GOINSTALL=1
+		;;
+
+	-p)
+		PYINSTALL=1
 		;;
 
         -u)
@@ -511,6 +548,11 @@ fi
 # Do we want to set up our environment for golang development?
 if [ ${GOINSTALL} -ne 0 ]; then
 	goSetup
+fi
+
+# Do we want to set up our environment for python development?
+if [ ${PYINSTALL} -ne 0 ]; then
+	pySetup
 fi
 
 # Set up appropriate symlinks

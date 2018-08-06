@@ -59,7 +59,7 @@ DISTFILE=shellpak-${FOSSIL_BRANCH}-${CKOUT_DATE}.tar.gz
 # Command options
 RSYNC_BIN=rsync
 RSYNC_EXCLUDE=global-excludes
-RSYNC_OPTS=-Ccavz --exclude='svn-commit*' --exclude='.AppleDouble' --exclude='*~' --exclude-from=${RSYNC_EXCLUDE} --delete
+RSYNC_OPTS=-Ccavz --exclude='svn-commit*' --exclude='.AppleDouble' --exclude='*~' --exclude='.DS_Store' --exclude-from=${RSYNC_EXCLUDE} --delete --timeout=30
 RSYNC_CONN_OPTS=-e ssh
 RSYNC_PUBLIC_OPTS=-Ccavz --exclude=GPATH --exclude=GRTAGS --exclude=GTAGS --exclude=docs/*.txt \
   --exclude=.fslckout --exclude=config --exclude=ext --exclude='.AppleDouble' --exclude='*~' \
