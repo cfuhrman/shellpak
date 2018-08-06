@@ -1,0 +1,14 @@
+# -*- mode: conf -*-
+#
+# Configuration file for nano(1)
+#
+set regexp
+set smooth
+set speller aspell
+
+# Colors
+set titlecolor     white,red
+set statuscolor    white,red
+set errorcolor     red,white
+set keycolor       white,red
+

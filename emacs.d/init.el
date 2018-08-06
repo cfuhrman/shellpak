@@ -49,6 +49,7 @@
 ;; List of paths to search
 (defvar cmf-path-list '("/usr/texbin"
                         "/usr/pkg/bin"
+			"/opt/pkg/bin"
                         "/usr/local/bin"
                         "~/.composer/vendor/bin"
                         "~/go/bin"
@@ -157,7 +158,7 @@
   )
 
 ;; Override stock use-fancy-splash-screens-p ()
-(if (version< emacs-version "25.2.1")
+(if (and (version< emacs-version "25.2.1") (not(version< emacs-version "24.5")))
     (defun use-fancy-splash-screens-p ()
       "Return t if fancy splash screens should be used."
       (when (and (display-graphic-p)
@@ -222,10 +223,10 @@
       'y-or-n-p)
 
 (fset 'align-on-equal
-   [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g tab return ?= return])
+      [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g tab return ?= return])
 
 (fset 'align-on-hash-arrow
-   [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g tab return ?= ?> return])
+      [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g tab return ?= ?> return])
 
 
 ;; Keyboard Bindings
@@ -252,12 +253,7 @@
 ;; Customize font under X
 (if (equal window-system 'x)
     (set-face-attribute 'default nil
-                        :family  "DejaVu Sans Mono"
-                        :foundry 'unknown
-                        :slant   'normal
-                        :weight  'normal
-                        :height   100
-                        :width   'normal))
+                        :height   100))
 
 ;; Enable Apple Color Emoji
 (if (equal window-system 'ns)
@@ -322,18 +318,16 @@
   (use-package osx-location
     :ensure t
 
-    :init
-    (add-hook 'osx-location-changed-hook
-              (lambda ()
-                (setq calendar-latitude osx-location-latitude
-                      calendar-longitude osx-location-longitude
-                      calendar-location-name (format "%s, %s" osx-location-latitude osx-location-longitude)
-                      forecast-latitude osx-location-latitude
-                      forecast-longitude osx-location-longitude
-                      forecast-city (format "%s, %s" osx-location-latitude osx-location-longitude)
-                      )
-                )
-              )
+    :hook
+    (osx-location-changed .
+			  (lambda ()
+			    (setq calendar-latitude osx-location-latitude
+				  calendar-longitude osx-location-longitude
+				  calendar-location-name (format "%s, %s" osx-location-latitude osx-location-longitude)
+				  forecast-latitude osx-location-latitude
+				  forecast-longitude osx-location-longitude
+				  forecast-city (format "%s, %s" osx-location-latitude osx-location-longitude)))
+			  )
 
     :config
     (osx-location-watch)
@@ -350,7 +344,6 @@
 ;; auto-complete
 (use-package auto-complete
   :ensure t
-  :ensure ac-ispell
   :ensure fuzzy
 
   :pin melpa-stable
@@ -362,13 +355,8 @@
               ("\C-p" . ac-previous)
 	      )
 
-  :init
-  (add-hook 'text-mode-hook 'ac-ispell-ac-setup)
-  (add-hook 'log-mode-hook  'ac-ispell-ac-setup)
-
   :config
   (ac-config-default)
-  (ac-ispell-setup)
   (setq ac-fuzzy-enable 1 )
 
   :custom
@@ -388,71 +376,61 @@
   (yas-wrap-around-region t)
   )
 
-;; popwin
-(use-package popwin
-  :ensure t
-
-  :config
-  (setq display-buffer-function 'popwin:display-buffer)
-
-  :custom
-  (popwin-mode t)
-  )
-
 ;; ace-window
-(use-package ace-window
-  :ensure t
-  :pin melpa-stable
+(if (not(version< emacs-version "24.4"))
+  (use-package ace-window
+    :ensure t
+    :pin melpa-stable
 
-  :config
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+    :config
+    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 
-  :bind (
-         ("C-x o" . ace-window))
+    :bind (
+	   ("C-x o" . ace-window))
+    )
   )
 
 ;; all-the-icons
-(use-package all-the-icons
-  :if window-system
-  :ensure t
-  :pin melpa-stable
+(if (version< emacs-version "24.4")
+    (message "All-the-icons requires Emacs version 24.4 or later.  Unable to install")
+  (use-package all-the-icons
+    :if window-system
+    :ensure t
+    :pin melpa-stable
 
-  :config
+    :config
 
-  ;; Install the font files only if we have not already done so
-  (defvar cmf-fonts-installed-file "~/SHELL/emacs.d/.icon-fonts-installed")
-  (unless (file-exists-p cmf-fonts-installed-file)
-    (progn
-      (message "Installing icon fonts")
-      (all-the-icons-install-fonts t)
-      (with-temp-buffer (write-file cmf-fonts-installed-file)))
-    )
-  )
-
-;; all-the-icons-dired
-(use-package all-the-icons-dired
-  :if window-system
-  :ensure t
-  :after all-the-icons
-
-  :config
-  (defun nice-all-the-icons-dired-hook ()
-    "Hook for disabling font-lock-mode for dired buffers w/ all-the-icons"
-    (font-lock-mode 0)
+    ;; Install the font files only if we have not already done so
+    (defvar cmf-fonts-installed-file "~/SHELL/emacs.d/.icon-fonts-installed")
+    (unless (file-exists-p cmf-fonts-installed-file)
+      (progn
+	(message "Installing icon fonts")
+	(all-the-icons-install-fonts t)
+	(with-temp-buffer (write-file cmf-fonts-installed-file)))
+      )
     )
 
-  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-  (add-hook 'dired-mode-hook 'nice-all-the-icons-dired-hook)
-  )
+  ;; all-the-icons-dired
+  (use-package all-the-icons-dired
+    :if window-system
+    :ensure t
+    :after all-the-icons
 
-(use-package all-the-icons-ivy
-  :if window-system
-  :ensure t
-  :after all-the-icons
-  :pin melpa-stable
+    :init
+    (require 'font-lock+)
 
-  :config
-  (all-the-icons-ivy-setup)
+    :hook (dired-mode . all-the-icons-dired-mode)
+    )
+
+  (use-package all-the-icons-ivy
+    :if window-system
+    :ensure t
+    :after all-the-icons
+    :pin melpa-stable
+
+    :config
+    (all-the-icons-ivy-setup)
+    )
   )
 
 ;; apache-mode
@@ -466,8 +444,7 @@
          ("sites-\\(available\\|enabled\\)/" . apache-mode)
          ("srm\\.conf\\'"                    . apache-mode))
 
-  :init
-  (add-hook 'apache-mode-hook 'nice-prog-hook)
+  :hook (apache-mode . nice-prog-hook)
   )
 
 ;; arjen-grey-theme
@@ -578,17 +555,6 @@
          ("cron\\(tab\\)?\\."    . crontab-mode))
   )
 
-;; diff-mode
-(use-package diff
-  :config
-  (push '("[Dd]iff"
-	  :regexp   t
-	  :noselect t
-	  :position right
-	  :width    0.40)
-	popwin:special-display-config)
-  )
-
 ;; eldoc
 (use-package eldoc
   :diminish eldoc-mode " Doc"
@@ -616,23 +582,22 @@
   (global-flycheck-mode)
 
   :custom
-  (flycheck-disabled-checkers (quote (php-phpcs go-build)))
+  (flycheck-check-syntax-automatically (quote (idle-change)))
+  (flycheck-disabled-checkers (quote (php-phpcs go-build python-flake8 python-pylint)))
   (flycheck-highlighting-mode 'lines)
+  (flycheck-idle-change-delay 1.5)
   (flycheck-phpcs-standard "PSR2")
   )
 
 ;; flyspell
 (use-package flyspell
   :ensure t
-  :ensure flyspell-correct-ivy
 
   :bind (:map flyspell-mode-map
 	      ("C-c ;" . flyspell-correct-previous-word-generic))
 
-  :init
-  (require 'flyspell-correct-ivy)
-  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-  (add-hook 'text-mode-hook 'flyspell-mode)
+  :hook ((prog-mode . flyspell-prog-mode)
+	 (text-mode . flyspell-mode))
 
   :config
   (setq-default ispell-program-name "aspell")
@@ -664,14 +629,17 @@
   )
 
 ;; gited - dired for git branches
-(use-package gited
-  :ensure t
-  :no-require t
+(if (version< emacs-version "24.4")
+    (message "Gited requires Emacs version 24.4 or greater.  Unable to install")
+  (use-package gited
+    :ensure t
+    :no-require t
 
-  :bind (
-         ("C-x C-g" . gited-list-branches)
-         )
+    :bind (
+	   ("C-c C-g" . gited-list-branches)
+	   )
 
+    )
   )
 
 ;; ggtags
@@ -680,10 +648,8 @@
 
   :diminish ggtags-mode " 🄶"
 
-  :init
-  (add-hook 'prog-mode-hook
-            (lambda ()
-              (ggtags-mode t)))
+  :hook (prog-mode . ggtags-mode)
+
   )
 
 ;; go-mode
@@ -702,19 +668,10 @@
   :bind (:map go-mode-map
 	      ("C-c C-j" . go-direx-pop-to-buffer))
 
+  :hook ((go-mode . nice-prog-hook)
+	 (go-mode . go-eldoc-setup))
   :init
-  (add-hook 'go-mode-hook 'nice-prog-hook)
-  (add-hook 'go-mode-hook 'go-eldoc-setup)
   (add-hook 'go-mode-hook (lambda () (subword-mode 1)))
-
-  :config
-  (push '("^\*go-direx:"
-	  :regexp    t
-	  :position  left
-	  :width     0.2
-	  :dedicated t
-	  :stick     t)
-	popwin:special-display-config)
   )
 
 ;; highlight-parentheses
@@ -761,6 +718,9 @@
   (ivy-use-virtual-buffers t)
   (ivy-height 10)
   (ivy-count-format "(%d/%d) ")
+  (swiper-goto-start-of-match nil)
+  (swiper-include-line-number-in-search t)
+  (swiper-stay-on-quit t)
   )
 
 ;; jinja2-mode
@@ -775,9 +735,7 @@
 (use-package json-mode
   :ensure t
 
-  :init
-  ;; Associated JSON files with nice-prog-hook
-  (add-hook 'json-mode-hook 'nice-prog-hook)
+  :hook (json-mode . nice-prog-hook)
   )
 
 ;; log-edit-mode
@@ -789,14 +747,14 @@
          ("pico\\."    . log-edit-mode)
          )
 
-  :init
-  (add-hook 'log-edit-mode-hook 'nice-text-hook)
-  (add-hook 'log-edit-mode-hook 'turn-on-orgstruct++)
+  :hook ((log-edit-mode . nice-text-hook)
+	 (log-edit-mode . turn-on-orgstruct++))
+
   )
 
 ;; magit
-(if (version< emacs-version "24.4")
-    (message "Magit requires Emacs version 24.4 or later.  Unable to install")
+(if (version< emacs-version "25.1")
+    (message "Magit requires Emacs version 25.1 or later.  Unable to install")
   (use-package magit
     :ensure t
 
@@ -808,6 +766,20 @@
 ;; make-mode
 (use-package make-mode
   :mode ("[Mm]akefile\\." . makefile-mode)
+  )
+
+;; markdown-mode
+(use-package markdown-mode
+  :ensure t
+  :pin melpa-stable
+  
+  :commands (markdown-mode gfm-mode)
+
+  :mode (("README\\.md\\'"	 . gfm-mode)
+         ("\\.md\\'"		 . markdown-mode)
+         ("\\.markdown\\'"	 . markdown-mode))
+
+  :init (setq markdown-command "multimarkdown")
   )
 
 ;; nxml-mode
@@ -853,11 +825,30 @@
          ("C-c b" . org-iswitchb)
          )
 
+  :hook (org-mode . nice-text-hook)
+
   :init
   (require 'org-install)
   (require 'org-bullets)
+  (require 'org-crypt)
 
+  ;; Enable org-crypt as appropriate
+  (org-crypt-use-before-save-magic)
+ 
   :config
+  (use-package org-fancy-priorities
+    :ensure t
+
+    :diminish " 🄵"
+
+    :hook
+    (org-mode . org-fancy-priorities-mode)
+
+    :config
+    ;; Customization for org-fancy-priorities
+    (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕"))
+    (setq org-lowest-priority ?D)
+    )
 
   ;; Org-mode settings are kept in a different file
   (require 'cmf-org-settings)
@@ -874,7 +865,6 @@
   (org-clock-persistence-insinuate)
 
   ;; Org-mode hooks
-  (add-hook 'org-mode-hook 'nice-text-hook)
   (add-hook 'org-mode-hook 'nice-org-hook)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
   )
@@ -904,10 +894,11 @@
 	      ("C-x p"   . php-insert-doc-block)
 	      )
 
+  :hook (php-mode . nice-prog-hook)
+
   :init
   (require 'php-doc)
   (require 'php-ext)
-  (add-hook 'php-mode-hook 'nice-prog-hook)
   (add-hook 'php-mode-hook (lambda () (subword-mode 1)))
 
   :config
@@ -915,8 +906,8 @@
   (load-file "~/.emacs.d/thirdparty/phpdocumentor.el")
 
   :custom
-  (php-mode-coding-style (quote psr2))
-  ;; (php-lineup-cascaded-calls t)
+  (php-enable-psr2-coding-style)
+  (php-lineup-cascaded-calls t)
   (phpcbf-standard "PSR2")
   )
 
@@ -933,6 +924,93 @@
       )
   ;; Otherwise use built-in prettify mode
   (global-prettify-symbols-mode t)
+  )
+
+;; python-mode
+(use-package python-mode
+  :ensure t
+  :pin melpa-stable
+
+  :mode ("\\.py\\'" . python-mode)
+
+  :init
+  (setq abbrev-file-name "~/.emacs.d/.abbrev_defs")
+  (if (not (file-exists-p abbrev-file-name))
+      (write-region "" "" abbrev-file-name))
+
+  :config
+  (setq save-abbrevs t)
+
+  (use-package jedi
+    :ensure t
+    :ensure auto-virtualenv
+    :no-require t
+
+    :pin melpa-stable
+
+    :hook ((python-mode . jedi:setup)
+	   (python-mode . jedi:ac-setup)
+	   (python-mode . auto-virtualenv-set-virtualenv)
+	   (window-configuration-change-hook . auto-virtualenv-set-virtualenv)
+	   (focus-in-hook . auto-virtualenv-set-virtualenv))
+
+    :init
+    (jedi:install-server)
+
+    :custom
+    (jedi:complete-on-dot 1)
+    (jedi:install-python-jedi-dev-command
+      (quote
+       ("pip3" "install" "--upgrade" "git+https://github.com/davidhalter/jedi.git@dev#egg=jedi")))
+    )
+
+  (use-package jedi-direx
+    :ensure t
+    :no-require t
+
+    :bind (:map python-mode-map
+		("C-c x" . jedi-direx:pop-to-buffer))
+
+    :hook (jedi-mode-hook . jedi-direx:setup)
+    )
+
+  (use-package flycheck-pyflakes
+    :ensure t
+    )
+
+  (use-package py-autopep8
+    :ensure t
+    :pin melpa-stable
+
+    :hook (python-mode . py-autopep8-enable-on-save)
+
+    :bind (:map python-mode-map
+		("C-c C-p" . autopep8))
+    )
+
+  (use-package py-yapf
+    :ensure t
+    :no-require t
+    :pin melpa-stable
+
+    :hook (python-mode . py-yapf-enable-on-save)
+    )
+
+  (use-package pyimport
+    :ensure t
+    :pin melpa-stable
+
+    :bind (:map python-mode-map
+		("C-c C-i" . pyimport-insert-missing))
+    )
+
+  (use-package sphinx-doc
+    :ensure t
+    :pin melpa-stable
+
+    :config
+    (add-hook 'python-mode-hook (lambda () (sphinx-doc-mode t)))
+    )
   )
 
 ;; ruby-mode
@@ -978,8 +1056,7 @@
   :mode (
          ("sql*" . sql-mode))
 
-  :init
-  (add-hook 'sql-mode-hook 'nice-prog-hook)
+  :hook (sql-mode . nice-prog-hook)
   )
 
 ;; sudo-edit
@@ -1004,8 +1081,10 @@
   :ensure t
   :no-require t
 
-  :init
-  (add-hook 'twittering-edit-mode-hook 'nice-text-hook)
+  :hook
+  (twittering-edit-mode . nice-text-hook)
+  ;; :init
+  ;; (add-hook 'twittering-edit-mode-hook 'nice-text-hook)
 
   :config
   (unless (equal window-system nil)
@@ -1048,6 +1127,9 @@
 
   :config
   (add-to-list 'vc-handled-backends 'Fossil)
+
+  :custom
+  (vc-fossil-extra-header-fields (quote (:remote-url :checkout :tags)))
   )
 
 ;; which-func
@@ -1059,21 +1141,23 @@
   )
 
 ;; which-key
-(use-package which-key
-  :ensure t
-  :pin melpa-stable
+(if (version< emacs-version "24.4")
+    (message "Which-Key requires Emacs version 24.4 or greater.  Unable to install")
+  (use-package which-key
+    :ensure t
+    :pin melpa-stable
 
-  :config
-  (which-key-mode)
+    :config
+    (which-key-mode)
+    )
   )
 
 ;; with-editor
 (use-package with-editor
   :no-require t
 
-  :init
-  (add-hook 'with-editor-mode-hook 'nice-text-hook)
-  (add-hook 'with-editor-mode-hook 'turn-on-orgstruct++)
+  :hook ((with-editor-mode . nice-text-hook)
+	 (with-editor-mode . turn-on-orgstruct++))
   )
 
 ;; xkcd
@@ -1089,8 +1173,8 @@
   :no-require t
 
   :mode ("\\.sls\\'" . yaml-mode)
-  :init
-  (add-hook 'yaml-mode-hook 'prog-mode-hook)
+
+  :hook (yaml-mode . nice-prog-hook)
   )
 
 ;; Miscellany

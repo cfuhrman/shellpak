@@ -220,12 +220,6 @@ for path in ${paths[@]}; do
 
 done
 
-# Note we want to append /opt/schily/bin since sometimes that contains a version
-# of tar that doesn't support the -z option
-if [ -d /opt/schily/bin ]; then
-	PATH=$PATH:/opt/schily/bin
-fi
-
 # Get rid of pre-pended ':' and double colons
 PATH=${PATH#:}
 PATH=${PATH//::/:}
@@ -245,7 +239,7 @@ PKILL='pkill'
 AWK=awk
 
 # Make grep(1) output pretty on systems that support color
-export GREP_OPTIONS='--color=auto'
+export CMF_GREP_OPTIONS='--color=auto'
 
 # Set up GOPATH
 if type -p go >/dev/null; then
@@ -341,6 +335,9 @@ fi
 if type -p phpcbf >/dev/null; then
 	alias phpcbf='phpcbf --standard=PSR2'
 fi
+
+# GREP_OPTIONS is deprecated, so here is a work-around
+alias grep="grep ${CMF_GREP_OPTIONS}"
 
 # Program defaults
 # --------------------------------------------------------------------

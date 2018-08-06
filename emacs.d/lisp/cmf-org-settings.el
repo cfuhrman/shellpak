@@ -140,6 +140,8 @@
  '(org-clock-persist (quote history))
  '(org-clock-persist-file "~/.org-clock-save.el")
  '(org-complete-tags-always-offer-all-agenda-tags t)
+ '(org-crypt-key "ABCDE12345") 		; Add your key here
+ '(org-crypt-tag-matcher "CRYPT")
  '(org-default-notes-file "~/org/notes.org")
  '(org-directory "~/org")
  '(org-export-backends (quote (ascii html icalendar latex md texinfo)))
@@ -223,6 +225,7 @@
      ("EMAIL" . 109)
      ("GGG" . 103)
      ("APPT" . 97))))
+ '(org-tags-exclude-from-inheritance (quote ("CRYPT")))
  '(org-todo-keywords
    (quote
     ((sequence "TODO" "NEXT(n!)" "STARTED(s!/@)" "DEFERRED(f!/@)" "DELEGATED(l@/@)" "WAITING(w@/@)" "|" "CANCELED(x@)" "DONE(d@)"))))

@@ -35,6 +35,7 @@ of the following programs:
 
 -   [Git](http://git-scm.com)
 -   [GNU Emacs](http://www.gnu.org/software/emacs/)
+-   [GNU Nano](https://www.nano-editor.org/)
 -   [GNU Screen](http://www.gnu.org/software/screen/)
 -   [GNU Indent](https://www.gnu.org/software/indent/)
 -   [mg Text Editor](http://homepage.boetes.org/software/mg/)
@@ -55,7 +56,7 @@ will be useful as a reference.
 
 The following operating systems are known to be supported:
 
--   Mac OS X 10.9 (Darwin)
+-   Mac OS X 10.13 (Darwin)
 -   NetBSD 6.1.x
 -   OpenBSD 5.8
 -   CentOS 6.5
@@ -63,7 +64,7 @@ The following operating systems are known to be supported:
 -   SunOS solaris 5.10
 -   AIX 1 7
 
-In addition, ShellPAK has been known to run on OpenSuSE, SuSE
+In addition, ShellPAK has been known to run on OpenSUSE, SuSE
 Enterprise Linux, Ubuntu, FreeBSD, and Cygwin.
 
 # Obtaining ShellPAK<a id="sec-2" name="sec-2"></a>
@@ -118,6 +119,12 @@ un-installation (via the `-u` flag)
     
     # Set up go programming environment
     $ ./setup.sh -g
+    
+    # Set up python development environment
+    $ ./setup.sh -p
+    
+    # Set up python3 development environment
+    $ PYTHON_VERSION=3 PIP_BIN=pip3 setup.sh -p
     
     # Remove ShellPAK
     $ ./setup.sh -u

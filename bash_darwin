@@ -19,10 +19,10 @@
 # Determine PATH
 paths=('/opt/local/bin'                         \
        '/opt/local/sbin'                        \
-       '/usr/pkg/bin'                           \
-       '/usr/pkg/sbin'                          \
+       '/opt/pkg/bin'                           \
+       '/opt/pkg/sbin'                          \
        '/usr/local/git/bin'                     \
-       '/usr/pkg/lib/perl5/site_perl/bin'       \
+       '/opt/pkg/lib/perl5/site_perl/bin'       \
        '/Applications/oracle'                   \
        '/usr/texbin'                            \
        "${HOME}/perl5/bin"
@@ -42,13 +42,18 @@ done
 PATH=${PATH#:}
 PATH=${PATH//::/:}
 
+# Place /opt/pkg/bin first if pkgsrc is present
+if [ -d /opt/pkg/bin ]; then
+	PATH=/opt/pkg/bin:${PATH//\/opt\/pkg\/bin\:/}
+fi
+
 # Place /usr/local/bin first if Homebrew is present
 if [ -d /usr/local/Cellar ]; then
         PATH=/usr/local/bin:${PATH//\/usr\/local\/bin\:/}
 fi
 
 # Set MANPATH
-MANPATH=/opt/local/man:/opt/local/share/man:$MANPATH:/usr/share/man:/usr/local/git/share/man:~/perl5/man
+MANPATH=/opt/local/man:/opt/local/share/man:$MANPATH:/usr/share/man:/usr/local/git/share/man:~/perl5/man:/opt/pkg/man
 
 # Enable LS Colors
 CLICOLOR=1
