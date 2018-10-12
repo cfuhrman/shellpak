@@ -329,11 +329,11 @@ fi
 
 # Aliases for PHP CodeSniffer
 if type -p phpcs >/dev/null; then
-	alias phpcs='phpcs --standard=PSR2'
+       alias phpcs='phpcs --standard=PSR2'
 fi
 
 if type -p phpcbf >/dev/null; then
-	alias phpcbf='phpcbf --standard=PSR2'
+       alias phpcbf='phpcbf --standard=PSR2'
 fi
 
 # GREP_OPTIONS is deprecated, so here is a work-around

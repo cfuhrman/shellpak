@@ -643,13 +643,13 @@
   )
 
 ;; ggtags
-(use-package ggtags
-  :ensure t
-
-  :diminish ggtags-mode " 🄶"
-
-  :hook (prog-mode . ggtags-mode)
-
+(if (version< emacs-version "25.1")
+    (message "GGTags requires Emacs version 25.1 or greater.  Unable to install")
+  (use-package ggtags
+    :ensure t
+    :diminish ggtags-mode " 🄶"
+    :hook (prog-mode . ggtags-mode)
+    )
   )
 
 ;; go-mode
@@ -687,6 +687,12 @@
 (use-package html-mode
   :mode ("\\.tmpl\\'" . html-mode)
   )
+
+;; htmlize
+(use-package htmlize
+  :ensure t
+  :pin melpa-stable
+)
 
 ;; ivy
 (use-package ivy
@@ -772,7 +778,7 @@
 (use-package markdown-mode
   :ensure t
   :pin melpa-stable
-  
+
   :commands (markdown-mode gfm-mode)
 
   :mode (("README\\.md\\'"	 . gfm-mode)
@@ -834,7 +840,7 @@
 
   ;; Enable org-crypt as appropriate
   (org-crypt-use-before-save-magic)
- 
+
   :config
   (use-package org-fancy-priorities
     :ensure t
@@ -1038,14 +1044,20 @@
   (sml/setup)
 
   :config
-  (if (equal window-system nil)
-      (progn
-	(sml/apply-theme 'dark)
-	(setq sml/read-only-char " 🔒"))
-    (progn
-      (sml/apply-theme 'dark)
-      (setq sml/read-only-char " 🅛"))
-    (sml/apply-theme 'respectful))
+  (pcase (window-system)
+    ('ns
+     (progn
+       (sml/apply-theme 'respectful)
+       (setq sml/read-only-char " 🅛")))
+    ('nil
+     (progn
+       (sml/apply-theme 'dark)
+       (setq sml/read-only-char " 🔒")))
+    (window-system
+     (progn
+       (sml/apply-theme 'respectful)
+       (setq sml/read-only-char " 🔒"))
+    ))
 
   :custom
   (sml/modified-char "★")
