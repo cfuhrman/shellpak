@@ -110,7 +110,8 @@
       (file+datetree "~/org/journal.org")
       "** %^{Heading} :JOURNAL:%^G
   Added: %U
-
+  Mood: %^{mood}
+  
   %?" :empty-lines 1)
      ("B" "Blood Pressure Log Entry" table-line
       (file+headline "~/org/journal.org" "Blood Pressure Log")
@@ -179,7 +180,6 @@
    (quote
     (("AUTO" "inputenc" t)
      ("T1" "fontenc" t)
-     ("" "fixltx2e" nil)
      ("" "graphicx" t)
      ("" "longtable" nil)
      ("" "float" nil)

@@ -35,6 +35,8 @@ BLUE='\[\033[0;34m\]'
 PURPLE='\[\033[0;35m\]'
 WHITE='\[\033[0;37m\]'
 CYAN='\[\033[0;36m\]'
+LIGHT_BLUE='\033[38;5;104m\]'
+LIGHT_YELLOW='\[\033[38;5;228m\]'
 
 # Make sure GNU echo is used (especially under Solaris!)
 if [ -e /usr/gnu/bin/echo ]; then
@@ -86,6 +88,17 @@ promptCMF ()
 
         export DEFAULTPS1
 }                                                 # promptCMF()
+
+# Function: promptCMF256()
+#
+# Sets up prompt using 256 colors
+
+promptCMF256 ()
+{
+	doXTerm
+	DEFAULTPS1=$PS1
+	PS1=${BLACK_BACKGROUND}${LIGHT_BLUE}'[ '${LIGHT_YELLOW}'\h'${LIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${LIGHT_BLUE}' ]-'${LIGHT_YELLOW}'\W '${CYAN}'$(__git_ps1 "(%s) ")'${BLACK_BACKGROUND}${BRIGHT_WHITE}'\$'${NO_COLOR}' '
+}
 
 # Function: promptDefault
 #
