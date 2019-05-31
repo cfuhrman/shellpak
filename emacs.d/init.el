@@ -49,10 +49,12 @@
 ;; List of paths to search
 (defvar cmf-path-list '("/usr/texbin"
                         "/usr/pkg/bin"
-			"/opt/pkg/bin"
+                        "/opt/pkg/bin"
                         "/usr/local/bin"
                         "~/.composer/vendor/bin"
+                        "~/bin"
                         "~/go/bin"
+                        "~/perl5/bin"
                         "/Library/TeX/texbin"))
 
 ;; Customize generic variables
@@ -141,7 +143,7 @@
 ;; My own style
 (c-add-style "cmf"
              '("bsd"
-	       (indent-tabs-mode . nil)
+               (indent-tabs-mode . nil)
                (c-offsets-alist
                 (statement-cont . (first c-lineup-cascaded-calls +)))))
 
@@ -306,9 +308,9 @@
 
   ;; Set up mac-specific parameters here
   (setq delete-by-moving-to-trash t
-	mac-option-modifier 'meta
-	trash-directory "~/.Trash/emacs"
-	)
+        mac-option-modifier 'meta
+        trash-directory "~/.Trash/emacs"
+        )
 
   ;; Make sure backup directory exists
   (if (not (file-exists-p trash-directory))
@@ -320,14 +322,14 @@
 
     :hook
     (osx-location-changed .
-			  (lambda ()
-			    (setq calendar-latitude osx-location-latitude
-				  calendar-longitude osx-location-longitude
-				  calendar-location-name (format "%s, %s" osx-location-latitude osx-location-longitude)
-				  forecast-latitude osx-location-latitude
-				  forecast-longitude osx-location-longitude
-				  forecast-city (format "%s, %s" osx-location-latitude osx-location-longitude)))
-			  )
+                          (lambda ()
+                            (setq calendar-latitude osx-location-latitude
+                                  calendar-longitude osx-location-longitude
+                                  calendar-location-name (format "%s, %s" osx-location-latitude osx-location-longitude)
+                                  forecast-latitude osx-location-latitude
+                                  forecast-longitude osx-location-longitude
+                                  forecast-city (format "%s, %s" osx-location-latitude osx-location-longitude)))
+                          )
 
     :config
     (osx-location-watch)
@@ -340,28 +342,6 @@
 ;;
 ;; For use on all operating systems
 ;;
-
-;; auto-complete
-(use-package auto-complete
-  :ensure t
-  :ensure fuzzy
-
-  :pin melpa-stable
-
-  :demand
-
-  :bind (:map ac-complete-mode-map
-              ("\C-n" . ac-next)
-              ("\C-p" . ac-previous)
-	      )
-
-  :config
-  (ac-config-default)
-  (setq ac-fuzzy-enable 1 )
-
-  :custom
-  (ac-dwim t)
-  )
 
 ;; yasnippet
 (use-package yasnippet
@@ -378,16 +358,16 @@
 
 ;; ace-window
 (if (not(version< emacs-version "24.4"))
-  (use-package ace-window
-    :ensure t
-    :pin melpa-stable
+    (use-package ace-window
+      :ensure t
+      :pin melpa-stable
 
-    :config
-    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+      :config
+      (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 
-    :bind (
-	   ("C-x o" . ace-window))
-    )
+      :bind (
+             ("C-x o" . ace-window))
+      )
   )
 
 ;; all-the-icons
@@ -404,9 +384,9 @@
     (defvar cmf-fonts-installed-file "~/SHELL/emacs.d/.icon-fonts-installed")
     (unless (file-exists-p cmf-fonts-installed-file)
       (progn
-	(message "Installing icon fonts")
-	(all-the-icons-install-fonts t)
-	(with-temp-buffer (write-file cmf-fonts-installed-file)))
+        (message "Installing icon fonts")
+        (all-the-icons-install-fonts t)
+        (with-temp-buffer (write-file cmf-fonts-installed-file)))
       )
     )
 
@@ -420,6 +400,8 @@
     (require 'font-lock+)
 
     :hook (dired-mode . all-the-icons-dired-mode)
+
+    :diminish all-the-icons-dired-mode " 🄸"
     )
 
   (use-package all-the-icons-ivy
@@ -454,7 +436,7 @@
 
   :init
   (add-to-list 'custom-safe-themes
-	       "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223")
+               "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223")
   (load-theme 'arjen-grey t)
 
   :custom-face
@@ -462,9 +444,19 @@
   )
 
 ;; auctex
+;; TODO: Add company-bibtex, if necessary
 (use-package auctex
   :ensure t
   :no-require t
+
+  :config
+  (use-package company-auctex
+    :ensure t
+    :after company
+
+    :init
+    (company-auctex-init)
+    )
   )
 
 ;; beacon mode
@@ -483,19 +475,38 @@
 ;; calfw
 (use-package calfw
   :ensure t
-  :ensure calfw-gcal
-  :ensure calfw-ical
-  :ensure calfw-org
   :pin melpa-stable
 
   :init
   (require 'calfw)
-  (require 'calfw-ical)
-  (require 'calfw-org)
 
   ;; See https://github.com/kiwanami/emacs-calfw for setting up your
   ;; own calendars
   :config
+  ;; calfw-gcal
+  (use-package calfw-gcal
+    :ensure t
+
+    :init
+    (require 'calfw-gcal)
+    )
+
+  ;; calfw-ical
+  (use-package calfw-ical
+    :ensure t
+
+    :init
+    (require 'calfw-ical)
+    )
+
+  ;; calfw-org
+  (use-package calfw-org
+    :ensure t
+
+    :init
+    (require 'calfw-org)
+    )
+
   (defun cmf-open-calendar ()
     (interactive)
     (cfw:open-calendar-buffer :contents-sources
@@ -510,14 +521,48 @@
     )
   )
 
+;; company-mode
+(use-package company
+  :ensure t
+  :pin gnu
+
+  :diminish company-mode " 🄲"
+
+  :init
+  (global-company-mode)
+
+  :bind (:map company-active-map
+              ("C-n" . company-select-next)
+              ("C-p" . company-select-previous)
+              ("TAB" . company-complete-selection)
+              )
+
+  :custom
+  (company-tooltip-align-annotations t)
+  (company-tooltip-minimum-width 27)
+  (company-idle-delay 0.3)
+  (company-tooltip-limit 10)
+  (company-minimum-prefix-length 3)
+  (company-tooltip-flip-when-above t)
+  )
+
+;; company-ansible
+(use-package company-ansible
+  :ensure t
+  :pin melpa-stable
+
+  :init
+  (add-to-list 'company-backends 'company-ansible)
+  )
+
 ;; [c]perl-mode
 (use-package cperl-mode
   :mode ("\\.cgi\\'" . cperl-mode)
 
   :init
+  (if (equal(length(getenv "PERL5LIB")) 0)
+      (setenv "PERL5LIB" (concat (getenv "HOME") "/perl5/lib/perl5")))
   (defalias 'perl-mode 'cperl-mode)
-  (add-to-list 'exec-path
-	       "~/perl5/bin")
 
   :config
   ;; Functions for perltidy
@@ -532,7 +577,14 @@
     "Run perltidy on the current defun."
     (interactive)
     (save-excursion (mark-defun)
-		    (perltidy-region))
+                    (perltidy-region))
+    )
+  (use-package company-plsense
+    :ensure t
+    :after company
+
+    :init
+    (add-to-list 'company-backends 'company-plsense)
     )
 
   :custom
@@ -555,6 +607,38 @@
          ("cron\\(tab\\)?\\."    . crontab-mode))
   )
 
+;; docker
+;;
+;; Note that I do not use Windows operating systems so do not know if
+;; 'windows-nt' works as well.  Feel free to contact me if it does.
+(if (member system-type '(darwin gnu/linux))
+    (use-package docker
+      :ensure t
+      :bind ("C-c d" . docker)
+      )
+  (message "%s is not supported by Docker, so docker.el will not be installed"  (upcase-initials (prin1-to-string system-type)))
+  )
+
+;; dockerfile-mode
+(use-package dockerfile-mode
+  :ensure t
+  :pin melpa-stable
+
+  :mode ("Dockerfile\\'" . dockerfile-mode)
+  )
+
+;; emacs-lisp
+(use-package emacs-lisp
+  :no-require t
+  :after company
+
+  :init
+  (add-hook 'emacs-lisp-mode-hook
+            (lambda ()
+              (add-to-list 'company-backends 'company-elisp))
+            )
+  )
+
 ;; eldoc
 (use-package eldoc
   :diminish eldoc-mode " Doc"
@@ -568,7 +652,6 @@
   ;; when it becomes more stable.
   :ensure t
   :if window-system
-  :pin melpa-stable
 
   :config
   (global-emojify-mode)
@@ -594,14 +677,20 @@
   :ensure t
 
   :bind (:map flyspell-mode-map
-	      ("C-c ;" . flyspell-correct-previous-word-generic))
+              ("C-c ;" . flyspell-correct-previous-word-generic))
 
   :hook ((prog-mode . flyspell-prog-mode)
-	 (text-mode . flyspell-mode))
+         (text-mode . flyspell-mode))
 
   :config
   (setq-default ispell-program-name "aspell")
-  (ac-flyspell-workaround)
+  (use-package flyspell-correct-ivy
+    :ensure t
+    :pin melpa
+    )
+
+  :custom
+  (ispell-extra-args (quote ("--run-together")))
   )
 
 ;; forecast
@@ -617,7 +706,7 @@
     (forecast-city cmf-location-name)
     (forecast-country "United States")
     (forecast-units 'us)
-    (forecast-api-key "f78b853ac0c972cccf06e75e21afbe9d")
+    (forecast-api-key "")		; Get API key at https://developer.forecast.io/
     )
   )
 
@@ -636,8 +725,8 @@
     :no-require t
 
     :bind (
-	   ("C-c C-g" . gited-list-branches)
-	   )
+           ("C-c C-g" . gited-list-branches)
+           )
 
     )
   )
@@ -655,10 +744,6 @@
 ;; go-mode
 (use-package go-mode
   :ensure t
-  :ensure go-autocomplete
-  :ensure go-direx
-  :ensure go-eldoc
-  :ensure go-snippets
 
   :pin melpa-stable
   :no-require t
@@ -666,12 +751,40 @@
   :mode ("\\.go\\'" . go-mode)
 
   :bind (:map go-mode-map
-	      ("C-c C-j" . go-direx-pop-to-buffer))
+              ("C-c C-j" . go-direx-pop-to-buffer))
 
   :hook ((go-mode . nice-prog-hook)
-	 (go-mode . go-eldoc-setup))
+         (go-mode . go-eldoc-setup))
   :init
   (add-hook 'go-mode-hook (lambda () (subword-mode 1)))
+
+  :config
+  ;; company-go
+  (use-package company-go
+    :ensure t
+
+    :init
+    (add-hook 'go-mode-hook
+              (lambda ()
+                (add-to-list 'company-backends 'company-elisp)))
+    )
+
+  ;; go-direx
+  (use-package go-direx
+    :ensure t
+    )
+
+  ;; go-eldoc
+  (use-package go-eldoc
+    :ensure t
+    :after eldoc
+    )
+
+  ;; go-snippets
+  (use-package go-snippets
+    :ensure t
+    :after yasnippet
+    )
   )
 
 ;; highlight-parentheses
@@ -692,7 +805,7 @@
 (use-package htmlize
   :ensure t
   :pin melpa-stable
-)
+  )
 
 ;; ivy
 (use-package ivy
@@ -754,7 +867,7 @@
          )
 
   :hook ((log-edit-mode . nice-text-hook)
-	 (log-edit-mode . turn-on-orgstruct++))
+         (log-edit-mode . turn-on-orgstruct++))
 
   )
 
@@ -781,16 +894,15 @@
 
   :commands (markdown-mode gfm-mode)
 
-  :mode (("README\\.md\\'"	 . gfm-mode)
-         ("\\.md\\'"		 . markdown-mode)
-         ("\\.markdown\\'"	 . markdown-mode))
+  :mode (("README\\.md\\'"         . gfm-mode)
+         ("\\.md\\'"               . markdown-mode)
+         ("\\.markdown\\'"         . markdown-mode))
 
   :init (setq markdown-command "multimarkdown")
   )
 
 ;; nxml-mode
 (use-package nxml-mode
-  :ensure auto-complete-nxml
 
   :mode (("\\.xsd\\'"  . xml-mode)
          ("\\.wsdl\\'" . xml-mode))
@@ -804,26 +916,16 @@
   (defun nice-nxml-hook ()
     "Hook for sane editing of XML files."
     (if (>= emacs-major-version 23)
-	(linum-mode t))
+        (linum-mode t))
     (auto-fill-mode -1)
     )
 
   ;; Apply hook
   (add-hook 'nxml-mode-hook 'nice-nxml-hook)
-
-  ;; Keystroke for popup help about something at point.
-  (setq auto-complete-nxml-popup-help-key "C-:")
-
-  ;; Keystroke for toggle on/off automatic completion.
-  (setq auto-complete-nxml-toggle-automatic-key "C-c C-t")
   )
 
 ;; org-mode
 (use-package org
-  :ensure org-ac
-  :ensure org-bullets
-  :ensure ox-twbs
-
   :bind (
          ("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
@@ -835,13 +937,21 @@
 
   :init
   (require 'org-install)
-  (require 'org-bullets)
   (require 'org-crypt)
 
   ;; Enable org-crypt as appropriate
   (org-crypt-use-before-save-magic)
 
   :config
+  ;; org-bullets
+  (use-package org-bullets
+    :ensure t
+
+    :init
+    (require 'org-bullets)
+    )
+
+  ;; org-fancy-priorities
   (use-package org-fancy-priorities
     :ensure t
 
@@ -856,13 +966,17 @@
     (setq org-lowest-priority ?D)
     )
 
+  ;; ox-twbs
+  (use-package ox-twbs
+    :ensure t
+    )
+
   ;; Org-mode settings are kept in a different file
   (require 'cmf-org-settings)
   ;; Define a basic hook for sane editing of org-mode documents
   (defun nice-org-hook ()
     "Hook for sane editing of 'org-mode' documents."
     (org-defkey org-mode-map "\C-c[" 'org-time-stamp-inactive)
-    (org-ac/setup-current-buffer)
     (if (equal (car (split-string org-version ".")) 8)
         (require 'ox-md))
     )
@@ -883,22 +997,16 @@
 ;; php-mode
 (use-package php-mode
   :ensure t
-  :ensure php-auto-yasnippets
-  :ensure php-eldoc
-  :ensure php-extras
-  :ensure phpcbf
-  :ensure phpunit
-
   :no-require t
 
   :mode ("\\.php\\'" . php-mode)
 
   :bind (:map php-mode-map
-	      ("C-c C--" . php-current-class)
-	      ("C-c C-=" . php-current-namespace)
-	      ("C-c C-y" . 'yas/create-php-snippet)
-	      ("C-x p"   . php-insert-doc-block)
-	      )
+              ("C-c C--" . php-current-class)
+              ("C-c C-=" . php-current-namespace)
+              ("C-c C-y" . 'yas/create-php-snippet)
+              ("C-x p"   . php-insert-doc-block)
+              )
 
   :hook (php-mode . nice-prog-hook)
 
@@ -910,6 +1018,40 @@
   :config
   ;; Load php documentor
   (load-file "~/.emacs.d/thirdparty/phpdocumentor.el")
+
+  ;; company-php
+  (use-package company-php
+    :ensure t
+    :pin melpa-stable
+    :after company
+
+    :init
+    (add-hook 'php-mode-hook
+              (lambda ()
+                (add-to-list 'company-backends 'company-ac-php-backend )))
+    )
+
+  ;; php-auto-yasnippets
+  (use-package php-auto-yasnippets
+    :ensure t
+    :after yasnippet
+    )
+
+  ;; php-eldoc
+  (use-package php-eldoc
+    :ensure t
+    :after eldoc
+    )
+
+  ;; phpcbf
+  (use-package phpcbf
+    :ensure t
+    )
+
+  ;; phpunit
+  (use-package phpunit
+    :ensure t
+    )
 
   :custom
   (php-enable-psr2-coding-style)
@@ -932,91 +1074,67 @@
   (global-prettify-symbols-mode t)
   )
 
-;; python-mode
-(use-package python-mode
-  :ensure t
-  :pin melpa-stable
-
-  :mode ("\\.py\\'" . python-mode)
-
-  :init
-  (setq abbrev-file-name "~/.emacs.d/.abbrev_defs")
-  (if (not (file-exists-p abbrev-file-name))
-      (write-region "" "" abbrev-file-name))
+;; python
+;;
+;; Install the following packages beforehand via pip or package
+;; manager, if available:
+;;
+;;  - autopep8
+;;  - flake8
+;;  - jedi
+;;  - setuptools-black
+;;  - virtualenv
+;;  - yapf
+;;
+;; Then run `M-x elpy-config'
+(use-package python
 
   :config
-  (setq save-abbrevs t)
-
-  (use-package jedi
+  ;; company-jedi
+  (use-package company-jedi
     :ensure t
-    :ensure auto-virtualenv
-    :no-require t
-
     :pin melpa-stable
-
-    :hook ((python-mode . jedi:setup)
-	   (python-mode . jedi:ac-setup)
-	   (python-mode . auto-virtualenv-set-virtualenv)
-	   (window-configuration-change-hook . auto-virtualenv-set-virtualenv)
-	   (focus-in-hook . auto-virtualenv-set-virtualenv))
+    :after company
 
     :init
-    (jedi:install-server)
+    (add-hook 'python-mode-hook
+	      (lambda ()
+		(add-to-list 'company-backends 'company-jedi)))
 
-    :custom
-    (jedi:complete-on-dot 1)
-    (jedi:install-python-jedi-dev-command
-      (quote
-       ("pip3" "install" "--upgrade" "git+https://github.com/davidhalter/jedi.git@dev#egg=jedi")))
+    :config
+    (company-jedi t)
     )
 
-  (use-package jedi-direx
-    :ensure t
-    :no-require t
-
-    :bind (:map python-mode-map
-		("C-c x" . jedi-direx:pop-to-buffer))
-
-    :hook (jedi-mode-hook . jedi-direx:setup)
-    )
-
-  (use-package flycheck-pyflakes
-    :ensure t
-    )
-
-  (use-package py-autopep8
+  ;; elpy
+  (use-package elpy
     :ensure t
     :pin melpa-stable
+    :after flycheck
 
-    :hook (python-mode . py-autopep8-enable-on-save)
-
-    :bind (:map python-mode-map
-		("C-c C-p" . autopep8))
+    :config
+    (elpy-enable)
+    (when (require 'flycheck nil t)
+      (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+      (add-hook 'elpy-mode-hook 'flycheck-mode))
     )
 
-  (use-package py-yapf
-    :ensure t
-    :no-require t
-    :pin melpa-stable
-
-    :hook (python-mode . py-yapf-enable-on-save)
-    )
-
-  (use-package pyimport
-    :ensure t
-    :pin melpa-stable
-
-    :bind (:map python-mode-map
-		("C-c C-i" . pyimport-insert-missing))
-    )
-
+  ;; sphinx-doc
   (use-package sphinx-doc
     :ensure t
     :pin melpa-stable
+    :diminish " 🆂"
 
-    :config
-    (add-hook 'python-mode-hook (lambda () (sphinx-doc-mode t)))
+    :bind ("C-x p" . sphinx-doc)
+
+    :init
+    (add-hook 'python-mode-hook (lambda ()
+                                  (require 'sphinx-doc)
+                                  (sphinx-doc-mode t)))
     )
+
+  :custom
+  ;; Use python3 by default
+  (elpy-rpc-python-command "python3")
   )
 
 ;; ruby-mode
@@ -1033,6 +1151,23 @@
   :mode (
          ("*.sed" . sed-mode)
          )
+  )
+
+;; sh-mode
+(use-package shell
+  :config
+  (use-package company-shell
+    :ensure t
+    :pin melpa-stable
+
+    :init
+    (add-hook 'sh-mode-hook
+              (lambda ()
+                (add-to-list 'company-backends 'company-shell)))
+
+    :custom
+    (company-shell-clean-manpage t)
+    )
   )
 
 ;; smart-mode-line
@@ -1057,7 +1192,7 @@
      (progn
        (sml/apply-theme 'respectful)
        (setq sml/read-only-char " 🔒"))
-    ))
+     ))
 
   :custom
   (sml/modified-char "★")
@@ -1065,8 +1200,7 @@
 
 ;; sql
 (use-package sql
-  :mode (
-         ("sql*" . sql-mode))
+  :mode (("/sql[^/]]*" . sql-mode))
 
   :hook (sql-mode . nice-prog-hook)
   )
@@ -1109,7 +1243,7 @@
   (twittering-tinyurl-service (quote tinyurl))
   (twittering-use-icon-storage t)
   (twittering-use-master-password t)
-  (twittering-username "wulflock")
+  (twittering-username "#####")		; Add your twitter handle here
   )
 
 ;; undo-tree
@@ -1124,12 +1258,14 @@
   (add-hook 'text-mode-hook
             (lambda ()
               (undo-tree-mode t)))
+  (add-hook 'conf-mode-hook
+            (lambda ()
+              (undo-tree-mode t)))
 
   :custom
   (undo-tree-visualizer-diff t)
   (undo-tree-visualizer-timestamps t)
   )
-
 
 ;; vc-fossil
 (use-package vc-fossil
@@ -1142,6 +1278,16 @@
 
   :custom
   (vc-fossil-extra-header-fields (quote (:remote-url :checkout :tags)))
+  )
+
+;; vue-js
+(use-package vue-mode
+  :ensure t
+  :pin melpa-stable
+
+  :config
+  ;; 0, 1, or 2, representing (respectively) none, low, and high coloring
+  (setq mmm-submode-decoration-level 2)
   )
 
 ;; which-func
@@ -1158,6 +1304,7 @@
   (use-package which-key
     :ensure t
     :pin melpa-stable
+    :diminish which-key-mode " 🅆"
 
     :config
     (which-key-mode)
@@ -1169,7 +1316,7 @@
   :no-require t
 
   :hook ((with-editor-mode . nice-text-hook)
-	 (with-editor-mode . turn-on-orgstruct++))
+         (with-editor-mode . turn-on-orgstruct++))
   )
 
 ;; xkcd
@@ -1185,6 +1332,9 @@
   :no-require t
 
   :mode ("\\.sls\\'" . yaml-mode)
+
+  :init
+  (add-hook 'yaml-mode-hook (lambda () (subword-mode 1)))
 
   :hook (yaml-mode . nice-prog-hook)
   )

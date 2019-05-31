@@ -73,7 +73,7 @@
  '(org-agenda-files
    (quote
     ("~/org/tasks.org" "~/org/refile.org" "~/org/notes.org")))
- '(org-archive-location "~/org/archive/%s_archive::datetree/")
+ '(org-archive-location "~/org/archive/%s_archive::file+olp+datetree/")
  '(org-ascii-charset (quote utf-8))
  '(org-capture-templates
    (quote

@@ -198,15 +198,16 @@ if [ "$PS1" ]; then
 fi
 
 # Determine PATH
-paths=('/usr/games'                             \
-       '/usr/X11R6/bin'                         \
-       '/usr/X11R7/bin'                         \
-       '/usr/sbin'                              \
-       '/opt/bin'                               \
-       '/opt/sbin'                              \
-       '/sbin'                                  \
-       '/usr/local/sbin'                        \
-       "$HOME/.composer/vendor/bin"             \
+paths=('/usr/games'				\
+       '/usr/X11R6/bin'				\
+       '/usr/X11R7/bin'				\
+       '/usr/sbin'				\
+       '/opt/bin'				\
+       '/opt/sbin'				\
+       '/sbin'					\
+       '/usr/local/sbin'			\
+       "$HOME/.composer/vendor/bin"		\
+       "$HOME/perl5/bin"			\
        "$HOME/bin"
       )
 
@@ -253,6 +254,12 @@ fi
 
 export PATH
 
+# Set up perl environment
+PERL5LIB="${HOME}/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="${HOME}/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"${HOME}/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=${HOME}/perl5"; export PERL_MM_OPT;
+
 
 # OS-Specific variable(s)
 # --------------------------------------------------------------------
@@ -287,6 +294,7 @@ esac
 alias cp='cp -${FILE_OPS_FLAGS}i'
 alias rm='rm -${FILE_OPS_FM_FLAGS}i'
 alias mv='mv -${FILE_OPS_FLAGS}i'
+alias ll='ls -alh'
 
 # Make sure we use the rm binary
 if [ -e /bin/rm ]; then

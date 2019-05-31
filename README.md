@@ -1,20 +1,20 @@
 
 # Table of Contents
 
-1.  [Description](#orgca81bf4)
-    1.  [Requirements](#org2c768cc)
-    2.  [Supported Platforms](#org43c250a)
-2.  [Obtaining ShellPAK](#orgb072061)
-    1.  [Alternate Repositories](#org822ffdf)
-3.  [Installation](#org7a04f13)
-    1.  [Other setup options](#orga848fba)
-4.  [Bugs](#orga13e6aa)
-5.  [Author](#org19bcca2)
-6.  [Copyright](#org994c8f3)
+1.  [Description](#orgf46e4a3)
+    1.  [Requirements](#org0727af0)
+    2.  [Supported Platforms](#org8e39d37)
+2.  [Obtaining ShellPAK](#org106b40a)
+    1.  [Alternate Repositories](#orgd42b8ef)
+3.  [Installation](#orgb984856)
+    1.  [Other setup options](#org125c07e)
+4.  [Bugs](#org9931909)
+5.  [Author](#org19492b6)
+6.  [Copyright](#org6467d02)
 
 
 
-<a id="orgca81bf4"></a>
+<a id="orgf46e4a3"></a>
 
 # Description
 
@@ -35,7 +35,7 @@ This code is specific to my own needs and is here in the hopes it
 will be useful as a reference.
 
 
-<a id="org2c768cc"></a>
+<a id="org0727af0"></a>
 
 ## Requirements
 
@@ -45,7 +45,7 @@ will be useful as a reference.
 -   rsync
 
 
-<a id="org43c250a"></a>
+<a id="org8e39d37"></a>
 
 ## Supported Platforms
 
@@ -63,7 +63,7 @@ In addition, ShellPAK has been known to run on OpenSUSE, SuSE
 Enterprise Linux, Ubuntu, FreeBSD, and Cygwin.
 
 
-<a id="orgb072061"></a>
+<a id="org106b40a"></a>
 
 # Obtaining ShellPAK
 
@@ -82,7 +82,7 @@ Further information on Fossil can be found at this [Quick Start
 Guide](http://www.fossil-scm.org/index.html/doc/trunk/www/quickstart.wiki).
 
 
-<a id="org822ffdf"></a>
+<a id="orgd42b8ef"></a>
 
 ## Alternate Repositories
 
@@ -98,7 +98,7 @@ Fossil.  Conversion to support the conventions of an alternative
 revision control system is an exercise left to the user.
 
 
-<a id="org7a04f13"></a>
+<a id="orgb984856"></a>
 
 # Installation
 
@@ -111,7 +111,7 @@ specified by the `-b` flag).  These files will be restored during
 un-installation (via the `-u` flag)
 
 
-<a id="orga848fba"></a>
+<a id="org125c07e"></a>
 
 ## Other setup options
 
@@ -126,6 +126,9 @@ un-installation (via the `-u` flag)
     
     # Set up go programming environment
     $ ./setup.sh -g
+    
+    # Set up PLSense
+    $ ./setup.sh -l
     
     # Set up python development environment
     $ ./setup.sh -p
@@ -150,7 +153,7 @@ of Emacs packages.  This is no longer required as Emacs will now
 automatically install necessary packages on startup.
 
 
-<a id="orga13e6aa"></a>
+<a id="org9931909"></a>
 
 # Bugs
 
@@ -158,7 +161,7 @@ Please report any bugs or feature requests by [filing a ticket](https://chiselap
 the ShellPAK repository website.
 
 
-<a id="org19bcca2"></a>
+<a id="org19492b6"></a>
 
 # Author
 
@@ -166,13 +169,14 @@ Christopher M. Fuhrman
 [cfuhrman@pobox.com](mailto:cfuhrman@pobox.com)
 
 
-<a id="org994c8f3"></a>
+<a id="org6467d02"></a>
 
 # Copyright
 
-Copyright (c) 2000-2018 Christopher M. Fuhrman
+Copyright (c) 2000-2019 Christopher M. Fuhrman
 All rights reserved.
 
 All files contained herein can be redistributed and/or modified
 under the terms of the Simplified BSD License (also known as the
 "2-Clause License" or "FreeBSD License".) unless otherwise noted.
+

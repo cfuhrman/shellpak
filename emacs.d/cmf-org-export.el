@@ -25,7 +25,7 @@
 
 ;; Force export to UTF-8 format
 (custom-set-variables
-  '(org-ascii-charset (quote utf-8)))
+ '(org-ascii-charset (quote utf-8)))
 
 (defun cmf-export-to-txt ()
   "Wrapper function for exporting an 'org-mode' document to text format.

@@ -112,9 +112,9 @@ disabled: ${DISABLEDHOSTS}
 clean: clean-echo ${CLEANDIRS} clean-dist clean-tags
 	@rm ${RM_OPTS} *.bak
 	@rm ${RM_OPTS} *~
-	@rm ${RM_OPTS} *-baseline
-	@rm ${RM_OPTS} *-merge
-	@rm ${RM_OPTS} *-original
+	@rm ${RM_OPTS} *-baseline*
+	@rm ${RM_OPTS} *-merge*
+	@rm ${RM_OPTS} *-original*
 
 clean-echo:
 	@echo 'Cleaning old files:'
