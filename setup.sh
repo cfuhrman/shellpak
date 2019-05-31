@@ -19,7 +19,7 @@
 #
 # USAGE:
 #
-#   bash setup.sh [-hnpru] [-d <directory>] [-b <directory>]
+#   bash setup.sh -h
 #
 # REQUIREMENTS:
 #
@@ -37,15 +37,14 @@ RSYNC=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS="-Ccav --delete --exclude-from=${RSYNC_EXCLUDE}"
 MAKE=make
-COPYRIGHT='Copyright (c) 2000-2018 Christopher M. Fuhrman'
+COPYRIGHT='Copyright (c) 2000-2019 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 DRYRUN=""
 UNINSTALL=0
 GOINSTALL=0
 GOPATH=${HOME}/go
 PYINSTALL=0
-BUILD_EMACS_PACKAGES=0
-EMACS_OUTPUT_LOG=${HOME}/tmp/emacs-pkg-install-$$-`date +%y%m%d`.log
+PLINSTALL=0
 NOLINK=0            # If set to 1 (true), then the following apply:
                     #   - Linked files will not be created
                     #   - ~/tmp directory will not be created
@@ -93,10 +92,9 @@ HOMEDOTFILES=('bash_logout'			\
               'emacs.d'				\
               'gitconfig'			\
               'indent.pro'			\
-              "mg"				\
-	      "nanorc"				\
+              'mg'				\
+              'nanorc'				\
               'perltidyrc'			\
-              'tmux.conf'			\
               'screenrc'			\
               'Xresources'
              )
@@ -303,16 +301,71 @@ goSetup ()
 	fi
 }
 
+# Function: plSetup
+#
+# Installs plSense for perl development
+
+plSetup ()
+{
+	local PLSENSE_REPO="https://github.com/aki2o/plsense.git"
+	local PLSENSE_VER="v0.3.4"
+	local PLSENSE_MODULE_PREREQUISITES=('Module::Install::CPANfile'	\
+					    'PPI::Document'		\
+					    'PPI::Lexer'		\
+					    'Log::Handler'		\
+					    'Config::Tiny'		\
+					    'Storable'           	\
+ 					    'Class::Std::Storable'	\
+					    'Cache::FileCache'		\
+					    'List::AllUtils'
+					   )
+
+	if type -p plsense > /dev/null; then
+		inform $L1 $TRUE "PLSense is already installed."
+		return
+	fi
+
+	inform $L1 $TRUE "Setting up PLSense for perl development"
+
+	for module in ${PLSENSE_MODULE_PREREQUISITES[@]}; do
+		inform $L2 $TRUE " ${module}"
+		cpan install $module
+	done
+
+	inform $L2 $TRUE "Installing PLSense"
+	temp_dir="$(mktemp -q -d -t ${0##*/}.XXXXXX 2>/dev/null || mktemp -q -d)"
+
+	git clone ${PLSENSE_REPO} $temp_dir
+	pushd . >/dev/null
+	cd $temp_dir
+	git checkout ${PLSENSE_VERSION}
+
+	# Standard Perl Installation
+	perl Makefile.PL &&			\
+	make             &&			\
+	make test        &&			\
+	make install
+
+	# Clean up
+	inform $L2 $TRUE "Cleaning up installation"
+	popd >/dev/null
+	rm -rf $temp_dir
+
+	inform $L1 $TRUE "Setting up PLSense (manual interaction will be necessary)"
+	$HOME/perl5/bin/plsense config
+}
+
 # Function: pySetup
 #
 # Installs the tools necessary for python development
 pySetup ()
 {
-	local PYTHON_PKGS=('jedi'		\
+	local PYTHON_PKGS=('autopep8'		\
 			   'flake8'		\
-			   'autopep8'		\
-			   'yapf'		\
-			   'virtualenv'
+			   'jedi'		\
+			   'setuptools-black'	\
+			   'virtualenv'		\
+			   'yapf'
 			  )
 
 	# Make sure that pip is installed
@@ -358,6 +411,45 @@ headerDisplay ()
 
 } # headerDisplay()
 
+# Function: linkTmuxConf
+#
+# Caveats:
+#   readlink(1) is neither available on Solaris nor AIX
+#
+# Links tmux.conf file depending on version
+
+linkTmuxConf ()
+{
+	local tmux_conf_symlink=$HOME/.tmux.conf
+
+	if ! type tmux >/dev/null 2>&1; then
+		inform $L1 $TRUE "tmux is not installed, so configuration files will not be set up"
+	else
+		if [ -h $tmux_conf_symlink ]; then
+			local real_tmux_conf=$( readlink $tmux_conf_symlink )
+
+			if [[ -h $tmux_conf_symlink && ! -e $real_tmux_conf ]]; then
+				inform $L1 $TRUE "Removing stale tmux.conf link"
+				rm -f $tmux_conf_symlink
+			fi
+
+		fi
+
+		if [ ! -e $HOME/.tmux.conf ]; then
+			local tmux_version=$( tmux -V | sed 's/tmux \([0-9]\).[0-9][a-z]*/\1/' )
+
+			if [[ $tmux_version -eq 1 ]]; then
+				local tmux_conf=${SHELLDIR}/tmux-${tmux_version}.conf
+			else
+				local tmux_conf=${SHELLDIR}/tmux-2.conf
+			fi
+
+			inform $L1 $TRUE "Linking tmux configuration file"
+			ln -s $tmux_conf $tmux_conf_symlink
+		fi
+	fi
+}
+
 # Function: inform
 #
 # Displays a message on STDOUT
@@ -401,6 +493,7 @@ usage: ${0##*/} -h This screen                             \\
                    of backup files
                 -n Do _not_ link files                     \\
                 -g Set up/remove GoLang Development        \\
+                -l Set up PLSense                          \\
 		-p Set up Python Development               \\
                 -u Uninstall ShellPAK                      \\
                 -r perform a trial run with no changes made
@@ -415,7 +508,7 @@ STDERR
 
 headerDisplay
 
-args=$(getopt d:b:hnrpgu $*)
+args=$(getopt d:b:hlnrpgu $*)
 
 set -- $args
 
@@ -454,6 +547,10 @@ do
 
 	-p)
 		PYINSTALL=1
+		;;
+
+	-l)
+		PLINSTALL=1
 		;;
 
         -u)
@@ -550,6 +647,11 @@ if [ ${GOINSTALL} -ne 0 ]; then
 	goSetup
 fi
 
+# Do we want to set up our environment for perl development?
+if [ ${PLINSTALL} -ne 0 ]; then
+	plSetup
+fi
+
 # Do we want to set up our environment for python development?
 if [ ${PYINSTALL} -ne 0 ]; then
 	pySetup
@@ -574,6 +676,7 @@ if [ ${NOLINK} -ne 1 ]; then
 
         done
 
+	linkTmuxConf
 fi
 
 # Create ~/tmp directory if it doesn't exist

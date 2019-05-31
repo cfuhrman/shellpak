@@ -1,8 +1,8 @@
 *.tar.gz
 *~
 .abbrev_defs
-.icon-fonts-installed
 .fslckout
+.icon-fonts-installed
 .org-id-locations
 .python-environments
 GPATH
@@ -20,9 +20,11 @@ emojis/
 eshell/
 ext/
 ido.last
+network-security.data
 org-clock-save.el
 recentf
-network-security.data
+session.*
 tramp
+transient/
 url/
 xkcd/
