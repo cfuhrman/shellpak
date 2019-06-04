@@ -100,14 +100,14 @@
 
   %?")
      ("n" "Note" entry
-      (file+datetree "~/org/notes.org")
+      (file+olp+datetree "~/org/notes.org")
       "* %^{Description}  %^G
   Added: %U
   Context: %a
 
   %?" :empty-lines 1)
      ("j" "Journal Entry" entry
-      (file+datetree "~/org/journal.org")
+      (file+olp+datetree "~/org/journal.org")
       "** %^{Heading} :JOURNAL:%^G
   Added: %U
   Mood: %^{mood}

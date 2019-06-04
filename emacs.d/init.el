@@ -1012,7 +1012,6 @@
 
   :init
   (require 'php-doc)
-  (require 'php-ext)
   (add-hook 'php-mode-hook (lambda () (subword-mode 1)))
 
   :config
