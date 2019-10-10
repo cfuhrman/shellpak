@@ -10,4 +10,4 @@ pdf:
 
 txt:
 
-# Ende
+# hosts/GNUmakefile ends here

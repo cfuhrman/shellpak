@@ -3,3 +3,5 @@
 #
 
 include ../../mk/subclean.mk
+
+# emacs.d/list/GNUmakefile ends here

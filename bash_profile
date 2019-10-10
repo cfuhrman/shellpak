@@ -55,4 +55,4 @@ fi
 export MAIL
 uname -a
 
-# Ende
+# bash_profile ends here

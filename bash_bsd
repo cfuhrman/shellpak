@@ -2,7 +2,7 @@
 # ====================================================================
 #
 # bash_bsd
-# 
+#
 # Copyright (c) 2001 Christopher M. Fuhrman
 # All rights reserved.
 #
@@ -63,10 +63,6 @@ fi
 # Set locale and file operation verbose flags
 if [[ ${OSTYPE} != 'OpenBSD' ]]; then
 
-        # File operating settings
-        FILE_OPS_FLAGS='v'
-        FILE_OPS_RM_FLAGS=${FILE_OPS_FLAGS}
-
         # Locale Settings
         LANG=${MYLOCALE}
 
@@ -80,11 +76,10 @@ if [[ ${OSTYPE} != 'OpenBSD' ]]; then
                 LC_ALL=${MYLOCALE}
         fi
 
-        export FILE_OPS_FLAGS                   \
-               FILE_OPS_RM_FLAGS                \
-               LANG LC_COLLATE                  \
-               LC_MONETARY                      \
-               LC_NUMERIC                       \
+        export LANG				\
+               LC_COLLATE			\
+               LC_MONETARY			\
+               LC_NUMERIC			\
                LC_ALL
 
 fi
@@ -92,4 +87,4 @@ fi
 # See if coreutils is installed
 aliasCoreUtils
 
-# Ende
+# bash_bsd ends here

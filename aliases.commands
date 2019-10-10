@@ -1,0 +1,78 @@
+#!/bin/bash
+# ====================================================================
+#
+# aliases.commands
+#
+# Copyright (c) 2019 Christopher M. Fuhrman
+# All rights reserved
+#
+# This program is free software; you can redistribute it and/or
+# modify it under terms of the Simplified BSD License (also
+# known as the "2-Clause License" or "FreeBSD License".)
+#
+# Created Fri Sep  6 09:49:33 2019 PDT
+#
+# ====================================================================
+
+#
+# Provides aliases for various commands
+#
+
+# Setting for Pine/Alpine remote config
+PINE_REMOTE_CONFIG="{mail.example.com/ssl/novalidate-cert/user=cfuhrman@example.com}INBOX.in-my-alpine-config"
+
+# Aliases
+# --------------------------------------------------------------------
+
+alias cp='cp -vi'
+alias rm='rm -vi'
+alias mv='mv -vi'
+alias ll='ls -alh'
+
+# Make sure we use the rm binary
+if [ -e /bin/rm ]; then
+        alias rmrmrm='/bin/rm -vif'
+else
+        alias rmrmrm='rm -vif'
+fi
+
+# Set up pine/alpine aliases
+if type -p alpine >/dev/null; then
+        alias alpine="alpine -p ${PINE_REMOTE_CONFIG}"
+        alias pine='echo "Mailer:NOTE:Alpine replaces pine\!"'
+else
+        if type -p pine >/dev/null; then
+                alias pine="pine -p ${PINE_REMOTE_CONFIG}"
+        fi
+fi
+
+# An alias to strip out current directory from PATH
+alias stripcwd='export PATH=${PATH/:./}'
+
+# Add alias for switching to 256 colors should the need arise
+if [[ $TERM =~ ^screen ]]; then
+        alias go256='export TERM=screen-256color'
+        alias no256='export TERM=screen'
+else
+        alias go256='export TERM=xterm-256color'
+        alias no256='export TERM=xterm'
+fi
+
+# Alias for fossil
+if type -p fossil >/dev/null; then
+        alias fl="fossil"
+fi
+
+# Aliases for PHP CodeSniffer
+if type -p phpcs >/dev/null; then
+       alias phpcs='phpcs --standard=PSR2'
+fi
+
+if type -p phpcbf >/dev/null; then
+       alias phpcbf='phpcbf --standard=PSR2'
+fi
+
+# GREP_OPTIONS is deprecated, so here is a work-around
+alias grep="grep --color=auto"
+
+# aliases.commands ends here

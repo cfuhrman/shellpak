@@ -17,4 +17,4 @@
 
 $0
 
-// Ende
+// `(file-name-nondirectory (buffer-file-name))` ends here

@@ -20,4 +20,4 @@ clean: ${CLEANDIRS}
 ${CLEANDIRS} :
 	${MAKE} -C $(@:clean-%=%) clean
 
-# Ende
+# emacs.d/GNUmakefile ends here

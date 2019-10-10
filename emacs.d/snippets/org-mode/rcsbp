@@ -1,19 +1,20 @@
 # -*- mode: snippet -*-
-# name: Boiler Plate for Org-mode files managed by subversion
+# name: Boiler Plate for Org-mode files managed by CVS/RCS
 # --
 #+TITLE: $1
 #+AUTHOR: `(user-full-name)`
 #+EMAIL: `(format "%s" user-mail-address)`
 #+OPTIONS: email:t
 #
-#+LATEX_HEADER: \usepackage[today,fancyhdr]{svninfo}
-#+LATEX_HEADER: \pagestyle{fancyplain}
+#+LATEX_HEADER: \usepackage{rcsinfo}
+#+LATEX_HEADER: \usepackage{fancyhdr}
 #+LATEX_HEADER: \usepackage{bookmark}
+#+LATEX_HEADER: \pagestyle{fancyplain}
 #+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue}
 #+LATEX_HEADER: \usepackage[backend=bibtex]{biblatex}
 #+LATEX_HEADER: \fancyhead[RE,LO]{\leftmark}
 #+LATEX_HEADER: \fancyhead[LE,RO]{\thepage}
-#+LATEX_HEADER: \svnInfo $Id$
+#+LATEX_HEADER: \rcsInfo $Id$
 
 #+LATEX: \thispagestyle{empty}
 

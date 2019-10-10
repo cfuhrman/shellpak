@@ -690,4 +690,4 @@ fi
 echo ''
 echo "${BOLD}ShellPAK${NORMAL} setup complete on ${CYAN}${HOSTNAME}${NORMAL}!"
 
-# Ende
+# setup.sh ends here

@@ -11,4 +11,4 @@
 # Shell host aliases
 alias sexamp='ssh shell.example.com'
 
-# Ende
+# hostaliases ends here

@@ -1,3 +1,4 @@
+# -*- mode: conf-space -*-
 # ====================================================================
 #
 # screenrc
@@ -10,10 +11,10 @@
 shell -${SHELL}
 
 # Set caption
-caption always "%{+b Bk}[%{+b Gk}%C %a%{-}] %-= %{bk}%-w %{+b Bk}{%{+b Gk}%n %t%{-}} %{bk}%+w %-= %{+b Bk}[%{Gk}%H%{-}]"
+caption always "%{Wk}%H | %-= %{bk}%-w %{+b Bk}{%{+b gk}%n:%t%{-}} %{bk}%+w %-= %{Wk}| %D, %d %M '%y %C %A"
 
 # define scrollback
-defscrollback 1024
+defscrollback 8192
 
 # Disable startup message
 startup_message off
@@ -50,6 +51,9 @@ bindkey -m -k kN stuff V
 # the last char. -m means this is for copy mode only.
 bindkey -m ^e stuff "$^f"
 
+# Instead of Control-a, make the escape/command character be Control-b
+escape ^Bb
+
 # C-g and other keys just quit copy mode. Esc does nothing.
 markkeys \033=\015=^G=^D=h=j=k=l=H=M=L=G=g=y=c=v=a=x=b=e=B=E=w
 markkeys @=\033
@@ -59,7 +63,3 @@ markkeys @=\033
 markkeys B=[:E=]:b={:e=}:w=>
 bindkey -m ^[Od stuff {  #"[[}"
 bindkey -m ^[Oc stuff ]  #"}]^f"
-
-# Local Variables:
-# mode: sh
-# End:

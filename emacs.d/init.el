@@ -86,6 +86,7 @@
  '(dired-listing-switches "-alh")
  '(dired-use-ls-dired (quote unspecified))
  '(display-time-mode t)
+ '(epg-gpg-home-directory "~/.gnupg/")
  '(emerge-combine-versions-template "
 %b
 %a
@@ -199,8 +200,7 @@
   (auto-fill-mode t)
   (eldoc-mode t)
   (electric-pair-mode t)
-  (font-lock-add-keywords nil
-                          '(("\\<\\(FIXME\\|TODO\\|BUG\\|LATER\\):" 1 font-lock-warning-face t)))
+  (hl-todo-mode t)
   )
 
 ;; Define a basic hook for sane editing of text documents
@@ -275,6 +275,7 @@
 ;;
 
 (require 'package)
+(setq package-check-signature nil)
 (setq package-enable-at-startup nil)
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
@@ -282,7 +283,17 @@
         ("marmalade" . "https://marmalade-repo.org/packages/")
         ("gnu" . "http://elpa.gnu.org/packages/"))
       )
+(setq package-unsigned-archives (quote ("melpa" "melpa-stable" "marmalade")))
 (package-initialize)
+
+;; Bootstrap 'gnu-elpa-keyring-update' if necessary
+(unless (package-installed-p 'gnu-elpa-keyring-update)
+  (package-refresh-contents)
+  (package-install 'gnu-elpa-keyring-update)
+  (require 'gnu-elpa-keyring-update))
+
+;; Uncomment once *all* package in GNU elpa repository are signed
+;; (setq package-check-signature t)
 
 ;; Boostrap 'diminish' if necessary
 (unless (package-installed-p 'diminish)
@@ -524,7 +535,7 @@
 ;; company-mode
 (use-package company
   :ensure t
-  :pin gnu
+  :pin melpa-stable
 
   :diminish company-mode " 🄲"
 
@@ -764,9 +775,17 @@
     :ensure t
 
     :init
+    (add-hook 'before-save-hook #'gofmt-before-save)
     (add-hook 'go-mode-hook
               (lambda ()
-                (add-to-list 'company-backends 'company-elisp)))
+                (add-to-list 'company-backends 'company-go)))
+    )
+
+  ;; go-complete
+  (use-package go-complete
+    :ensure t
+
+    :hook (completion-at-point-functions . go-complete-at-point)
     )
 
   ;; go-direx
@@ -805,6 +824,44 @@
 (use-package htmlize
   :ensure t
   :pin melpa-stable
+  )
+
+;; hl-todo
+(if (version< emacs-version "25.1")
+    (message "hl-todo requires Emacs version 25.1 or greater.  Unable to install")
+  (use-package hl-todo
+    :ensure t
+    :pin melpa-stable
+
+    :bind (
+	   ("C-c p" . hl-todo-previous)
+	   ("C-c n" . hl-todo-next)
+	   ("C-c o" . hl-todo-occur)
+	   ("C-c i" . hl-todo-insert)
+	   )
+
+    :custom
+    (hl-todo-keyword-faces
+     (quote
+      (("HOLD" . "#d0bf8f")
+       ("TODO" . "#cc9393")
+       ("NEXT" . "#dca3a3")
+       ("THEM" . "#dc8cc3")
+       ("PROG" . "#7cb8bb")
+       ("OKAY" . "#7cb8bb")
+       ("DONT" . "#5f7f5f")
+       ("FAIL" . "#8c5353")
+       ("DONE" . "#afd8af")
+       ("NOTE" . "#d0bf8f")
+       ("KLUDGE" . "#d0bf8f")
+       ("HACK" . "#d0bf8f")
+       ("TEMP" . "#d0bf8f")
+       ("FIXME" . "#cc9393")
+       ("XXX+" . "#cc9393")
+       ("\\?\\?\\?+" . "#cc9393")
+       ("BUG" . "#8c5353")
+       ("LATER" . "#d0bf8f"))))
+    )
   )
 
 ;; ivy
@@ -1053,6 +1110,7 @@
     )
 
   :custom
+  (php-insert-doc-access-tag nil)
   (php-enable-psr2-coding-style)
   (php-lineup-cascaded-calls t)
   (phpcbf-standard "PSR2")
@@ -1134,6 +1192,15 @@
   :custom
   ;; Use python3 by default
   (elpy-rpc-python-command "python3")
+  )
+
+;; realgud
+(if (version< emacs-version "25.1")
+    (message "realgud requires Emacs version 25.1 or greater.  Unable to install")
+  (use-package realgud
+    :ensure t
+    :pin melpa-stable
+    )
   )
 
 ;; ruby-mode

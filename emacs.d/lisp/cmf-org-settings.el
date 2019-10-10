@@ -73,7 +73,7 @@
  '(org-agenda-files
    (quote
     ("~/org/tasks.org" "~/org/refile.org" "~/org/notes.org")))
- '(org-archive-location "~/org/archive/%s_archive::file+olp+datetree/")
+ '(org-archive-location "~/org/archive/%s_archive::datetree/")
  '(org-ascii-charset (quote utf-8))
  '(org-capture-templates
    (quote
@@ -100,14 +100,14 @@
 
   %?")
      ("n" "Note" entry
-      (file+olp+datetree "~/org/notes.org")
+      (file+datetree "~/org/notes.org")
       "* %^{Description}  %^G
   Added: %U
   Context: %a
 
   %?" :empty-lines 1)
      ("j" "Journal Entry" entry
-      (file+olp+datetree "~/org/journal.org")
+      (file+datetree "~/org/journal.org")
       "** %^{Heading} :JOURNAL:%^G
   Added: %U
   Mood: %^{mood}

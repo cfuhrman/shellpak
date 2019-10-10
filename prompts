@@ -172,4 +172,4 @@ promptTFCC ()
         export DEFAULTPS1
 }                                                 # promptTFCC()
 
-# Ende
+# prompts ends here
