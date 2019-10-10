@@ -243,4 +243,4 @@ ${DISTFILE}: clean clean-tags txt version
 .PHONE: subdirs ${TXIDIRS}
 .PHONY: clean clean-elc docbook html pdf txt markdown texinfo
 
-# Ende
+# GNUmakefile ends here

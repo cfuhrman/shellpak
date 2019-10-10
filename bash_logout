@@ -21,4 +21,4 @@ echo -n 'Logged out at '
 date
 echo 'Have a nice day :)'
 
-# Ende
+# bash_logout ends here

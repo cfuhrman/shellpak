@@ -7,4 +7,4 @@ ORG_FILES=README.org
 
 include ../mk/documentation.mk
 
-# Ende
+# docs/GNUmakefile ends here

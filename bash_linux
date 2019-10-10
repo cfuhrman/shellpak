@@ -87,4 +87,4 @@ fi
 # Set up default ulimit
 ulimit -c unlimited
 
-# Ende
+# bash_linux ends here

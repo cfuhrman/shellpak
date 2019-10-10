@@ -1,22 +1,33 @@
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Description</a>
+<ul>
+<li><a href="#sec-1-1">1.1. Requirements</a></li>
+<li><a href="#sec-1-2">1.2. Supported Platforms</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2. Obtaining ShellPAK</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Alternate Repositories</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. Installation</a>
+<ul>
+<li><a href="#sec-3-1">3.1. Other setup options</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4. Bugs</a></li>
+<li><a href="#sec-5">5. Author</a></li>
+<li><a href="#sec-6">6. Copyright</a></li>
+</ul>
+</div>
+</div>
 
-# Table of Contents
-
-1.  [Description](#orge8788e7)
-    1.  [Requirements](#org3447c53)
-    2.  [Supported Platforms](#orga6fda87)
-2.  [Obtaining ShellPAK](#orgd61ce06)
-    1.  [Alternate Repositories](#org4f51a45)
-3.  [Installation](#org74abf0b)
-    1.  [Other setup options](#org33fca1b)
-4.  [Bugs](#org2f59748)
-5.  [Author](#orgb222ddd)
-6.  [Copyright](#org8f65a3a)
 
 
-
-<a id="orge8788e7"></a>
-
-# Description
+# Description<a id="sec-1" name="sec-1"></a>
 
 ShellPAK allows for the automatic installation and configuration of
 my personal [GNU Bash](http://www.gnu.org/software/bash/) shell environment as well as the configuration
@@ -34,20 +45,14 @@ of the following programs:
 This code is specific to my own needs and is here in the hopes it
 will be useful as a reference.
 
-
-<a id="org3447c53"></a>
-
-## Requirements
+## Requirements<a id="sec-1-1" name="sec-1-1"></a>
 
 -   GNU Bash version 3.2 or greater
 -   GNU Emacs 24.1 or greater (Emacs 24.4 or greater preferred)
 -   GNU Make
 -   rsync
 
-
-<a id="orga6fda87"></a>
-
-## Supported Platforms
+## Supported Platforms<a id="sec-1-2" name="sec-1-2"></a>
 
 The following operating systems are known to be supported:
 
@@ -62,10 +67,7 @@ The following operating systems are known to be supported:
 In addition, ShellPAK has been known to run on OpenSUSE, SuSE
 Enterprise Linux, Ubuntu, FreeBSD, and Cygwin.
 
-
-<a id="orgd61ce06"></a>
-
-# Obtaining ShellPAK
+# Obtaining ShellPAK<a id="sec-2" name="sec-2"></a>
 
 As of <span class="timestamp-wrapper"><span class="timestamp">&lt;2014-07-30 Wed&gt;</span></span>, [ShellPAK](https://chiselapp.com/user/cfuhrman/repository/shpak/home) is managed by the [Fossil](http://fossil-scm.org)
 distributed version control system.  To check out a repository:
@@ -81,10 +83,7 @@ distributed version control system.  To check out a repository:
 Further information on Fossil can be found at this [Quick Start
 Guide](http://www.fossil-scm.org/index.html/doc/trunk/www/quickstart.wiki).
 
-
-<a id="org4f51a45"></a>
-
-## Alternate Repositories
+## Alternate Repositories<a id="sec-2-1" name="sec-2-1"></a>
 
 [ShellPAK](https://chiselapp.com/user/cfuhrman/repository/shpak/home) is also available for checkout from the following
 locations:
@@ -97,10 +96,7 @@ Be aware that portions of the ShellPAK infrastructure relies on
 Fossil.  Conversion to support the conventions of an alternative
 revision control system is an exercise left to the user.
 
-
-<a id="org74abf0b"></a>
-
-# Installation
+# Installation<a id="sec-3" name="sec-3"></a>
 
     # Install ShellPAK
     $ ./setup.sh
@@ -110,10 +106,7 @@ Note that during installation, ShellPAK will store dot-files (e.g.,
 specified by the `-b` flag).  These files will be restored during
 un-installation (via the `-u` flag)
 
-
-<a id="org33fca1b"></a>
-
-## Other setup options
+## Other setup options<a id="sec-3-1" name="sec-3-1"></a>
 
     # Perform a dry-run
     $ ./setup.sh -r
@@ -152,26 +145,17 @@ Previous versions of `setup.sh` provided options for installation
 of Emacs packages.  This is no longer required as Emacs will now
 automatically install necessary packages on startup.
 
-
-<a id="org2f59748"></a>
-
-# Bugs
+# Bugs<a id="sec-4" name="sec-4"></a>
 
 Please report any bugs or feature requests by [filing a ticket](https://chiselapp.com/user/cfuhrman/repository/shpak/reportlist) via
 the ShellPAK repository website.
 
-
-<a id="orgb222ddd"></a>
-
-# Author
+# Author<a id="sec-5" name="sec-5"></a>
 
 Christopher M. Fuhrman
-[cfuhrman@pobox.com](mailto:cfuhrman@pobox.com)
+[cfuhrman@pobox.com](cfuhrman@pobox.com)
 
-
-<a id="org8f65a3a"></a>
-
-# Copyright
+# Copyright<a id="sec-6" name="sec-6"></a>
 
 Copyright (c) 2000-2019 Christopher M. Fuhrman
 All rights reserved.
@@ -179,4 +163,3 @@ All rights reserved.
 All files contained herein can be redistributed and/or modified
 under the terms of the Simplified BSD License (also known as the
 "2-Clause License" or "FreeBSD License".) unless otherwise noted.
-

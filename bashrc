@@ -24,7 +24,8 @@ export SHELLDIR
 # Includes
 source $SHELLDIR/functions
 source $SHELLDIR/prompts
-source $SHELLDIR/hostaliases
+source $SHELLDIR/aliases.commands
+source $SHELLDIR/aliases.hosts
 source $SHELLDIR/thirdparty/git-prompt.sh
 
 # Set SHELLPAK_VERSION
@@ -225,22 +226,8 @@ done
 PATH=${PATH#:}
 PATH=${PATH//::/:}
 
-# Set default for YASTISBROKEN
-YASTISBROKEN=0
-
-# Used for specifying a 'verbose' flag for file operation commands
-# (e.g., mv, cp) for operating systems that support it
-FILE_OPS_FLAGS=""
-FILE_OPS_RM_FLAGS=${FILE_OPTS_RM_FLAGS}
-
-# Operating system PKILL command
-PKILL='pkill'
-
 # Set default for awk
 AWK=awk
-
-# Make grep(1) output pretty on systems that support color
-export CMF_GREP_OPTIONS='--color=auto'
 
 # Set up GOPATH
 if type -p go >/dev/null; then
@@ -288,64 +275,6 @@ Linux )
 
 esac
 
-# Aliases
-# --------------------------------------------------------------------
-
-alias cp='cp -${FILE_OPS_FLAGS}i'
-alias rm='rm -${FILE_OPS_FM_FLAGS}i'
-alias mv='mv -${FILE_OPS_FLAGS}i'
-alias ll='ls -alh'
-
-# Make sure we use the rm binary
-if [ -e /bin/rm ]; then
-        alias rmrmrm='/bin/rm -${FILE_OPS_RM_FLAGS}f'
-else
-        alias rmrmrm='rm -${FILE_OPS_RM_FLAGS}f'
-fi
-
-# Set up pine/alpine aliases
-if type -p alpine >/dev/null; then
-        alias alpine="alpine -p ${PINE_REMOTE_CONFIG}"
-        alias pine='echo "Mailer:NOTE:Alpine replaces pine\!"'
-else
-        if type -p pine >/dev/null; then
-                alias pine="pine -p ${PINE_REMOTE_CONFIG}"
-        fi
-fi
-
-# Bloated unstable web browsers.  Coming to a computer near you!
-alias kn='${PKILL} -9 netscape-communicator'
-alias km='${PKILL} -9 mozilla'
-alias kf='${PKILL} -9 firefox'
-
-# An alias to strip out current directory from PATH
-alias stripcwd='export PATH=${PATH/:./}'
-
-# Add alias for switching to 256 colors should the need arise
-if [[ $TERM =~ ^screen ]]; then
-        alias go256='export TERM=screen-256color'
-        alias no256='export TERM=screen'
-else
-        alias go256='export TERM=xterm-256color'
-        alias no256='export TERM=xterm'
-fi
-
-# Alias for fossil
-if type -p fossil >/dev/null; then
-        alias fl="fossil"
-fi
-
-# Aliases for PHP CodeSniffer
-if type -p phpcs >/dev/null; then
-       alias phpcs='phpcs --standard=PSR2'
-fi
-
-if type -p phpcbf >/dev/null; then
-       alias phpcbf='phpcbf --standard=PSR2'
-fi
-
-# GREP_OPTIONS is deprecated, so here is a work-around
-alias grep="grep ${CMF_GREP_OPTIONS}"
 
 # Program defaults
 # --------------------------------------------------------------------
@@ -382,6 +311,7 @@ shopt -s cmdhist
 # again later.
 export HISTSIZE=10000
 export HISTFILESIZE=${HISTSIZE}
+export HISTTIMEFORMAT="[%F %T]: "
 
 #
 # Bash behavior settings
@@ -410,13 +340,6 @@ shopt -s extglob
 # Set up some default settings
 umask 022
 
-# There's a SuSE bug whereby if interactive POSIX mode is enabled,
-# then /etc/bash_completion.d/yast2-completion.sh will throw a syntax
-# error (see https://bugzilla.novell.com/show_bug.cgi?id=504844)
-if [ ! ${YASTISBROKEN} ]; then
-        set -o posix
-fi
-
 # Host-specific processing.  We only do this if the host-specific file
 # exists
 HOSTBITS=(${HOSTNAME//./ })
@@ -434,4 +357,4 @@ if [ $DOMAIN ] && [ -f $SHELLDIR/hosts/$DOMAIN ]; then
         source $SHELLDIR/hosts/$DOMAIN
 fi
 
-# Ende
+# bashrc ends here
