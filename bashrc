@@ -68,13 +68,14 @@ __sp_bashrc_set_browser ()
 {
 
         # Set preferred browsers in order of evaluation
-        browsers=('firefox'                     \
-                  'galeon'                      \
-                  'epiphany'                    \
-                  'konqueror'                   \
-                  'mozilla'                     \
-                  'w3m'                         \
-                  'elinks'                      \
+        browsers=('google-chrome'		\
+                  'chromium'			\
+                  'firefox'			\
+                  'epiphany'			\
+                  'konqueror'			\
+                  'mozilla'			\
+                  'w3m'				\
+                  'elinks'			\
                   'lynx'
                  )
 
@@ -208,6 +209,7 @@ paths=('/usr/games'				\
        '/sbin'					\
        '/usr/local/sbin'			\
        "$HOME/.composer/vendor/bin"		\
+       "$HOME/vendor/bin"			\
        "$HOME/perl5/bin"			\
        "$HOME/bin"
       )

@@ -53,6 +53,7 @@
                         "/usr/local/bin"
                         "~/.composer/vendor/bin"
                         "~/bin"
+                        "~/vendor/bin"
                         "~/go/bin"
                         "~/perl5/bin"
                         "/Library/TeX/texbin"))
@@ -181,6 +182,18 @@
               ;; by about 1.5 -- so use 17 instead.
               (> frame-height (+ image-height 17))))))
       ))
+
+;; Convenience function for disabling all minor modes
+(defun disable-all-minor-modes ()
+  "Disables all minor modes"
+  (interactive)
+  (mapc
+   (lambda (mode-symbol)
+     (when (functionp mode-symbol)
+       ;; some symbols are functions which aren't normal mode functions
+       (ignore-errors
+         (funcall mode-symbol -1))))
+   minor-mode-list))
 
 ;; Fix for bug involving enriched text mode
 (if (version< emacs-version "25.3")
@@ -1275,6 +1288,9 @@
 (use-package sudo-edit
   :ensure t
   :no-require t
+
+  :init
+  (setq sudo-edit-indicator-mode t)
   )
 
 ;; twilight-theme
