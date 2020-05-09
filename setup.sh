@@ -37,7 +37,7 @@ RSYNC=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS="-Ccav --delete --exclude-from=${RSYNC_EXCLUDE}"
 MAKE=make
-COPYRIGHT='Copyright (c) 2000-2019 Christopher M. Fuhrman'
+COPYRIGHT='Copyright (c) 2000-2020 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 DRYRUN=""
 UNINSTALL=0
@@ -444,8 +444,9 @@ linkTmuxConf ()
 				local tmux_conf=${SHELLDIR}/tmux-2.conf
 			fi
 
-			inform $L1 $TRUE "Linking tmux configuration file"
+			inform $L1 $FALSE "Linking tmux configuration file"
 			ln -s $tmux_conf $tmux_conf_symlink
+			echo -e "${GREEN}done${NORMAL}"
 		fi
 	fi
 }

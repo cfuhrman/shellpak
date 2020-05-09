@@ -78,7 +78,6 @@
  '(calendar-time-zone -480)
  '(calendar-view-holidays-initially-flag nil)
  '(column-number-mode t)
- '(comment-auto-fill-only-comments t)
  '(comment-fill-column 80)
  '(comment-multi-line t)
  '(comment-style (quote indent))
@@ -214,6 +213,8 @@
   (eldoc-mode t)
   (electric-pair-mode t)
   (hl-todo-mode t)
+  (lambda ()
+    (set (make-local-variable 'comment-auto-fill-only-comments) t))
   )
 
 ;; Define a basic hook for sane editing of text documents
@@ -701,7 +702,7 @@
   :ensure t
 
   :bind (:map flyspell-mode-map
-              ("C-c ;" . flyspell-correct-previous-word-generic))
+              ("C-c ;" . flyspell-correct-wrapper))
 
   :hook ((prog-mode . flyspell-prog-mode)
          (text-mode . flyspell-mode))
@@ -816,6 +817,15 @@
   (use-package go-snippets
     :ensure t
     :after yasnippet
+    )
+  )
+
+;; graphviz-dot-mode
+(if (version< emacs-version "25.1")
+    (message "GraphViz Dot Mode requires Emacs version 25.1 or greater.  Unable to install")
+  (use-package graphviz-dot-mode
+    :ensure t
+    :pin melpa-stable
     )
   )
 
@@ -1006,6 +1016,7 @@
   :hook (org-mode . nice-text-hook)
 
   :init
+  (require 'epa-file)
   (require 'org-install)
   (require 'org-crypt)
 
@@ -1282,6 +1293,17 @@
   :mode (("/sql[^/]]*" . sql-mode))
 
   :hook (sql-mode . nice-prog-hook)
+
+  :config
+  ;; sql-indent
+  (use-package sql-indent
+    :ensure t
+    :pin marmalade
+
+    :custom
+    (sql-indent-first-column-regexp
+     "^\\s-*\\(create\\|d\\(?:elete\\|rop\\)\\|from\\|group\\|having\\|in\\(?:sert\\|t\\(?:ersect\\|o\\)\\)\\|order\\|se\\(?:\\(?:lec\\)?t\\)\\|truncate\\|commit\\|u\\(?:nion\\|pdate\\)\\|where\\)\\(\\b\\|\\s-\\)")
+    )
   )
 
 ;; sudo-edit
@@ -1399,6 +1421,16 @@
 
   :hook ((with-editor-mode . nice-text-hook)
          (with-editor-mode . turn-on-orgstruct++))
+  )
+
+;; wttrin
+(use-package wttrin
+  :ensure t
+  :pin melpa-stable
+
+  :custom
+  (wttrin-default-accept-language '("Accept-Language" . "en-US"))
+  (wttrin-default-cities '("Portland, OR?u" "Santa Clara, CA?u" "Colonial Heights, VA?u"))
   )
 
 ;; xkcd

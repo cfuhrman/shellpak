@@ -5,7 +5,7 @@
 # --
 <?php
 
-/*
+/**
  * `(file-name-nondirectory (buffer-file-name))`
  *
  * Copyright (c) `(format-time-string "%Y")` `(user-full-name)`
@@ -20,4 +20,4 @@
 
 $0
 
-/* Ende */
+/** `(file-name-nondirectory (buffer-file-name))` ends here */
