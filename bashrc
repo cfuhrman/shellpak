@@ -52,17 +52,7 @@ PINE_REMOTE_CONFIG="{mail.example.com/ssl/novalidate-cert/user=cfuhrman@example.
 
 # Function: __sp_bashrc_set_browser
 #
-# Sets BROWSER environment variable
-#
-# Order of preference:
-#
-#  * firefox
-#  * galeon
-#  * konqueror
-#  * mozilla
-#  * w3m
-#  * elinks
-#  * lynx
+# Sets BROWSER environment variable.  See code for order of preference.
 
 __sp_bashrc_set_browser ()
 {
@@ -71,8 +61,6 @@ __sp_bashrc_set_browser ()
         browsers=('google-chrome'		\
                   'chromium'			\
                   'firefox'			\
-                  'epiphany'			\
-                  'konqueror'			\
                   'mozilla'			\
                   'w3m'				\
                   'elinks'			\
@@ -94,15 +82,8 @@ __sp_bashrc_set_browser ()
 
 # Function: __sp_bashrc_set_editor
 #
-# Sets EDITOR environment variable
-#
-# Order of preference:
-#
-#  * emacs
-#  * mg
-#  * nano
-#  * vim
-#  * vi (if all else fails)
+# Sets EDITOR environment variable.  See code for order of preference.
+
 
 __sp_bashrc_set_editor ()
 {
@@ -201,6 +182,7 @@ fi
 
 # Determine PATH
 paths=('/usr/games'				\
+       '/opt/schily/bin'			\
        '/usr/X11R6/bin'				\
        '/usr/X11R7/bin'				\
        '/usr/sbin'				\
