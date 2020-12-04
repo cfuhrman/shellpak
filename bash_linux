@@ -87,4 +87,7 @@ fi
 # Set up default ulimit
 ulimit -c unlimited
 
+# Set up colors for ip(8)
+export COLORFGBG=";0"
+
 # bash_linux ends here

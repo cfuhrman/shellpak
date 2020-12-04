@@ -1,6 +1,6 @@
 ;;; init.el --- Personal customizations
 ;; ====================================================================
-;;
+;;;
 ;; Copyright (c) 2008, 2016 Christopher M. Fuhrman
 ;; All rights reserved.
 ;;
@@ -266,11 +266,6 @@
          (equal (equal system-type 'gnu/linux) nil))
     (normal-erase-is-backspace-mode 0))
 
-;; Customize font under X
-(if (equal window-system 'x)
-    (set-face-attribute 'default nil
-                        :height   100))
-
 ;; Enable Apple Color Emoji
 (if (equal window-system 'ns)
     (set-fontset-font
@@ -289,15 +284,20 @@
 ;;
 
 (require 'package)
+
+;; Fix GNUTLS
+(if(version< emacs-version "26.1")
+    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+  )
+
 (setq package-check-signature nil)
 (setq package-enable-at-startup nil)
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
         ("melpa-stable" . "https://stable.melpa.org/packages/")
-        ("marmalade" . "https://marmalade-repo.org/packages/")
         ("gnu" . "http://elpa.gnu.org/packages/"))
       )
-(setq package-unsigned-archives (quote ("melpa" "melpa-stable" "marmalade")))
+(setq package-unsigned-archives (quote ("melpa" "melpa-stable")))
 (package-initialize)
 
 ;; Bootstrap 'gnu-elpa-keyring-update' if necessary
@@ -350,10 +350,7 @@
                           (lambda ()
                             (setq calendar-latitude osx-location-latitude
                                   calendar-longitude osx-location-longitude
-                                  calendar-location-name (format "%s, %s" osx-location-latitude osx-location-longitude)
-                                  forecast-latitude osx-location-latitude
-                                  forecast-longitude osx-location-longitude
-                                  forecast-city (format "%s, %s" osx-location-latitude osx-location-longitude)))
+                                  calendar-location-name (format "%s, %s" osx-location-latitude osx-location-longitude)))
                           )
 
     :config
@@ -371,11 +368,15 @@
 ;; yasnippet
 (use-package yasnippet
   :ensure t
-  :ensure yasnippet-snippets
   :pin melpa-stable
 
   :init
   (yas-global-mode 1)
+
+  :config
+  (use-package yasnippet-snippets
+    :ensure t
+    )
 
   :custom
   (yas-wrap-around-region t)
@@ -393,6 +394,12 @@
       :bind (
              ("C-x o" . ace-window))
       )
+  )
+
+;; adoc-mode (ASCIIDOC)
+(use-package adoc-mode
+  :ensure t
+  :pin melpa-stable
   )
 
 ;; all-the-icons
@@ -489,7 +496,7 @@
   :ensure t
   :pin melpa-stable
 
-  :diminish " 🄱"
+  :diminish beacon-mode " 🄱"
   :init
   (require 'beacon)
 
@@ -632,6 +639,15 @@
          ("cron\\(tab\\)?\\."    . crontab-mode))
   )
 
+;; diff-hl
+(use-package diff-hl
+  :ensure t
+  :pin melpa-stable
+
+  :config
+  (global-diff-hl-mode)
+  )
+
 ;; docker
 ;;
 ;; Note that I do not use Windows operating systems so do not know if
@@ -718,23 +734,6 @@
   (ispell-extra-args (quote ("--run-together")))
   )
 
-;; forecast
-(if (version< emacs-version "24.4")
-    (message "Forecast requires Emacs version 24.4 or later.  Unable to install")
-  (use-package forecast
-    :ensure t
-    :no-require t
-
-    :custom
-    (forecast-latitude cmf-latitude)
-    (forecast-longitude cmf-longitude)
-    (forecast-city cmf-location-name)
-    (forecast-country "United States")
-    (forecast-units 'us)
-    (forecast-api-key "")		; Get API key at https://developer.forecast.io/
-    )
-  )
-
 ;; geben
 (use-package geben
   :ensure t
@@ -743,8 +742,9 @@
   )
 
 ;; gited - dired for git branches
-(if (version< emacs-version "24.4")
-    (message "Gited requires Emacs version 24.4 or greater.  Unable to install")
+(if (or (version< emacs-version "24.4") (eq (executable-find "git") nil))
+    (message
+     "Either git not found or version < 24.4.  Unable to install gited")
   (use-package gited
     :ensure t
     :no-require t
@@ -857,10 +857,10 @@
     :pin melpa-stable
 
     :bind (
-	   ("C-c p" . hl-todo-previous)
-	   ("C-c n" . hl-todo-next)
-	   ("C-c o" . hl-todo-occur)
-	   ("C-c i" . hl-todo-insert)
+	   ("C-c h p" . hl-todo-previous)
+	   ("C-c h n" . hl-todo-next)
+	   ("C-c h o" . hl-todo-occur)
+	   ("C-c h i" . hl-todo-insert)
 	   )
 
     :custom
@@ -946,14 +946,14 @@
          ("pico\\."    . log-edit-mode)
          )
 
-  :hook ((log-edit-mode . nice-text-hook)
-         (log-edit-mode . turn-on-orgstruct++))
+  :hook ((log-edit-mode . nice-text-hook))
 
   )
 
 ;; magit
-(if (version< emacs-version "25.1")
-    (message "Magit requires Emacs version 25.1 or later.  Unable to install")
+(if (or (version< emacs-version "25.1") (eq (executable-find "git") nil))
+    (message
+     "Either git not found or version < 25.1.  Unable to install magit")
   (use-package magit
     :ensure t
 
@@ -1036,7 +1036,7 @@
   (use-package org-fancy-priorities
     :ensure t
 
-    :diminish " 🄵"
+    :diminish org-fancy-priorities-mode " 🄵"
 
     :hook
     (org-mode . org-fancy-priorities-mode)
@@ -1083,10 +1083,10 @@
   :mode ("\\.php\\'" . php-mode)
 
   :bind (:map php-mode-map
-              ("C-c C--" . php-current-class)
-              ("C-c C-=" . php-current-namespace)
-              ("C-c C-y" . 'yas/create-php-snippet)
-              ("C-x p"   . php-insert-doc-block)
+              ("C-c -"		. php-current-class)
+              ("C-c ="		. php-current-namespace)
+              ("C-c C-y"	. 'yas/create-php-snippet)
+              ("C-x p"		. php-insert-doc-block)
               )
 
   :hook (php-mode . nice-prog-hook)
@@ -1108,7 +1108,11 @@
     :init
     (add-hook 'php-mode-hook
               (lambda ()
-                (add-to-list 'company-backends 'company-ac-php-backend )))
+                (add-to-list 'company-backends 'company-ac-php-backend
+			     )))
+
+    :config
+    (ac-php-core-eldoc-setup)
     )
 
   ;; php-auto-yasnippets
@@ -1153,6 +1157,27 @@
       )
   ;; Otherwise use built-in prettify mode
   (global-prettify-symbols-mode t)
+  )
+
+;; projectile
+(use-package projectile
+  :ensure t
+  :pin melpa-stable
+  :diminish projectile-mode " 🄿"
+
+  :config
+  (projectile-mode +1)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (use-package counsel-projectile
+    :ensure t
+    :pin melpa-stable
+    )
+
+  :custom
+  (counsel-projectile-mode t)
+  (projectile-completion-system 'ivy)
+  (projectile-enable-caching t)
+  (projectile-indexing-method 'alien)
   )
 
 ;; python
@@ -1203,7 +1228,7 @@
   (use-package sphinx-doc
     :ensure t
     :pin melpa-stable
-    :diminish " 🆂"
+    :diminish sphinx-doc-mode " 🆂"
 
     :bind ("C-x p" . sphinx-doc)
 
@@ -1298,7 +1323,6 @@
   ;; sql-indent
   (use-package sql-indent
     :ensure t
-    :pin marmalade
 
     :custom
     (sql-indent-first-column-regexp
@@ -1353,7 +1377,7 @@
 ;; undo-tree
 (use-package undo-tree
   :ensure t
-  :diminish " 🆃"
+  :diminish undo-tree-mode " 🆃"
 
   :init
   (add-hook 'prog-mode-hook
@@ -1419,8 +1443,7 @@
 (use-package with-editor
   :no-require t
 
-  :hook ((with-editor-mode . nice-text-hook)
-         (with-editor-mode . turn-on-orgstruct++))
+  :hook ((with-editor-mode . nice-text-hook))
   )
 
 ;; wttrin
@@ -1448,7 +1471,10 @@
   :mode ("\\.sls\\'" . yaml-mode)
 
   :init
-  (add-hook 'yaml-mode-hook (lambda () (subword-mode 1)))
+  (add-hook 'yaml-mode-hook
+	    (lambda ()
+	      (subword-mode 1)
+	      (auto-fill-mode nil)))
 
   :hook (yaml-mode . nice-prog-hook)
   )

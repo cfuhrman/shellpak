@@ -25,6 +25,7 @@ paths=('/opt/local/bin'                         \
        '/opt/pkg/lib/perl5/site_perl/bin'       \
        '/Applications/oracle'                   \
        '/usr/texbin'                            \
+       '/usr/local/opt/make/libexec/gnubin'     \
        "${HOME}/perl5/bin"
 )
 

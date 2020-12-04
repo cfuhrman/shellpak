@@ -1,6 +1,6 @@
 ;;; custom.el --- Custom Emacs Configuration
 ;; ====================================================================
-;;
+;;;
 ;; Copyright (c) 2008 Christopher M. Fuhrman
 ;; All rights reserved
 ;;

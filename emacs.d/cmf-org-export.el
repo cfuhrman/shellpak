@@ -1,6 +1,6 @@
 ;;; cmf-org-export.el --- Org-mode export wrapper functions
 ;; ====================================================================
-;;
+;;;
 ;; Copyright (c) 2014 Christopher M. Fuhrman
 ;; All rights reserved
 ;;
