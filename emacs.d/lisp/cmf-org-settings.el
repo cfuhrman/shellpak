@@ -178,8 +178,7 @@
       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))))
  '(org-latex-default-packages-alist
    (quote
-    (("AUTO" "inputenc" t)
-     ("T1" "fontenc" t)
+    (("T1" "fontenc" t)
      ("" "graphicx" t)
      ("" "longtable" nil)
      ("" "float" nil)
@@ -196,7 +195,7 @@
  '(org-latex-packages-alist nil)
  '(org-latex-pdf-process
    (quote
-    ("latexmk -pdflatex='lualatex -shell-excape -interaction nonstopmode' -pdf -f %f" "bibtex %b")))
+    ("%latex -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f")))
  '(org-log-done (quote note))
  '(org-log-note-clock-out t)
  '(org-log-refile (quote time))

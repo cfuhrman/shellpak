@@ -1,20 +1,20 @@
 
 # Table of Contents
 
-1.  [Description](#org0b3dcb8)
-    1.  [Requirements](#org9e9cedf)
-    2.  [Supported Platforms](#org0e5c979)
-2.  [Obtaining ShellPAK](#orgf859f80)
-    1.  [Alternate Repositories](#org336e549)
-3.  [Installation](#orga198572)
-    1.  [Other setup options](#orgd3b7577)
-4.  [Bugs](#org2f8620b)
-5.  [Author](#org918b360)
-6.  [Copyright](#org0db29b1)
+1.  [Description](#org3550a3d)
+    1.  [Requirements](#org10e7540)
+    2.  [Supported Platforms](#orgc606ad7)
+2.  [Obtaining ShellPAK](#org5f9f8c8)
+    1.  [Alternate Repositories](#org6817f71)
+3.  [Installation](#org19411f7)
+    1.  [Other setup options](#org5e8f648)
+4.  [Bugs](#orgb249e6c)
+5.  [Author](#orgd358b95)
+6.  [Copyright](#org0517210)
 
 
 
-<a id="org0b3dcb8"></a>
+<a id="org3550a3d"></a>
 
 # Description
 
@@ -35,7 +35,7 @@ This code is specific to my own needs and is here in the hopes it
 will be useful as a reference.
 
 
-<a id="org9e9cedf"></a>
+<a id="org10e7540"></a>
 
 ## Requirements
 
@@ -45,7 +45,7 @@ will be useful as a reference.
 -   rsync
 
 
-<a id="org0e5c979"></a>
+<a id="orgc606ad7"></a>
 
 ## Supported Platforms
 
@@ -63,7 +63,7 @@ In addition, ShellPAK has been known to run on OpenSUSE, SuSE
 Enterprise Linux, Ubuntu, FreeBSD, and Cygwin.
 
 
-<a id="orgf859f80"></a>
+<a id="org5f9f8c8"></a>
 
 # Obtaining ShellPAK
 
@@ -82,7 +82,7 @@ Further information on Fossil can be found at this [Quick Start
 Guide](http://www.fossil-scm.org/index.html/doc/trunk/www/quickstart.wiki).
 
 
-<a id="org336e549"></a>
+<a id="org6817f71"></a>
 
 ## Alternate Repositories
 
@@ -98,7 +98,7 @@ Fossil.  Conversion to support the conventions of an alternative
 revision control system is an exercise left to the user.
 
 
-<a id="orga198572"></a>
+<a id="org19411f7"></a>
 
 # Installation
 
@@ -111,7 +111,7 @@ specified by the `-b` flag).  These files will be restored during
 un-installation (via the `-u` flag)
 
 
-<a id="orgd3b7577"></a>
+<a id="org5e8f648"></a>
 
 ## Other setup options
 
@@ -153,7 +153,7 @@ of Emacs packages.  This is no longer required as Emacs will now
 automatically install necessary packages on startup.
 
 
-<a id="org2f8620b"></a>
+<a id="orgb249e6c"></a>
 
 # Bugs
 
@@ -161,7 +161,7 @@ Please report any bugs or feature requests by [filing a ticket](https://chiselap
 the ShellPAK repository website.
 
 
-<a id="org918b360"></a>
+<a id="orgd358b95"></a>
 
 # Author
 
@@ -169,7 +169,7 @@ Christopher M. Fuhrman
 [cfuhrman@pobox.com](mailto:cfuhrman@pobox.com)
 
 
-<a id="org0db29b1"></a>
+<a id="org0517210"></a>
 
 # Copyright
 

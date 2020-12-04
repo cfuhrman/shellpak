@@ -277,7 +277,7 @@ __sp_bashrc_set_pager
 
 # Do *not* append the following to our history: consecutive duplicate
 # commands, ls, bg and fg, and exit
-HISTIGNORE='\&:fg:bg:ls:pwd:cd ..:cd ~-:cd -:cd:jobs:set -x:ls -l:ls -l'
+HISTIGNORE='\&:fg:bg:ls:pwd:cd ..:cd ~-:cd -:cd:jobs:set -x:ls -l:ls -al'
 
 # Don't keep useless history commands.  Note the last pattern is to not
 # keep dangerous commands in the history file.  Who really needs to
@@ -340,5 +340,10 @@ fi
 if [ $DOMAIN ] && [ -f $SHELLDIR/hosts/$DOMAIN ]; then
         source $SHELLDIR/hosts/$DOMAIN
 fi
+
+# Clean up
+unset __sp_bashrc_set_browser
+unset __sp_bashrc_set_editor
+unset __sp_bashrc_set_pager
 
 # bashrc ends here
