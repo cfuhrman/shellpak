@@ -1,12 +1,12 @@
-;;; init.el --- Personal customizations
+;;; init.el --- Personal customization
 ;; ====================================================================
 ;;;
-;; Copyright (c) 2008, 2016 Christopher M. Fuhrman
-;; All rights reserved.
+;; Copyright (c) 2008, 2016, 2021 Christopher M. Fuhrman
+;; All rights reserved
 ;;
 ;; This program is free software; you can redistribute it and/or
-;; modify it under the terms of the Simplified BSD License (also known
-;; as the "2-Clause License" or "FreeBSD License".)
+;; modify it under terms of the Simplified BSD License (also
+;; known as the "2-Clause License" or "FreeBSD License".)
 ;;
 ;; Created Thu Feb 29 17:16:39 2008 PST
 ;;
@@ -17,224 +17,155 @@
 ;;   GNU Emacs-compatible initialization file defining a number of
 ;;   coding styles and preferences
 ;;
-;; TODO:
-;;
-;;    - The same thing we do every night, Pinky.  Try to take over
-;;      *THE WORLD*!
-;;
 
 ;;; Code:
+
+;; This will let Emacs load faster by reducing the number of times we
+;; must garbage collect.  The default is 800 kilobytes.
+;;
+;; LATER: Check out https://gitlab.com/koral/gcmh to see if that
+;;        further impacts performance
+(setq gc-cons-threshold (* 50 1000 1000))
 
 ;; Update load paths
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path "~/.emacs.d/thirdparty")
 
+;; Set exec path
+(dolist (path '("~/.composer/vendor/bin"
+                "~/bin"
+                "~/go/bin"
+                "~/perl5/bin"
+                "~/vendor/bin"
+                "/Library/TeX/texbin"
+                "/usr/local/bin"
+                "/usr/pkg/bin"))
+  (if (file-directory-p path)
+      (progn
+        (add-to-list 'exec-path path)
+        (setenv "PATH" (concat (getenv "PATH") ":" path))))
+  )
 
-;; Variables
+
+;; VARIABLES
+;;
+;; Contains all global variables, including custom-set-variables.
 ;; --------------------------------------------------------------------
 
 ;; Variable definitions
-(defvar cmf-full-name "Christopher M. Fuhrman")
-(defvar cmf-mail-address "cfuhrman@example.com")
-(defvar cmf-latitude ####)              ; Determine your lat/long at maps.google.com
-(defvar cmf-longitude ####)
-(defvar cmf-location-name "San Jose, CA")
-(defvar cmf-time-zone "America/Los Angeles")
-(defvar cmf-time-zone-short-name "PST")
-(defvar cmf-time-zone-short-name-daylight "PDT")
-(defvar cmf-custom "~/.emacs.d/custom.el")
-(defvar cmf-custom-16 "~/.emacs.d/custom-nox.el")
-(defvar cmf-custom-256 "~/.emacs.d/custom-nox256.el")
+(defvar cmf/full-name "Christopher M. Fuhrman")
+(defvar cmf/mail-address "cfuhrman@example.com")
+(defvar cmf/latitude ####)		; Determine your lat/long at maps.google.com
+(defvar cmf/longitude ####)
+(defvar cmf/location-name "San Jose, CA")
+(defvar cmf/time-zone "America/Los Angeles")
+(defvar cmf/time-zone-short-name "PST")
+(defvar cmf/time-zone-short-name-daylight "PDT")
 
-;; List of paths to search
-(defvar cmf-path-list '("/usr/texbin"
-                        "/usr/pkg/bin"
-                        "/opt/pkg/bin"
-                        "/usr/local/bin"
-                        "~/.composer/vendor/bin"
-                        "~/bin"
-                        "~/vendor/bin"
-                        "~/go/bin"
-                        "~/perl5/bin"
-                        "/Library/TeX/texbin"))
-
-;; Customize generic variables
+;; Custom variables
 (custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(c-default-style
    (quote
-    ((c-mode . "cmf")
-     (c++-mode . "cmf")
+    ((c-mode        . "cmf")
+     (c++-mode        . "cmf")
      (objc-mode . "cmf")
      (java-mode . "cmf")
-     (awk-mode . "awk")
-     (other . "cmf"))))
+     (awk-mode        . "awk")
+     (other        . "cmf"))))
  '(calendar-christian-all-holidays-flag t)
- '(calendar-daylight-time-zone-name cmf-time-zone-short-name-daylight)
- '(calendar-latitude cmf-latitude)
- '(calendar-location-name cmf-location-name)
- '(calendar-longitude cmf-longitude)
+ '(calendar-daylight-time-zone-name cmf/time-zone-short-name-daylight)
+ '(calendar-latitude cmf/latitude)
+ '(calendar-location-name cmf/location-name)
+ '(calendar-longitude cmf/longitude)
  '(calendar-mark-holidays-flag t)
- '(calendar-standard-time-zone-name cmf-time-zone-short-name)
+ '(calendar-standard-time-zone-name cmf/time-zone-short-name)
  '(calendar-time-zone -480)
  '(calendar-view-holidays-initially-flag nil)
- '(column-number-mode t)
  '(comment-fill-column 80)
+ '(column-number-mode t)
  '(comment-multi-line t)
  '(comment-style (quote indent))
- '(delete-selection-mode nil)
- '(diff-switches "-u")
- '(dired-listing-switches "-alh")
- '(dired-use-ls-dired (quote unspecified))
+ '(custom-safe-themes
+   '("fce3524887a0994f8b9b047aef9cc4cc017c5a93a5fb1f84d300391fba313743" default))
  '(display-time-mode t)
- '(epg-gpg-home-directory "~/.gnupg/")
  '(emerge-combine-versions-template "
 %b
 %a
 ")
- '(global-hl-line-mode t)
- '(linum-delay t)
- '(log-edit-hook (quote (log-edit-show-files)))
- '(mark-even-if-inactive t)
- '(mark-holidays-in-calendar t)
+ '(global-prettify-symbols-mode t)
+ '(log-edit-hook '(log-edit-show-files))
+ ;; '(safe-local-variable-values '(buffer-auto-save-file-name))
  '(recentf-mode t)
- '(scroll-bar-mode (quote right))
- '(sh-basic-offset 8)
+ '(safe-local-variable-values
+   '((org-latex-pdf-process "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f" "bibtex %b")))
  '(sh-indent-comment t)
  '(sh-indent-for-case-alt (quote +))
  '(sh-indent-for-case-label 0)
  '(sh-indent-for-continuation 4)
  '(sh-indentation 8)
- '(show-paren-mode 1)
- '(tramp-default-method "ssh")
- '(transient-mark-mode 1)
- '(use-package-concat t)
- '(user-full-name cmf-full-name)
- '(user-mail-address cmf-mail-address)
+ '(show-paren-mode t)
+ '(transient-mark-mode t)
+ '(which-function-mode t)
+ '(user-full-name cmf/full-name)
+ '(user-mail-address cmf/mail-address)
  )
 
-;; Load the appropriate customization file based on if we are running
-;; under a window system, such as "x" or "ns" (Mac OS X or GNUstep)
-(if (equal window-system nil)
-    (if (or (string-match "term-256" (getenv "TERM"))
-            (string-match "screen-256" (getenv "TERM")))
-        (setq custom-file cmf-custom-256)
-      (setq custom-file cmf-custom-16))
-  (setq custom-file cmf-custom)
+(if (window-system)
+    (tool-bar-mode -1)
   )
 
-(load custom-file)
 
-
-;; Programming styles
+;; GENERAL CONFIGURATION
+;;
+;; Contains general emacs configuration, including set up of package.el
 ;; --------------------------------------------------------------------
 
-;; OpenBSD Coding Style
-(c-add-style "openbsd"
-             '("bsd"
-               (c-backspace-function . delete-backward-char)
-               (c-syntactic-indentation-in-macros . nil)
-               (c-tab-always-indent . nil)
-               (c-hanging-braces-alist
-                (block-close . c-snug-do-while))
-               (c-offsets-alist
-                (arglist-cont-nonempty . *)
-                (statement-cont . *))
-               (indent-tabs-mode . t)))
+;; Originally taken from
+;; https://github.com/daviwil/emacs-from-scratch/blob/master/init.el
+(defun cmf/display-startup-time ()
+  (message "Emacs loaded in %s with %d garbage collections."
+           (format "%.2f seconds"
+                   (float-time
+                    (time-subtract after-init-time before-init-time)))
+           gcs-done))
 
-;; My own style
-(c-add-style "cmf"
-             '("bsd"
-               (indent-tabs-mode . nil)
-               (c-offsets-alist
-                (statement-cont . (first c-lineup-cascaded-calls +)))))
+;; Uncomment to enable
+;; (add-hook 'emacs-startup-hook #'cmf/display-startup-time)
+
+;; package.el installation and configuration
+(require 'package)
+
+(setq package-archives
+      '(("melpa"        . "https://melpa.org/packages/")
+        ("melpa-stable" . "https://stable.melpa.org/packages/")
+        ("gnu"          . "http://elpa.gnu.org/packages/"))
+      )
+(setq package-check-signature nil)
+
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
+
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+(require 'use-package)
+
+;; Only enable for debugging
+(setq use-package-verbose nil)
 
 
-;; Functions
+;; BEHAVIOR
+;;
+;; Section containing macros and packages that change default
+;; behavior.
 ;; --------------------------------------------------------------------
-
-;; Function for loading exec paths
-(defun cmf/update-exec-path (pathlist)
-  "Add given PATHLIST to 'exec-path'."
-  (dolist (path pathlist)
-    (add-to-list 'exec-path path)
-    (setenv "PATH" (concat (getenv "PATH") ":" path)))
-  )
-
-;; Override stock use-fancy-splash-screens-p ()
-(if (and (version< emacs-version "25.2.1") (not(version< emacs-version "24.5")))
-    (defun use-fancy-splash-screens-p ()
-      "Return t if fancy splash screens should be used."
-      (when (and (display-graphic-p)
-                 (or (and (display-color-p)
-                          (image-type-available-p 'xpm))
-                     (image-type-available-p 'pbm)))
-        (let ((frame (fancy-splash-frame)))
-          (when frame
-            (let* ((img (create-image (fancy-splash-image-file)))
-                   (image-height (and img (cdr (image-size img nil frame))))
-                   ;; We test frame-height so that, if the frame is split
-                   ;; by displaying a warning, that doesn't cause the normal
-                   ;; splash screen to be used.
-                   (frame-height (1- (frame-height frame))))
-              ;; The original value added to the `image-height' for the
-              ;; test was 19; however, that causes the test to fail on X11
-              ;; by about 1.5 -- so use 17 instead.
-              (> frame-height (+ image-height 17))))))
-      ))
-
-;; Convenience function for disabling all minor modes
-(defun disable-all-minor-modes ()
-  "Disables all minor modes"
-  (interactive)
-  (mapc
-   (lambda (mode-symbol)
-     (when (functionp mode-symbol)
-       ;; some symbols are functions which aren't normal mode functions
-       (ignore-errors
-         (funcall mode-symbol -1))))
-   minor-mode-list))
-
-;; Fix for bug involving enriched text mode
-(if (version< emacs-version "25.3")
-    (eval-after-load "enriched"
-      '(defun enriched-decode-display-prop (start end &optional param)
-         (list start end))))
-
-
-;; Hooks
-;; --------------------------------------------------------------------
-
-;; Define a nice programming hook
-(defun nice-prog-hook ()
-  "Enable some sanity for programming source files."
-  (if (>= emacs-major-version 23)
-      (linum-mode t))
-  (auto-fill-mode t)
-  (eldoc-mode t)
-  (electric-pair-mode t)
-  (hl-todo-mode t)
-  (lambda ()
-    (set (make-local-variable 'comment-auto-fill-only-comments) t))
-  )
-
-;; Define a basic hook for sane editing of text documents
-(defun nice-text-hook ()
-  "Hook for sane editing of text documents."
-  (auto-fill-mode t)
-  (footnote-mode t)
-  )
-
-;; Apply hooks as appropriate
-(add-hook 'prog-mode-hook 'nice-prog-hook)
-(add-hook 'text-mode-hook 'nice-text-hook)
-(add-hook 'text-mode-hook
-          (lambda ()
-            (set-fill-column 80)))
-
 
 ;; Macros
-;; --------------------------------------------------------------------
-
 (fset 'yes-or-no-p
       'y-or-n-p)
 
@@ -244,104 +175,160 @@
 (fset 'align-on-hash-arrow
       [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g tab return ?= ?> return])
 
-
-;; Keyboard Bindings
-;; --------------------------------------------------------------------
-
 ;; Custom key bindings for commonly used commands
 (global-set-key [?\C-x ?\C-k ?0] 'normal-erase-is-backspace-mode)
 (global-set-key [?\C-x ?\C-k ?1] 'delete-trailing-whitespace)
 (global-set-key [?\C-x ?\C-k ?2] 'align-on-equal)
 (global-set-key [?\C-x ?\C-k ?3] 'align-on-hash-arrow)
 
+;; Mode customization
+(add-hook 'text-mode-hook 'auto-fill-mode)
+(add-hook 'text-mode-hook 'footnote-mode)
+(add-hook 'text-mode-hook
+          (lambda ()
+            (setq fill-column 80)))
 
-;; Additional Initializations
-;; --------------------------------------------------------------------
-
-;; Update path list
-(cmf/update-exec-path cmf-path-list)
-
-;; Fix normal-erase-is-backspace under non-Linux OS
-(if (and (equal window-system nil)
-         (equal (equal system-type 'gnu/linux) nil))
-    (normal-erase-is-backspace-mode 0))
-
-;; Enable Apple Color Emoji
-(if (equal window-system 'ns)
-    (set-fontset-font
-     t 'symbol
-     (font-spec :family "Apple Color Emoji") nil 'prepend))
-
-;; Use Emacs ls(1) emulation
-(require 'ls-lisp)
-
-
-;; Package configuration
-;; --------------------------------------------------------------------
-
-;;
-;; package.el installation and configuration
-;;
-
-(require 'package)
-
-;; Fix GNUTLS
-(if(version< emacs-version "26.1")
-    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+;; Functions
+(defun cmf/choose-line-number-mode-hook ()
+  "Determine line number mode to use based on Emacs version."
+  (if (version< emacs-version "26.1")
+      (linum-mode t)
+    (display-line-numbers-mode t))
   )
 
-(setq package-check-signature nil)
-(setq package-enable-at-startup nil)
-(setq package-archives
-      '(("melpa" . "https://melpa.org/packages/")
-        ("melpa-stable" . "https://stable.melpa.org/packages/")
-        ("gnu" . "http://elpa.gnu.org/packages/"))
-      )
-(setq package-unsigned-archives (quote ("melpa" "melpa-stable")))
-(package-initialize)
+;; GNU/Linux systems typically have GNU coreutils installed, so pass
+;; the --dired flag to ls since GNU ls supports that
+(if (eq system-type 'gnu/linux)
+    (setq dired-listing-switches "-alh --dired")
+  (setq dired-listing-switches "-alh")
+  )
 
-;; Bootstrap 'gnu-elpa-keyring-update' if necessary
-(unless (package-installed-p 'gnu-elpa-keyring-update)
-  (package-refresh-contents)
-  (package-install 'gnu-elpa-keyring-update)
-  (require 'gnu-elpa-keyring-update))
+;; Packages
+(use-package ace-window
+  :ensure t
+  :pin melpa-stable
 
-;; Uncomment once *all* package in GNU elpa repository are signed
-;; (setq package-check-signature t)
+  :bind ("C-x o" . ace-window)
 
-;; Boostrap 'diminish' if necessary
-(unless (package-installed-p 'diminish)
-  (package-refresh-contents)
-  (package-install 'diminish))
+  :config
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  )
 
-;; Bootstrap 'use-package' if necessary
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+(use-package counsel
+  :ensure t
+  :pin melpa-stable
+  :after swiper
+  :diminish
 
-;; Enable use-package
-(eval-when-compile
-  (require 'use-package))
-(require 'diminish)
-(require 'bind-key)
+  :bind (
+         ("M-x"         . counsel-M-x)
+         ("C-x C-f"     . counsel-find-file)
+         ("M-y"         . counsel-yank-pop)
+         ("<f1> f"      . counsel-describe-function)
+         ("<f1> v"      . counsel-describe-variable)
+         ("<f1> l"      . counsel-find-library)
+         ("<f2> i"      . counsel-info-lookup-symbol)
+         ("<f2> u"      . counsel-unicode-char)
+         ("<f2> j"      . counsel-set-variable)
+         ("C-x b"       . counsel-switch-buffer)
+         ("M-i"         . counsel-imenu)
+
+         ;; Ivy-based interface to shell and system tools
+         ("C-c c"       . counsel-compile)
+         ("C-c g"       . counsel-git)
+         ("C-c j"       . counsel-git-grep)
+         ("C-c L"       . counsel-git-log)
+         ("C-c k"       . counsel-rg)
+         ("C-c m"       . counsel-linux-app)
+         ("C-x l"       . counsel-locate)
+         ("C-c J"       . counsel-file-jump)
+         ("C-S-o"       . counsel-rhythmbox)
+         ("C-c w"       . counsel-wmctrl)
+
+         ;; Other commands
+         ("C-c b"       . counsel-bookmark)
+         ("C-c d"       . counsel-descbinds)
+         ("C-c o"       . counsel-outline)
+         ("C-c t"       . counsel-load-theme)
+         ("C-c F"       . counsel-org-file)
+         )
+
+  :custom
+  (counsel-preselect-current-file t)
+
+  :config
+  (counsel-mode t)
+  )
+
+(use-package ivy
+  :ensure t
+  :pin melpa-stable
+  :diminish
+
+  :bind (
+         ;; Ivy-based interface to standard commands
+         ("C-c v"       . ivy-push-view)
+         ("C-c V"       . ivy-pop-view)
+
+
+         ;; Ivy-resume and other commands
+         ("C-c C-r"     . ivy-resume)
+         )
+
+  :custom
+  (ivy-use-virtual-buffers t)
+  (ivy-height 10)
+  (ivy-count-format "(%d/%d) ")
+
+  :init
+  (ivy-mode t)
+
+  :config
+  (use-package ivy-rich
+    :ensure t
+
+    :init
+    (ivy-rich-mode t)
+    )
+  )
+
+(use-package swiper
+  :ensure t
+  :pin melpa-stable
+  :after ivy
+
+  :bind (
+         ("C-s"         . swiper)
+         ("C-r"         . swiper-backward)
+         )
+
+  :init
+  (ivy-mode t)
+  )
 
 ;;
-;; OSX Modes (Mac OS X only)
+;; Operating system specific code
 ;;
 
-(when (eq system-type 'darwin)
-
-  ;; Set up mac-specific parameters here
-  (setq delete-by-moving-to-trash t
-        mac-option-modifier 'meta
-        trash-directory "~/.Trash/emacs"
+(when (eq system-type 'gnu/linux)
+  (setq trash-directory "~/.local/share/Trash/files/emacs"
+        delete-by-moving-to-trash t
         )
 
   ;; Make sure backup directory exists
   (if (not (file-exists-p trash-directory))
-      (make-directory trash-directory))
+      (make-directory trash-directory t))
+  )
 
-  ;; osx-location
+(when (eq system-type 'darwin)
+  (setq delete-by-moving-to-trash t
+        trash-directory "~/.Trash/emacs"
+        )
+
+  (if (eq window-system nil)
+      (normal-erase-is-backspace-mode 0)
+    )
+
   (use-package osx-location
     :ensure t
 
@@ -355,365 +342,102 @@
 
     :config
     (osx-location-watch)
-
     )
   )
 
-;;
-;; Generic Packages
-;;
-;; For use on all operating systems
-;;
 
-;; yasnippet
-(use-package yasnippet
+;; APPEARANCE
+;;
+;; Section for controlling the appearance of Emacs, including theme
+;; installation.
+;; --------------------------------------------------------------------
+
+;; Packages
+(use-package all-the-icons
   :ensure t
   :pin melpa-stable
-
-  :init
-  (yas-global-mode 1)
+  :if window-system
 
   :config
-  (use-package yasnippet-snippets
-    :ensure t
+
+  ;; Install the font files only if we have not already done so
+  (defvar cmf/fonts-installed-file "~/SHELL/emacs.d/.icon-fonts-installed")
+  (unless (file-exists-p cmf/fonts-installed-file)
+    (progn
+      (message "Installing icon fonts")
+      (all-the-icons-install-fonts t)
+      (with-temp-buffer (write-file cmf/fonts-installed-file)))
     )
-
-  :custom
-  (yas-wrap-around-region t)
   )
 
-;; ace-window
-(if (not(version< emacs-version "24.4"))
-    (use-package ace-window
-      :ensure t
-      :pin melpa-stable
-
-      :config
-      (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-
-      :bind (
-             ("C-x o" . ace-window))
-      )
-  )
-
-;; adoc-mode (ASCIIDOC)
-(use-package adoc-mode
+;; all-the-icons-dired
+(use-package all-the-icons-dired
   :ensure t
-  :pin melpa-stable
-  )
-
-;; all-the-icons
-(if (version< emacs-version "24.4")
-    (message "All-the-icons requires Emacs version 24.4 or later.  Unable to install")
-  (use-package all-the-icons
-    :if window-system
-    :ensure t
-    :pin melpa-stable
-
-    :config
-
-    ;; Install the font files only if we have not already done so
-    (defvar cmf-fonts-installed-file "~/SHELL/emacs.d/.icon-fonts-installed")
-    (unless (file-exists-p cmf-fonts-installed-file)
-      (progn
-        (message "Installing icon fonts")
-        (all-the-icons-install-fonts t)
-        (with-temp-buffer (write-file cmf-fonts-installed-file)))
-      )
-    )
-
-  ;; all-the-icons-dired
-  (use-package all-the-icons-dired
-    :if window-system
-    :ensure t
-    :after all-the-icons
-
-    :init
-    (require 'font-lock+)
-
-    :hook (dired-mode . all-the-icons-dired-mode)
-
-    :diminish all-the-icons-dired-mode " 🄸"
-    )
-
-  (use-package all-the-icons-ivy
-    :if window-system
-    :ensure t
-    :after all-the-icons
-    :pin melpa-stable
-
-    :config
-    (all-the-icons-ivy-setup)
-    )
-  )
-
-;; apache-mode
-(use-package apache-mode
-  :ensure t
-  :defer t
-  :no-require t
-  :mode (("\\.htaccess\\'"                   . apache-mode)
-         ("access\\.conf\\'"                 . apache-mode)
-         ("httpd\\.conf\\'"                  . apache-mode)
-         ("sites-\\(available\\|enabled\\)/" . apache-mode)
-         ("srm\\.conf\\'"                    . apache-mode))
-
-  :hook (apache-mode . nice-prog-hook)
-  )
-
-;; arjen-grey-theme
-(use-package arjen-grey-theme
-  :ensure t
+  :after all-the-icons
   :if window-system
 
   :init
-  (add-to-list 'custom-safe-themes
-               "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223")
-  (load-theme 'arjen-grey t)
+  (require 'font-lock+)
 
-  :custom-face
-  (highlight ((t (:distant-foreground "LightYellow3" :background "DarkOliveGreen"))))
+  :hook (dired-mode . all-the-icons-dired-mode)
+
+  :diminish all-the-icons-dired-mode
   )
 
-;; auctex
-;; TODO: Add company-bibtex, if necessary
-(use-package auctex
+(use-package all-the-icons-ivy
   :ensure t
-  :no-require t
+  :if window-system
+  :pin melpa-stable
+  :after (ivy all-the-icons)
 
   :config
-  (use-package company-auctex
+  (all-the-icons-ivy-setup)
+
+  (use-package all-the-icons-ivy-rich
     :ensure t
-    :after company
+    :if window-system
 
     :init
-    (company-auctex-init)
+    (all-the-icons-ivy-rich-mode t)
     )
   )
 
-;; beacon mode
-(use-package beacon
+(use-package doom-modeline
   :ensure t
-  :pin melpa-stable
 
-  :diminish beacon-mode " 🄱"
-  :init
-  (require 'beacon)
-
-  :config
-  (beacon-mode 1)
-  )
-
-;; calfw
-(use-package calfw
-  :ensure t
-  :pin melpa-stable
-
-  :init
-  (require 'calfw)
-
-  ;; See https://github.com/kiwanami/emacs-calfw for setting up your
-  ;; own calendars
-  :config
-  ;; calfw-gcal
-  (use-package calfw-gcal
-    :ensure t
-
-    :init
-    (require 'calfw-gcal)
-    )
-
-  ;; calfw-ical
-  (use-package calfw-ical
-    :ensure t
-
-    :init
-    (require 'calfw-ical)
-    )
-
-  ;; calfw-org
-  (use-package calfw-org
-    :ensure t
-
-    :init
-    (require 'calfw-org)
-    )
-
-  (defun cmf-open-calendar ()
-    (interactive)
-    (cfw:open-calendar-buffer :contents-sources
-			      (list
-			       (cfw:org-create-source "Green")  ; orgmode source
-			       (cfw:ical-create-source "Google Calendar"
-						       "https://calendar.google.com/calendar/ical/jsmith%40example.com/private-set-me-up/basic.ics"
-						       "Orange")
-			       (cfw:ical-create-source "Trips via Kayak"
-			       			       "https://www.kayak.com/trips/ical/tf/blahblah/blahblah/calendar.ics"
-			       			       "SteelBlue")
-    )
-  )
-
-;; company-mode
-(use-package company
-  :ensure t
-  :pin melpa-stable
-
-  :diminish company-mode " 🄲"
-
-  :init
-  (global-company-mode)
-
-  :bind (:map company-active-map
-              ("C-n" . company-select-next)
-              ("C-p" . company-select-previous)
-              ("TAB" . company-complete-selection)
-              )
+  :hook (after-init . doom-modeline-mode)
 
   :custom
-  (company-tooltip-align-annotations t)
-  (company-tooltip-minimum-width 27)
-  (company-idle-delay 0.3)
-  (company-tooltip-limit 10)
-  (company-minimum-prefix-length 3)
-  (company-tooltip-flip-when-above t)
+  (doom-modeline-vcs-max-length 14)
   )
 
-;; company-ansible
-(use-package company-ansible
+(use-package doom-themes
   :ensure t
-  :pin melpa-stable
-
-  :init
-  (add-to-list 'company-backends 'company-ansible)
-  )
-
-;; [c]perl-mode
-(use-package cperl-mode
-  :mode ("\\.cgi\\'" . cperl-mode)
-
-  :init
-  (if (equal(length(getenv "PERL5LIB")) 0)
-      (setenv "PERL5LIB" (concat (getenv "HOME") "/perl5/lib/perl5")))
-  (defalias 'perl-mode 'cperl-mode)
 
   :config
-  ;; Functions for perltidy
-  (defun cmf/perltidy-region ()
-    "Run perltidy on the current region."
-    (interactive)
-    (save-excursion
-      (shell-command-on-region (point) (mark) "perltidy -q" nil t))
-    )
-
-  (defun cmf/perltidy-defun ()
-    "Run perltidy on the current defun."
-    (interactive)
-    (save-excursion (mark-defun)
-                    (perltidy-region))
-    )
-  (use-package company-plsense
-    :ensure t
-    :after company
-
-    :init
-    (add-to-list 'company-backends 'company-plsense)
-    )
-
-  :custom
-  (cperl-continued-brace-offset -8)
-  (cperl-continued-statement-offset 4)
-  (cperl-electric-keywords t)
-  (cperl-electric-linefeed t)
-  (cperl-electric-parens nil)
-  (cperl-font-lock t)
-  (cperl-highlight-variables-indiscriminately t)
-  (cperl-indent-level 8)
+  (load-theme 'doom-nord)
   )
 
-;; crontab-mode
-(use-package crontab-mode
-  :ensure t
-  :no-require t
-
-  :mode (("\\.cron\\(tab\\)?\\'" . crontab-mode)
-         ("cron\\(tab\\)?\\."    . crontab-mode))
-  )
-
-;; diff-hl
-(use-package diff-hl
-  :ensure t
-  :pin melpa-stable
-
-  :config
-  (global-diff-hl-mode)
-  )
-
-;; docker
-;;
-;; Note that I do not use Windows operating systems so do not know if
-;; 'windows-nt' works as well.  Feel free to contact me if it does.
-(if (member system-type '(darwin gnu/linux))
-    (use-package docker
-      :ensure t
-      :bind ("C-c d" . docker)
-      )
-  (message "%s is not supported by Docker, so docker.el will not be installed"  (upcase-initials (prin1-to-string system-type)))
-  )
-
-;; dockerfile-mode
-(use-package dockerfile-mode
-  :ensure t
-  :pin melpa-stable
-
-  :mode ("Dockerfile\\'" . dockerfile-mode)
-  )
-
-;; emacs-lisp
-(use-package emacs-lisp
-  :no-require t
-  :after company
-
-  :init
-  (add-hook 'emacs-lisp-mode-hook
-            (lambda ()
-              (add-to-list 'company-backends 'company-elisp))
-            )
-  )
-
-;; eldoc
-(use-package eldoc
-  :diminish eldoc-mode " Doc"
-  )
-
-;; emojify
 (use-package emojify
-  ;; While the melpa version of emojify supports an experimental
-  ;; version of global-emojify-mode-line-mode, enabling this causes
-  ;; issues with cutting & pasting text, so will revisit that option
-  ;; when it becomes more stable.
   :ensure t
+  :pin melpa-stable
   :if window-system
+
+  :custom
+  (emojify-emoji-styles '(unicode))
 
   :config
   (global-emojify-mode)
   )
 
-;; flycheck
-(use-package flycheck
-  :ensure t
 
-  :init
-  (global-flycheck-mode)
+;; EXTENSIONS
+;;
+;; Section for adding functionality to Emacs, such as version-control
+;; or spell-checking functionality.
+;; --------------------------------------------------------------------
 
-  :custom
-  (flycheck-check-syntax-automatically (quote (idle-change)))
-  (flycheck-disabled-checkers (quote (php-phpcs go-build python-flake8 python-pylint)))
-  (flycheck-highlighting-mode 'lines)
-  (flycheck-idle-change-delay 1.5)
-  (flycheck-phpcs-standard "PSR2")
-  )
-
-;; flyspell
+;; Packages
 (use-package flyspell
   :ensure t
 
@@ -734,286 +458,157 @@
   (ispell-extra-args (quote ("--run-together")))
   )
 
-;; geben
-(use-package geben
+(use-package helpful
   :ensure t
   :pin melpa-stable
-  :no-require t
-  )
+  :commands (helpful-callable helpful helpful-command helpful-key)
 
-;; gited - dired for git branches
-(if (or (version< emacs-version "24.4") (eq (executable-find "git") nil))
-    (message
-     "Either git not found or version < 24.4.  Unable to install gited")
-  (use-package gited
-    :ensure t
-    :no-require t
-
-    :bind (
-           ("C-c C-g" . gited-list-branches)
-           )
-
-    )
-  )
-
-;; ggtags
-(if (version< emacs-version "25.1")
-    (message "GGTags requires Emacs version 25.1 or greater.  Unable to install")
-  (use-package ggtags
-    :ensure t
-    :diminish ggtags-mode " 🄶"
-    :hook (prog-mode . ggtags-mode)
-    )
-  )
-
-;; go-mode
-(use-package go-mode
-  :ensure t
-
-  :pin melpa-stable
-  :no-require t
-
-  :mode ("\\.go\\'" . go-mode)
-
-  :bind (:map go-mode-map
-              ("C-c C-j" . go-direx-pop-to-buffer))
-
-  :hook ((go-mode . nice-prog-hook)
-         (go-mode . go-eldoc-setup))
-  :init
-  (add-hook 'go-mode-hook (lambda () (subword-mode 1)))
-
-  :config
-  ;; company-go
-  (use-package company-go
-    :ensure t
-
-    :init
-    (add-hook 'before-save-hook #'gofmt-before-save)
-    (add-hook 'go-mode-hook
-              (lambda ()
-                (add-to-list 'company-backends 'company-go)))
-    )
-
-  ;; go-complete
-  (use-package go-complete
-    :ensure t
-
-    :hook (completion-at-point-functions . go-complete-at-point)
-    )
-
-  ;; go-direx
-  (use-package go-direx
-    :ensure t
-    )
-
-  ;; go-eldoc
-  (use-package go-eldoc
-    :ensure t
-    :after eldoc
-    )
-
-  ;; go-snippets
-  (use-package go-snippets
-    :ensure t
-    :after yasnippet
-    )
-  )
-
-;; graphviz-dot-mode
-(if (version< emacs-version "25.1")
-    (message "GraphViz Dot Mode requires Emacs version 25.1 or greater.  Unable to install")
-  (use-package graphviz-dot-mode
-    :ensure t
-    :pin melpa-stable
-    )
-  )
-
-;; highlight-parentheses
-(use-package highlight-parentheses
-  :ensure t
-  :diminish highlight-parentheses-mode
-
-  :config
-  (global-highlight-parentheses-mode)
-  )
-
-;; html-mode
-(use-package html-mode
-  :mode ("\\.tmpl\\'" . html-mode)
-  )
-
-;; htmlize
-(use-package htmlize
-  :ensure t
-  :pin melpa-stable
-  )
-
-;; hl-todo
-(if (version< emacs-version "25.1")
-    (message "hl-todo requires Emacs version 25.1 or greater.  Unable to install")
-  (use-package hl-todo
-    :ensure t
-    :pin melpa-stable
-
-    :bind (
-	   ("C-c h p" . hl-todo-previous)
-	   ("C-c h n" . hl-todo-next)
-	   ("C-c h o" . hl-todo-occur)
-	   ("C-c h i" . hl-todo-insert)
-	   )
-
-    :custom
-    (hl-todo-keyword-faces
-     (quote
-      (("HOLD" . "#d0bf8f")
-       ("TODO" . "#cc9393")
-       ("NEXT" . "#dca3a3")
-       ("THEM" . "#dc8cc3")
-       ("PROG" . "#7cb8bb")
-       ("OKAY" . "#7cb8bb")
-       ("DONT" . "#5f7f5f")
-       ("FAIL" . "#8c5353")
-       ("DONE" . "#afd8af")
-       ("NOTE" . "#d0bf8f")
-       ("KLUDGE" . "#d0bf8f")
-       ("HACK" . "#d0bf8f")
-       ("TEMP" . "#d0bf8f")
-       ("FIXME" . "#cc9393")
-       ("XXX+" . "#cc9393")
-       ("\\?\\?\\?+" . "#cc9393")
-       ("BUG" . "#8c5353")
-       ("LATER" . "#d0bf8f"))))
-    )
-  )
-
-;; ivy
-(use-package ivy
-  :ensure counsel
-  :ensure swiper
-  :diminish ivy-mode
-
-  :bind (
-         ("C-s"     . swiper)
-         ("C-r"     . swiper)
-         ("C-c C-r" . ivy-resume)
-         ("M-x"     . counsel-M-x)
-         ("C-x C-f" . counsel-find-file)
-         ("<f1> f"  . counsel-describe-function)
-         ("<f1> v"  . counsel-describe-variable)
-         ("<f1> l"  . counsel-load-library)
-         ("M-i"     . counsel-imenu)
-         ("<f2> i"  . counsel-info-lookup-symbol)
-         ("<f2> u"  . counsel-unicode-char)
-         ("C-c g"   . counsel-git)
-         ("C-c j"   . counsel-git-grep)
-         ("C-x l"   . counsel-locate)
-         )
-
-  :init
-  (ivy-mode 1)
+  :bind
+  ([remap describe-function]    . counsel-helpful-function)
+  ([remap describe-symbol]      . helpful-symbol)
+  ([remap describe-variable]    . counsel-helpful-variable)
+  ([remap describe-command]     . helpful-command)
+  ([remap describe-key]         . helpful-key)
 
   :custom
-  (ivy-use-virtual-buffers t)
-  (ivy-height 10)
-  (ivy-count-format "(%d/%d) ")
-  (swiper-goto-start-of-match nil)
-  (swiper-include-line-number-in-search t)
-  (swiper-stay-on-quit t)
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
   )
 
-;; jinja2-mode
-(use-package jinja2-mode
-  :ensure t
-  :defer t
-  :mode ("\\.j2\\'" . jinja2-mode)
-
-  )
-
-;; json-mode
-(use-package json-mode
-  :ensure t
-
-  :hook (json-mode . nice-prog-hook)
-  )
-
-;; log-edit-mode
 (use-package log-edit
+  ;; This is a built-in mode
   :mode (
          ("COMMIT.*"   . log-edit-mode)
          ("ci-comment" . log-edit-mode)
          ("bzr_log\\." . log-edit-mode)
+         ("cvs*"       . log-edit-mode)
          ("pico\\."    . log-edit-mode)
          )
-
-  :hook ((log-edit-mode . nice-text-hook))
-
   )
 
-;; magit
-(if (or (version< emacs-version "25.1") (eq (executable-find "git") nil))
-    (message
-     "Either git not found or version < 25.1.  Unable to install magit")
+(unless (eq (executable-find "git") nil)
   (use-package magit
     :ensure t
+    :commands magit-status
 
-    :bind
-    ("C-x g" . magit-status)
+    :bind ("C-x g" . magit-status)
     )
   )
 
-;; make-mode
-(use-package make-mode
-  :mode ("[Mm]akefile\\." . makefile-mode)
-  )
-
-;; markdown-mode
-(use-package markdown-mode
+(use-package sudo-edit
   :ensure t
   :pin melpa-stable
+  :no-require t
 
-  :commands (markdown-mode gfm-mode)
-
-  :mode (("README\\.md\\'"         . gfm-mode)
-         ("\\.md\\'"               . markdown-mode)
-         ("\\.markdown\\'"         . markdown-mode))
-
-  :init (setq markdown-command "multimarkdown")
+  :custom
+  (sudo-edit-indicator-mode t)
   )
 
-;; nxml-mode
-(use-package nxml-mode
+(use-package treemacs
+  :ensure t
+  :pin melpa-stable
+  :defer t
 
-  :mode (("\\.xsd\\'"  . xml-mode)
-         ("\\.wsdl\\'" . xml-mode))
+  :bind
+  (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag))
+
+  :init
+  ;; HACK: Added here so that treemacs won't complain about
+  ;;       hl-line-mode's background color for icons under terminal
+  ;;       mode
+  (defvar treemacs-no-load-time-warnings t)
+
+  :custom
+  (treemacs-follow-mode t)
+  (treemacs-filewatch-mode t)
 
   :config
-  ;; Under normal circumstances, I would add nice-prog-hook to nxml
-  ;; mode and be done with it.  The issue here is that nice-prog-hook
-  ;; includes enabling auto-fill-mode, which wrecks havoc when editing
-  ;; XML files at work.  So, create my own hook explicitly disabling
-  ;; auto-fill-mode
-  (defun nice-nxml-hook ()
-    "Hook for sane editing of XML files."
-    (if (>= emacs-major-version 23)
-        (linum-mode t))
-    (auto-fill-mode -1)
+  (use-package treemacs-projectile
+    :ensure t
+    :pin melpa-stable
+    :after projectile
     )
 
-  ;; Apply hook
-  (add-hook 'nxml-mode-hook 'nice-nxml-hook)
+  (use-package treemacs-magit
+    :ensure t
+    :pin melpa-stable
+    :after magit
+    )
   )
 
-;; org-mode
+(use-package undo-tree
+  :ensure t
+  :diminish undo-tree-mode
+
+  :hook ((prog-mode .
+                    (lambda ()
+                      (undo-tree-mode t)))
+         (text-mode .
+                    (lambda ()
+                      (undo-tree-mode t)))
+         (conf-mode .
+                    (lambda ()
+                      (undo-tree-mode t))))
+
+  :custom
+  (undo-tree-visualizer-diff t)
+  (undo-tree-visualizer-timestamps t)
+  )
+
+(use-package vc-fossil
+  :ensure t
+
+  :init
+  (require 'vc-fossil)
+
+  :config
+  (add-to-list 'vc-handled-backends 'Fossil)
+  )
+
+(unless (eq (executable-find "w3m") nil)
+  (use-package w3m
+    :ensure t
+    )
+  )
+
+(use-package which-key
+  :ensure t
+  :pin melpa-stable
+  :diminish which-key-mode
+
+  :init
+  (which-key-mode)
+
+  :custom
+  (which-key-idle-delay 1)
+  )
+
+
+;; ORG-MODE
+;;
+;; Section for configuring org-mode.
+;; --------------------------------------------------------------------
+
 (use-package org
+  ;; This is a built-in mode
   :bind (
          ("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          ("C-c c" . org-capture)
-         ("C-c b" . org-iswitchb)
+         :map org-mode-map
+         ("C-c [" . org-time-stamp-inactive)
          )
 
-  :hook (org-mode . nice-text-hook)
+  :hook ((org-mode . auto-fill-mode)
+         (org-mode .
+                   (lambda ()
+                     (footnote-mode -1))))
 
   :init
   (require 'epa-file)
@@ -1024,241 +619,577 @@
   (org-crypt-use-before-save-magic)
 
   :config
-  ;; org-bullets
+  ;; org-mode specific variables are customized here
+  (require 'cmf-org-settings)
+
+  (org-clock-persistence-insinuate)
+
+  ;; NOTE: Testing out this feature
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
+
+  (if (member system-type '(gnu/linux))
+      (setq org-file-apps
+            '((auto-mode . emacs)
+              ("\\.x?html?\\'" . "xdg-open %s")
+              ("\\.pdf\\'" . emacs)
+              ("\\.pdf::\\([0-9]+\\)\\'" . "xdg-open \"%s\" -p %1")
+              ("\\.pdf.xoj" . "xournal %s")))
+    )
+
   (use-package org-bullets
     :ensure t
+
+    :hook (org-mode . org-bullets-mode)
 
     :init
     (require 'org-bullets)
     )
 
-  ;; org-fancy-priorities
   (use-package org-fancy-priorities
     :ensure t
+    :diminish org-fancy-priorities-mode
 
-    :diminish org-fancy-priorities-mode " 🄵"
-
-    :hook
-    (org-mode . org-fancy-priorities-mode)
+    :hook (org-mode . org-fancy-priorities-mode)
 
     :config
     ;; Customization for org-fancy-priorities
     (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕"))
     (setq org-lowest-priority ?D)
     )
-
-  ;; ox-twbs
-  (use-package ox-twbs
-    :ensure t
-    )
-
-  ;; Org-mode settings are kept in a different file
-  (require 'cmf-org-settings)
-  ;; Define a basic hook for sane editing of org-mode documents
-  (defun nice-org-hook ()
-    "Hook for sane editing of 'org-mode' documents."
-    (org-defkey org-mode-map "\C-c[" 'org-time-stamp-inactive)
-    (if (equal (car (split-string org-version ".")) 8)
-        (require 'ox-md))
-    )
-
-  ;; Persist org-clock appropriately
-  (org-clock-persistence-insinuate)
-
-  ;; Org-mode hooks
-  (add-hook 'org-mode-hook 'nice-org-hook)
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
   )
 
-;; org-gcal
-;;
-;; LATER: When org-gcal is compliant with version 8.2.10 (Default
-;; under Emacs 25.3)
 
-;; php-mode
-(use-package php-mode
+;; FILE-SPECIFIC MODES
+;;
+;; Configuration or installation of modes for dealing with specific
+;; types of files that are not necessarily programming languages.
+;; --------------------------------------------------------------------
+
+(use-package adoc-mode
+  :ensure t
+  :pin melpa-stable
+  :defer t
+  )
+
+(use-package apache-mode
+  :ensure t
+  :defer t
+  :no-require t
+
+  :hook (apache-mode . cmf/choose-line-nuber-mode)
+
+  :mode (("\\.htaccess\\'"                   . apache-mode)
+         ("access\\.conf\\'"                 . apache-mode)
+         ("httpd\\.conf\\'"                  . apache-mode)
+         ("sites-\\(available\\|enabled\\)/" . apache-mode)
+         ("srm\\.conf\\'"                    . apache-mode))
+  )
+
+(use-package auctex
+  :ensure t
+  :commands (latex-mode LaTeX-mode plain-tex-mode)
+
+  :config
+  (use-package company-auctex
+    :ensure t
+    :no-require t
+    :after company
+
+    :hook (auctex-mode .
+                       (lambda ()
+                         (add-to-list 'company-backends 'company-auctex)))
+
+    :config
+    (company-auctex-init)
+    )
+
+  (use-package company-bibtex
+    :ensure t
+    :no-require t
+    :after company
+
+    :hook (bibtex-mode .
+                       (lambda ()
+                         (add-to-list 'company-backends 'company-bibtex)))
+    )
+  )
+
+(use-package crontab-mode
   :ensure t
   :no-require t
 
-  :mode ("\\.php\\'" . php-mode)
+  :mode (("\\.cron\\(tab\\)?\\'" . crontab-mode)
+         ("cron\\(tab\\)?\\."    . crontab-mode))
+  )
 
-  :bind (:map php-mode-map
-              ("C-c -"		. php-current-class)
-              ("C-c ="		. php-current-namespace)
-              ("C-c C-y"	. 'yas/create-php-snippet)
-              ("C-x p"		. php-insert-doc-block)
-              )
+(use-package dockerfile-mode
+  :ensure t
+  :pin melpa-stable
 
-  :hook (php-mode . nice-prog-hook)
+  :mode ("Dockerfile\\'" . dockerfile-mode)
+  )
+
+(use-package json-mode
+  :ensure t
+
+  :hook ((json-mode . undo-tree-mode)
+         (json-mode . lsp-deferred)
+         (json-mode . cmf/choose-line-number-mode-hook))
+  )
+
+(use-package markdown-mode
+  :ensure t
+  :pin melpa-stable
+
+  :commands (markdown-mode gfm-mode)
+
+  :mode (("README\\.md\\'"         . gfm-mode)
+         ("\\.md\\'"               . markdown-mode)
+         ("\\.markdown\\'"         . markdown-mode))
 
   :init
-  (require 'php-doc)
-  (add-hook 'php-mode-hook (lambda () (subword-mode 1)))
+  (setq markdown-command "multimarkdown")
+  )
 
+(use-package restclient
+  :ensure t
+  :mode ("\\.rtt\\'" . restclient-mode)
+
+  ;; See https://github.com/kiwanami/emacs-calfw for setting up your
+  ;; own calendars
   :config
-  ;; Load php documentor
-  (load-file "~/.emacs.d/thirdparty/phpdocumentor.el")
-
-  ;; company-php
-  (use-package company-php
+  (use-package company-restclient
     :ensure t
     :pin melpa-stable
     :after company
 
-    :init
-    (add-hook 'php-mode-hook
-              (lambda ()
-                (add-to-list 'company-backends 'company-ac-php-backend
-			     )))
+    :hook ((restclient-mode . undo-tree-mode)
+           (restclient-mode . cmf/choose-line-number-mode-hook)
+           (restclient-mode .
+                            (lambda ()
+                              (add-to-list 'company-backends 'company-restclient))))
+    )
+  )
 
-    :config
-    (ac-php-core-eldoc-setup)
+(use-package nxml-mode
+  ;; This is a built-in mode
+  :mode (("\\.xsd\\'"  . xml-mode)
+         ("\\.wsdl\\'" . xml-mode))
+
+  :hook (nxml-mode . cmf/choose-line-number-mode-hook)
+  )
+
+(use-package yaml-mode
+  :ensure t
+  :no-require t
+
+  :mode ("\\.sls\\'" . yaml-mode)
+
+  :hook ((yaml-mode . cmf/choose-line-number-mode-hook)
+         (yaml-mode .
+                    (lambda ()
+                      (subword-mode t)
+                      (auto-fill-mode -1)))
+         )
+  )
+
+
+;; PROGRAMMING
+;;
+;; Section for configuring programming environment as well as adding
+;; programming-specific packages that add functionality.
+;; --------------------------------------------------------------------
+
+;; Hook definitions
+(add-hook 'prog-mode-hook 'cmf/choose-line-number-mode-hook)
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (auto-fill-mode t)
+            (eldoc-mode t)
+            (electric-pair-mode t)
+            (subword-mode t)
+            (setq fill-column 120)))
+(add-hook 'emacs-lisp-mode-hook
+          (lambda ()
+            (setq fill-column 70)))
+
+;; Packages
+(use-package company
+  :ensure t
+  :pin melpa-stable
+
+  :bind (:map company-active-map
+              ("C-n" . company-select-next)
+              ("C-p" . company-select-previous)
+              ("TAB" . company-complete-selection)
+              )
+
+  :hook (emacs-lisp-mode .
+                         (lambda ()
+                           (add-to-list 'company-backends 'company-capf)))
+
+  :custom
+  (company-tooltip-align-annotations t)
+  (company-tooltip-minimum-width 27)
+  (company-idle-delay 0.3)
+  (company-tooltip-limit 10)
+  (company-minimum-prefix-length 3)
+  (company-tooltip-flip-when-above t)
+
+  :init
+  (global-company-mode)
+  )
+
+(use-package company-box
+  :ensure t
+  :if window-system
+  :unless (version< emacs-version "26.1")
+  :after company
+
+  :hook (company-mode . company-box-mode)
+
+  :config
+  (if (eq window-system 'ns)
+      ;; DONT: Company-box and macOS do not behave properly when
+      ;; running under full screen mode (at at least under Mojave).
+      ;; The same is true regardless if ns-use-native-fullscreen is
+      ;; set to nil or not.  For the time being, just notify the user.
+      (message "Do not use full-screen mode when running under macOS!")
+    )
+  )
+
+(use-package company-shell
+  :ensure t
+  :pin melpa-stable
+  :commands shell-mode
+  :after company
+
+  :hook (sh-mode .
+                 (lambda ()
+                   (add-to-list 'company-backends 'company-shell)))
+
+  :custom
+  (company-shell-clean-manpage t)
+  )
+
+(use-package cperl-mode
+  ;; This is a built-in mode
+  :mode ("\\.cgi\\'" . cperl-mode)
+
+  :custom
+  (cperl-close-paren-offset -4)
+  (cperl-continued-statement-offset 4)
+  (cperl-electric-keywords t)
+  (cperl-electric-linefeed t)
+  (cperl-electric-parens nil)
+  (cperl-font-lock t)
+  (cperl-highlight-variables-indiscriminately t)
+  (cperl-indent-level 4)
+  (cperl-indent-parens-as-block t)
+  (cperl-tab-always-indent t)
+
+  :init
+  (if (eq (length(getenv "PERL5LIB")) 0)
+      (setenv "PERL5LIB" (concat (getenv "HOME") "/perl5/lib/perl5")))
+  (defalias 'perl-mode 'cperl-mode)
+
+  :config
+  ;; Functions for perltidy
+  (defun cmf/perltidy-region ()
+    "Run perltidy on the current region."
+    (interactive)
+    (save-excursion
+      (shell-command-on-region (point) (mark) "perltidy -q" nil t))
     )
 
-  ;; php-auto-yasnippets
-  (use-package php-auto-yasnippets
+  (defun cmf/perltidy-defun ()
+    "Run perltidy on the current defun."
+    (interactive)
+    (save-excursion (mark-defun)
+                    (perltidy-region))
+    )
+
+  (use-package company-plsense
+    :ensure t
+    :after company
+
+    :hook (cperl-mode .
+                      (lambda ()
+                        (add-to-list 'company-backends 'company-plsense)))
+    )
+  )
+
+(use-package diff-hl
+  :ensure t
+  :pin melpa-stable
+
+  :config
+  (global-diff-hl-mode)
+  )
+
+(use-package flycheck
+  :ensure t
+
+  :custom
+  (flycheck-check-syntax-automatically (quote (idle-change)))
+  (flycheck-disabled-checkers (quote (php-phpcs go-build python-flake8 python-pylint)))
+  (flycheck-highlighting-mode 'lines)
+  (flycheck-idle-change-delay 3)
+  (flycheck-phpcs-standard "PSR2")
+
+  :init
+  (global-flycheck-mode)
+  )
+
+(use-package ggtags
+  :ensure t
+  :diminish ggtags-mode
+
+  :hook (prog-mode . ggtags-mode)
+  )
+
+(use-package go-mode
+  :ensure t
+  :no-require t
+  :pin melpa-stable
+
+  :bind (:map go-mode-map
+              ("C-c C-j" . go-direx-pop-to-buffer))
+
+  :config
+  (use-package company-go
+    :ensure t
+    :after company
+
+    :hook (go-mode .
+                   (lambda ()
+                     (add-to-list 'company-backends 'company-go)))
+
+    :init
+    (add-hook 'before-save-hook #'gofmt-before-save)
+    )
+
+  (use-package go-complete
+    :ensure t
+
+    :hook (completion-at-point-functions . go-complete-at-point)
+    )
+
+  (use-package go-direx
+    :ensure t
+    )
+
+  (use-package go-eldoc
+    :ensure t
+    :after eldoc
+
+    :hook (go-mode . go-eldoc-setup)
+    )
+
+  (use-package go-snippets
     :ensure t
     :after yasnippet
     )
+  )
 
-  ;; php-eldoc
-  (use-package php-eldoc
-    :ensure t
-    :after eldoc
-    )
+(use-package hl-todo
+  :ensure t
+  :pin melpa-stable
 
-  ;; phpcbf
-  (use-package phpcbf
-    :ensure t
-    )
+  :bind (
+         ("C-c h p" . hl-todo-previous)
+         ("C-c h n" . hl-todo-next)
+         ("C-c h o" . hl-todo-occur)
+         ("C-c h i" . hl-todo-insert)
+         )
 
-  ;; phpunit
-  (use-package phpunit
+  :hook (prog-mode . hl-todo-mode)
+
+  :custom
+  (hl-todo-keyword-faces
+   (quote
+    (("HOLD"            . "#d0bf8f")
+     ("TODO"            . "#cc9393")
+     ("NEXT"            . "#dca3a3")
+     ("THEM"            . "#dc8cc3")
+     ("PROG"            . "#7cb8bb")
+     ("OKAY"            . "#7cb8bb")
+     ("DONT"            . "#5f7f5f")
+     ("FAIL"            . "#8c5353")
+     ("DONE"            . "#afd8af")
+     ("NOTE"            . "#d0bf8f")
+     ("KLUDGE"          . "#d0bf8f")
+     ("HACK"            . "#d0bf8f")
+     ("TEMP"            . "#d0bf8f")
+     ("FIXME"           . "#cc9393")
+     ("XXX+"            . "#cc9393")
+     ("\\?\\?\\?+"      . "#cc9393")
+     ("BUG"             . "#8c5353")
+     ("LATER"           . "#d0bf8f"))))
+  )
+
+(unless (eq (executable-find "npm") nil)
+  (use-package lsp-ivy
     :ensure t
+    :pin melpa-stable
+    :after (ivy lsp)
     )
+  )
+
+(use-package jinja2-mode
+  :ensure t
+  :defer t
+
+  :mode ("\\.j2\\'" . jinja2-mode)
+  )
+
+(unless (eq (executable-find "npm") nil)
+  (use-package lsp-mode
+    :ensure t
+    :pin melpa-stable
+    :commands (lsp lsp-deferred)
+
+    :custom
+    (lsp-prefer-flymake nil)
+    (lsp-file-watch-threshold 40000)
+
+    :init
+    (setq lsp-keymap-prefix "C-c C-l")
+
+    :config
+    (lsp-enable-which-key-integration t)
+
+    (if (window-system)
+        (setq lsp-headerline-breadcrumb-icons-enable t)
+      (setq lsp-headerline-breadcrumb-icons-enable nil)
+      )
+
+    ;; Stanza is required here to make sure lsp-mode is enabled when
+    ;; editing Java files
+    (unless (eq (executable-find "java") nil)
+      (use-package lsp-java
+        :ensure t
+        :pin melpa-stable
+
+        :config
+        (add-hook 'java-mode-hook #'lsp)
+        )
+      )
+
+    (use-package lsp-treemacs
+      :ensure t
+      :pin melpa-stable
+      :after treemacs
+
+      :bind (:map lsp-mode-map
+                  ("C-x t s" . lsp-treemacs-symbols))
+      )
+
+    (use-package lsp-ui
+      :ensure t
+
+      :hook (lsp-mode . lsp-ui-mode)
+
+      :custom
+      (lsp-ui-doc-position 'top)
+      )
+    )
+  )
+
+(use-package make-mode
+  ;; This is a built-in mode
+  :mode ("[Mm]akefile\\." . makefile-mode)
+  )
+
+(use-package php-mode
+  :ensure t
+  :no-require t
+
+  :bind (:map php-mode-map
+              ("C-c -"                . php-current-class)
+              ("C-c ="                . php-current-namespace)
+              ("C-x p"                . php-insert-doc-block)
+              )
+
+  :hook (php-mode . lsp-deferred)
 
   :custom
   (php-insert-doc-access-tag nil)
   (php-enable-psr2-coding-style)
   (php-lineup-cascaded-calls t)
   (phpcbf-standard "PSR2")
-  )
-
-;; pretty-lambdada
-(if (version< emacs-version "24.4")
-    (use-package pretty-lambdada
-      :ensure t
-
-      :init
-      (require 'pretty-lambdada)
-
-      :config
-      (pretty-lambda-for-modes)
-      )
-  ;; Otherwise use built-in prettify mode
-  (global-prettify-symbols-mode t)
-  )
-
-;; projectile
-(use-package projectile
-  :ensure t
-  :pin melpa-stable
-  :diminish projectile-mode " 🄿"
 
   :config
-  (projectile-mode +1)
-  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-  (use-package counsel-projectile
-    :ensure t
-    :pin melpa-stable
-    )
+  (require 'php-doc)
+  (require 'phpcbf)
 
-  :custom
-  (counsel-projectile-mode t)
-  (projectile-completion-system 'ivy)
-  (projectile-enable-caching t)
-  (projectile-indexing-method 'alien)
-  )
-
-;; python
-;;
-;; Install the following packages beforehand via pip or package
-;; manager, if available:
-;;
-;;  - autopep8
-;;  - flake8
-;;  - jedi
-;;  - setuptools-black
-;;  - virtualenv
-;;  - yapf
-;;
-;; Then run `M-x elpy-config'
-(use-package python
-
-  :config
-  ;; company-jedi
-  (use-package company-jedi
+  (use-package company-php
     :ensure t
     :pin melpa-stable
     :after company
 
-    :init
-    (add-hook 'python-mode-hook
-	      (lambda ()
-		(add-to-list 'company-backends 'company-jedi)))
+    :hook (php-mode .
+                    (lambda ()
+                      (add-to-list 'company-backends 'company-ac-php-backend
+                                   )))
 
     :config
-    (company-jedi t)
+    (ac-php-core-eldoc-setup)
     )
 
-  ;; elpy
-  (use-package elpy
+  (use-package php-eldoc
     :ensure t
-    :pin melpa-stable
-    :after flycheck
+    :after eldoc
 
     :config
-    (elpy-enable)
-    (when (require 'flycheck nil t)
-      (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-      (add-hook 'elpy-mode-hook 'flycheck-mode))
+    (php-eldoc-enable)
     )
 
-  ;; sphinx-doc
-  (use-package sphinx-doc
+  (use-package phpunit
     :ensure t
-    :pin melpa-stable
-    :diminish sphinx-doc-mode " 🆂"
-
-    :bind ("C-x p" . sphinx-doc)
-
-    :init
-    (add-hook 'python-mode-hook (lambda ()
-                                  (require 'sphinx-doc)
-                                  (sphinx-doc-mode t)))
     )
+  )
+
+(use-package projectile
+  :ensure t
+  :pin melpa-stable
+  :diminish projectile-mode
+
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
 
   :custom
-  ;; Use python3 by default
-  (elpy-rpc-python-command "python3")
-  )
+  (projectile-completion-system 'ivy)
+  (projectile-enable-caching t)
+  (projectile-indexing-method 'alien)
+  (projectile-tags-backend 'ggtags)
 
-;; realgud
-(if (version< emacs-version "25.1")
-    (message "realgud requires Emacs version 25.1 or greater.  Unable to install")
-  (use-package realgud
+  :init
+  (when (or (file-directory-p "~/dev") (file-directory-p "~/org"))
+    (setq projectile-project-search-path '("~/dev" "~/org")))
+  (setq projectile-switch-project-action #'projectile-dired)
+
+  :config
+  (projectile-mode +1)
+
+  (use-package counsel-projectile
     :ensure t
     :pin melpa-stable
+    :after counsel
+
+    :config
+    (counsel-projectile-mode)
     )
   )
 
-;; ruby-mode
-(use-package ruby-mode
-  :init
-  (add-hook 'ruby-mode-hook 'nice-prog-hook)
+;; TODO: Customize python development environment
+
+(use-package rainbow-delimiters
+  :ensure t
+
+  :hook (prog-mode . rainbow-delimiters-mode)
   )
 
-;; sed-mode
 (use-package sed-mode
   :ensure t
   :no-require t
@@ -1268,61 +1199,23 @@
          )
   )
 
-;; sh-mode
-(use-package shell
-  :config
-  (use-package company-shell
-    :ensure t
-    :pin melpa-stable
-
-    :init
-    (add-hook 'sh-mode-hook
-              (lambda ()
-                (add-to-list 'company-backends 'company-shell)))
-
-    :custom
-    (company-shell-clean-manpage t)
-    )
+(use-package sh-mode
+  ;; This is a built-in mode
+  :hook (sh-mode . lsp)
   )
 
-;; smart-mode-line
-(use-package smart-mode-line
-  :ensure t
-
-  :init
-  (setq sml/no-confirm-load-theme t)
-  (sml/setup)
-
-  :config
-  (pcase (window-system)
-    ('ns
-     (progn
-       (sml/apply-theme 'respectful)
-       (setq sml/read-only-char " 🅛")))
-    ('nil
-     (progn
-       (sml/apply-theme 'dark)
-       (setq sml/read-only-char " 🔒")))
-    (window-system
-     (progn
-       (sml/apply-theme 'respectful)
-       (setq sml/read-only-char " 🔒"))
-     ))
-
-  :custom
-  (sml/modified-char "★")
-  )
-
-;; sql
 (use-package sql
+  ;; This is a built-in mode
   :mode (("/sql[^/]]*" . sql-mode))
 
-  :hook (sql-mode . nice-prog-hook)
-
   :config
-  ;; sql-indent
   (use-package sql-indent
     :ensure t
+    :diminish sqlind-minor-mode
+
+    :hook (sql-mode .
+                    (lambda ()
+                      (sqlind-minor-mode t)))
 
     :custom
     (sql-indent-first-column-regexp
@@ -1330,164 +1223,38 @@
     )
   )
 
-;; sudo-edit
-(use-package sudo-edit
-  :ensure t
-  :no-require t
-
-  :init
-  (setq sudo-edit-indicator-mode t)
-  )
-
-;; twilight-theme
-(use-package twilight-theme
-  :ensure t
-  :if (equal custom-file cmf-custom-256)
-  :init
-  (load-theme 'twilight t)
-
-  :custom-face
-  (cfw:face-toolbar-button-off ((t (:foreground "grey65" :weight bold))))
-  )
-
-;; twittering-mode
-(use-package twittering-mode
-  :ensure t
-  :no-require t
-
-  :hook
-  (twittering-edit-mode . nice-text-hook)
-  ;; :init
-  ;; (add-hook 'twittering-edit-mode-hook 'nice-text-hook)
-
-  :config
-  (unless (equal window-system nil)
-    (setq twittering-icon-mode t)
-    )
-
-  :custom
-  (twittering-display-remaining t)
-  (twittering-timer-interval 900)
-  (twittering-tinyurl-service (quote tinyurl))
-  (twittering-use-icon-storage t)
-  (twittering-use-master-password t)
-  (twittering-username "#####")		; Add your twitter handle here
-  )
-
-;; undo-tree
-(use-package undo-tree
-  :ensure t
-  :diminish undo-tree-mode " 🆃"
-
-  :init
-  (add-hook 'prog-mode-hook
-            (lambda ()
-              (undo-tree-mode t)))
-  (add-hook 'text-mode-hook
-            (lambda ()
-              (undo-tree-mode t)))
-  (add-hook 'conf-mode-hook
-            (lambda ()
-              (undo-tree-mode t)))
-
-  :custom
-  (undo-tree-visualizer-diff t)
-  (undo-tree-visualizer-timestamps t)
-  )
-
-;; vc-fossil
-(use-package vc-fossil
-  :ensure t
-  :init
-  (require 'vc-fossil)
-
-  :config
-  (add-to-list 'vc-handled-backends 'Fossil)
-
-  :custom
-  (vc-fossil-extra-header-fields (quote (:remote-url :checkout :tags)))
-  )
-
-;; vue-js
-(use-package vue-mode
+(use-package yasnippet
   :ensure t
   :pin melpa-stable
 
+  :init
+  (yas-global-mode t)
+
   :config
-  ;; 0, 1, or 2, representing (respectively) none, low, and high coloring
-  (setq mmm-submode-decoration-level 2)
-  )
-
-;; which-func
-(use-package which-func
-  :no-require t
-
-  :custom
-  (which-function-mode t)
-  )
-
-;; which-key
-(if (version< emacs-version "24.4")
-    (message "Which-Key requires Emacs version 24.4 or greater.  Unable to install")
-  (use-package which-key
+  (use-package yasnippet-snippets
     :ensure t
-    :pin melpa-stable
-    :diminish which-key-mode " 🅆"
-
-    :config
-    (which-key-mode)
     )
-  )
-
-;; with-editor
-(use-package with-editor
-  :no-require t
-
-  :hook ((with-editor-mode . nice-text-hook))
-  )
-
-;; wttrin
-(use-package wttrin
-  :ensure t
-  :pin melpa-stable
 
   :custom
-  (wttrin-default-accept-language '("Accept-Language" . "en-US"))
-  (wttrin-default-cities '("Portland, OR?u" "Santa Clara, CA?u" "Colonial Heights, VA?u"))
+  (yas-wrap-around-region t)
   )
 
-;; xkcd
-(use-package xkcd
-  :ensure t
-  :if window-system
-  :no-require t
-  )
+;;
+;; Programming Styles
+;;
 
-;; yaml-mode
-(use-package yaml-mode
-  :ensure t
-  :no-require t
+;; My own coding style
+(c-add-style "cmf"
+             '("bsd"
+               (indent-tabs-mode . nil)
+               (c-offsets-alist
+                (statement-cont . (first c-lineup-cascaded-calls +)))))
 
-  :mode ("\\.sls\\'" . yaml-mode)
 
-  :init
-  (add-hook 'yaml-mode-hook
-	    (lambda ()
-	      (subword-mode 1)
-	      (auto-fill-mode nil)))
-
-  :hook (yaml-mode . nice-prog-hook)
-  )
-
-;; Miscellany
+;; CLEAN UP
 ;; --------------------------------------------------------------------
 
-;; Diminished modes that we have to put here as :diminish doesn't seem
-;; to want to work :/
-(diminish 'yas-minor-mode " 🅈")
-
-;; Do some byte recompilation
-(byte-recompile-directory (expand-file-name "~/.emacs.d/thirdparty") 0)
-(byte-recompile-directory (expand-file-name "~/.emacs.d/lisp") 0)
+;; Make gc pauses faster by decreasing the threshold.
+(setq gc-cons-threshold (* 2 1000 1000))
 
 ;;; init.el ends here

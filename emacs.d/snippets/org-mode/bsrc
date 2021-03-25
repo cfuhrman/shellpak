@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: Insert an org-babel src block
+# --
+#+begin_src $1
+$2
+#+end_src

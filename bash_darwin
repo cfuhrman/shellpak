@@ -17,15 +17,16 @@
 #
 
 # Determine PATH
-paths=('/opt/local/bin'                         \
-       '/opt/local/sbin'                        \
-       '/opt/pkg/bin'                           \
-       '/opt/pkg/sbin'                          \
-       '/usr/local/git/bin'                     \
-       '/opt/pkg/lib/perl5/site_perl/bin'       \
-       '/Applications/oracle'                   \
-       '/usr/texbin'                            \
-       '/usr/local/opt/make/libexec/gnubin'     \
+paths=('/opt/local/bin'				\
+       '/opt/local/sbin'			\
+       '/opt/pkg/bin'				\
+       '/opt/pkg/sbin'				\
+       '/usr/local/git/bin'			\
+       '/opt/pkg/lib/perl5/site_perl/bin'	\
+       '/Applications/oracle'			\
+       '/usr/texbin'				\
+       '/usr/local/opt/make/libexec/gnubin'	\
+       '/usr/local/opt/ansible@2.9/bin'		\
        "${HOME}/perl5/bin"
 )
 

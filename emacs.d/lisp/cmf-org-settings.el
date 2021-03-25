@@ -29,7 +29,6 @@
      ("g" . "GTD Task Lists")
      ("gh" "Home" tags-todo "HOME")
      ("go" "Office" tags-todo "OFFICE")
-     ("gg" "G.G. Guards" tags-todo "GGG")
      ("gr" "Tasks to refile"
       ((todo "TODO"
              ((org-agenda-files
@@ -64,12 +63,7 @@
       ((org-agenda-tag-filter-preset
         (quote
          ("+OFFICE")))))
-     ("G" "G.G. Guards Agenda"
-      ((agenda "")
-       (tags-todo "GGG"))
-      ((org-agenda-tag-filter-preset
-        (quote
-         ("+GGG"))))))))
+     )))
  '(org-agenda-files
    (quote
     ("~/org/tasks.org" "~/org/refile.org" "~/org/notes.org")))
@@ -145,6 +139,7 @@
  '(org-crypt-tag-matcher "CRYPT")
  '(org-default-notes-file "~/org/notes.org")
  '(org-directory "~/org")
+ '(org-ellipsis " ▾")
  '(org-export-backends (quote (ascii html icalendar latex md texinfo)))
  '(org-export-latex-listings t)
  '(org-export-latex-packages-alist (quote (("" "listings") ("" "color"))))
@@ -196,6 +191,7 @@
  '(org-latex-pdf-process
    (quote
     ("%latex -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f")))
+ '(org-list-allow-alphabetical t)
  '(org-log-done (quote note))
  '(org-log-note-clock-out t)
  '(org-log-refile (quote time))

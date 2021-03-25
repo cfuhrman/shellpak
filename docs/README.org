@@ -2,7 +2,6 @@
 #+AUTHOR: Christopher M. Fuhrman
 #+EMAIL: cfuhrman@pobox.com
 #+OPTIONS: email:t
-#
 #+LATEX_HEADER: \usepackage{fancyhdr}
 #+LATEX_HEADER: \pagestyle{fancyplain}
 
@@ -29,24 +28,20 @@
 ** Requirements
 
     - GNU Bash version 3.2 or greater
-    - GNU Emacs 24.1 or greater (Emacs 24.4 or greater preferred)
+    - GNU Emacs 26.1 or greater
     - GNU Make
     - rsync
 
 ** Supported Platforms
 
-   The following operating systems are known to be supported:
+   The following operating systems are supported:
 
-    - Mac OS X 10.13 (Darwin)
-    - NetBSD 6.1.x
-    - OpenBSD 5.8
-    - CentOS 6.5
-    - Debian 9 (Stretch) and derivatives
-    - SunOS solaris 5.10
-    - AIX 1 7
-
-   In addition, ShellPAK has been known to run on OpenSUSE, SuSE
-   Enterprise Linux, Ubuntu, FreeBSD, and Cygwin.
+    - CentOS
+    - macOS (Mac OS X)
+    - NetBSD
+    - OpenBSD
+    - Ubuntu
+    - openSUSE
 
 * Obtaining ShellPAK
 
@@ -144,7 +139,7 @@
 
 * Copyright
 
-  Copyright (c) 2000-2019 Christopher M. Fuhrman
+  Copyright (c) 2000-2021 Christopher M. Fuhrman
   All rights reserved.
 
   All files contained herein can be redistributed and/or modified
