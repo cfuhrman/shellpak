@@ -1,0 +1,79 @@
+#+TITLE: 2021 Rewrite of Emacs configuration
+#+AUTHOR: Christopher M. Fuhrman
+#+EMAIL: cfuhrman@pobox.com
+#+OPTIONS: email:t
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \pagestyle{fancyplain}
+#+LATEX_HEADER: \usepackage{bookmark}
+#+LATEX_HEADER: \hypersetup{urlcolor=blue}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue}
+#+LATEX_HEADER: \fancyhead[RE,LO]{\leftmark}
+#+LATEX_HEADER: \fancyhead[LE,RO]{\thepage}
+
+#+LATEX: \thispagestyle{empty}
+
+* Background
+
+  In late February/early March of 2021, I undertook the task of rewriting my
+  configuration for GNU Emacs, focusing on making my configuration cleaner,
+  easier to manage and leveraging [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] to provide a more modern programming
+  environment.  This document provides an overview of new features as well as
+  the benefits of using this new environment.  Finally, some fun statistics will
+  be provided illustrating how much faster my GNU Emacs configuration starts up.
+
+* Compatibility
+
+  This configuration is compatible with GNU Emacs 26.1 or greater running under
+  Linux, macOS and possibly BSD operating systems.  As I do not regularly use MS
+  Windows operating systems, support for running this configuration under Windows
+  is not officially supported.
+
+  GNU Emacs 27.1 is recommended as it features [[https://ubuntuhandbook.org/index.php/2020/08/gnu-emacs-27-1-native-json-parsing/][native JSON parsing support]].  As
+  the lsp client communicates with the server backend using JSON, speed
+  improvements will be especially felt there.
+
+* New Features
+
+  The primary new feature present in this configuration is lsp-mode, which is a
+  client for the [[https://microsoft.github.io/language-server-protocol/][Language Server Protocol]].  This brings features found in modern
+  development environments to Emacs.  No more will my co-workers pester me about
+  using JetBrain products at work!  LSP mode has been integrated into other
+  packages I use such as company, flycheck and projectile.
+
+  Another feature I've included is [[https://github.com/Alexander-Miller/treemacs][treemacs]] which provides tree layout file
+  explorer similar to speedbar.  By integrating with other packages such as lsp
+  mode and projectile, I can view not only a project's file layout but symbol
+  information (via [[https://github.com/emacs-lsp/lsp-treemacs][lsp-treemacs]]) about the current file I am editing.
+
+  The behavior and appearance of this customized Emacs environment leverages
+  [[https://github.com/seagle0128/doom-modeline][doom-modeline]] and [[https://github.com/hlissner/emacs-doom-themes][emacs-doom-themes]] to provide a very modern look.  The
+  interface to [[https://github.com/abo-abo/swiper][ivy]] has been made more friendly thanks to [[https://github.com/Yevgnen/ivy-rich][ivy-rich]].  And finally,
+  =C-h= commands will display more helpful information by utilizing [[https://github.com/Wilfred/helpful][helpful]], a
+  package providing a better =*Help= buffer.
+
+* Observed improvements
+
+  Comparing terminal-mode start up times on my 13" 2017 Macbook Pro (Intel
+  i5-6267U) between my previous configuration and the new rewritten one, I've
+  seen start-up times go from an average of 5.87 seconds to an average of 2.65
+  seconds, a 222% increase!  This was done by reducing the number of packages
+  installed as well as optimizing the configuration such that only packages I
+  need are loaded at start-up.  All others are loaded dynamically as needed.
+
+* Caveats
+
+  1. Running company-box under macOS when Emacs is in full screen mode will
+     produce undesirable behavior such as having one's menu bar on another
+     virtual desktop.
+  2. lsp-mode can get sluggish when dealing with large projects.
+  3. Sometimes projectile won't list files in another project's hierarchy.  I
+     believe this may have something to do with nested working directories.
+
+* References
+
+  This complete re-write was inspired by [[https://github.com/daviwil][David Wilson]]'s excellent video series,
+  [[https://www.youtube.com/playlist?list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch]].  Check out other videos on Emacs he has provided.  They
+  are well worth the watch!
+
+
+

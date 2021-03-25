@@ -35,9 +35,9 @@ BACKUPDIR=${HOME}/Backup/shell
 HOMETMPDIR=${HOME}/tmp
 RSYNC=rsync
 RSYNC_EXCLUDE=global-excludes
-RSYNC_OPTS="-Ccav --delete --exclude-from=${RSYNC_EXCLUDE}"
+RSYNC_OPTS="-Ccav --perms --chmod=go-rw --delete --exclude-from=${RSYNC_EXCLUDE}"
 MAKE=make
-COPYRIGHT='Copyright (c) 2000-2020 Christopher M. Fuhrman'
+COPYRIGHT='Copyright (c) 2000-2021 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 DRYRUN=""
 UNINSTALL=0
@@ -684,6 +684,7 @@ fi
 if [[ ${NOLINK} -ne 1 && ! -d ${HOMETMPDIR} ]]; then
         inform $L1 $FALSE "Creating ${HOMETMPDIR}"
         mkdir ${HOMETMPDIR}
+
         echo -e "${GREEN}done${NORMAL}"
 fi
 

@@ -55,6 +55,7 @@ FOSSIL_BRANCH=$(shell fossil info | grep "^tags" | awk -F\: '{print $$2}' | sed 
 FOSSIL_REPO=${HOME}/repos/public.fossil
 CKOUT_DATE=$(shell fossil info | grep "^checkout" | awk '{ print $$3 }' | sed 's/[-: ]//g')
 DISTFILE=shellpak-${FOSSIL_BRANCH}-${CKOUT_DATE}.tar.gz
+GIT_REPO=${HOME}/dev/shpak
 
 # Command options
 RSYNC_BIN=rsync
@@ -88,7 +89,7 @@ uninstall: setup.sh VERSION
 
 install: update
 
-update: txt setup.sh
+update: clean setup.sh
 	@echo 'Executing setup.sh for ShellPAK update'
 	@${SETUP_BIN} ${DRYRUN_OPT}
 
@@ -154,13 +155,14 @@ public: readme
 	@echo 'Syncing with public repository'
 	${RSYNC_BIN} ${RSYNC_PUBLIC_OPTS} . ${PUBLICCO}
 
+# Target for exporting changes from public Fossil repository
+git-export: ${GIT_REPO}
+	@echo 'Exporting changes to ${GIT_REPO}'
+	fossil git export ${GIT_REPO} --quiet
+
 # Target for importing changes from public Fossil repository
 git-import: .git
-	@echo 'Importing changes from Fossil'
-	fossil export --git ${FOSSIL_REPO} | \
-          sed 's/^committer cfuhrman <cfuhrman>/committer Christopher M. Fuhrman <cfuhrman@pobox.com>/g' | \
-          git fast-import
-	git reset --hard trunk
+	@echo 'git-import target has been replaced by git-export target'
 
 dist: ${DISTFILE}
 
@@ -219,12 +221,12 @@ ${TXIDIRS}:
 # Host Targets
 #
 
-${LOCALHOSTS}: txt
+${LOCALHOSTS}:
 	@echo "Propagating to $@"
 	@${RSYNC_BIN} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . ${USER}@$@:${SHELLDIR}
 	@${SSH} $@ ${SSH_SETUP_CMD}
 
-${REMOTEHOSTS}: txt
+${REMOTEHOSTS}:
 	@echo "Propagating to $@"
 	@${RSYNC_BIN} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . ${USER}@$@:${SHELLDIR}
 	@${SSH} $@ ${SSH_SETUP_CMD}

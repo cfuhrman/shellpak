@@ -1,8 +1,11 @@
 *.tar.gz
 *~
 .abbrev_defs
+.cache
+.dap-breakpoints
 .fslckout
 .icon-fonts-installed
+.lsp-session-v1
 .org-id-locations
 .python-environments
 GPATH
@@ -14,13 +17,13 @@ ac-dict/
 auto-save-list
 bookmarks
 config/
-docs/*.org
 elpa/
 elpy/
 emojis/
 eshell/
 ext/
 ido.last
+lsp-cache/
 network-security.data
 org-clock-save.el
 projectile-bookmarks.eld
@@ -30,4 +33,5 @@ session.*
 tramp
 transient/
 url/
+workspace/
 xkcd/
