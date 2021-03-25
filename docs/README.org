@@ -68,7 +68,6 @@
 
     - Git :: [[https://github.com/cfuhrman/shellpak][GitHub]]
     - Fossil :: [[https://fossil.fuhrwerks.com/shpak][FuhrWerks]]
-    - Bazaar :: [[https://code.launchpad.net/~cfuhrman/shpak/trunk][Launchpad]]
 
    Be aware that portions of the ShellPAK infrastructure relies on
    Fossil.  Conversion to support the conventions of an alternative
