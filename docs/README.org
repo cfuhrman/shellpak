@@ -66,7 +66,7 @@
    [[https://chiselapp.com/user/cfuhrman/repository/shpak/home][ShellPAK]] is also available for checkout from the following
    locations:
 
-    - Git :: [[https://github.com/cfuhrman/shpak][GitHub]], [[https://bitbucket.org/chrisfuhrman/shellpak][BitBucket]]
+    - Git :: [[https://github.com/cfuhrman/shellpak][GitHub]]
     - Fossil :: [[https://fossil.fuhrwerks.com/shpak][FuhrWerks]]
     - Bazaar :: [[https://code.launchpad.net/~cfuhrman/shpak/trunk][Launchpad]]
 
