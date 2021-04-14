@@ -70,12 +70,12 @@
  ;; If there is more than one, they won't work right.
  '(c-default-style
    (quote
-    ((c-mode        . "cmf")
-     (c++-mode        . "cmf")
+    ((c-mode    . "cmf")
+     (c++-mode  . "cmf")
      (objc-mode . "cmf")
      (java-mode . "cmf")
-     (awk-mode        . "awk")
-     (other        . "cmf"))))
+     (awk-mode  . "awk")
+     (other     . "cmf"))))
  '(calendar-christian-all-holidays-flag t)
  '(calendar-daylight-time-zone-name cmf/time-zone-short-name-daylight)
  '(calendar-latitude cmf/latitude)
@@ -127,6 +127,11 @@
 ;; Originally taken from
 ;; https://github.com/daviwil/emacs-from-scratch/blob/master/init.el
 (defun cmf/display-startup-time ()
+  "Displays Emacs start up time in seconds.
+
+Displays the number of seconds Emacs took to start up along with the
+number of garbage collections that took place.  Useful for optimizing
+your Emacs Configuration"
   (message "Emacs loaded in %s with %d garbage collections."
            (format "%.2f seconds"
                    (float-time
@@ -214,6 +219,54 @@
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   )
 
+(use-package ivy
+  :ensure t
+  :pin melpa-stable
+  :diminish
+
+  :bind (
+         ;; Ivy-based interface to standard commands
+         ("C-c v"       . ivy-push-view)
+         ("C-c V"       . ivy-pop-view)
+
+
+         ;; Ivy-resume and other commands
+         ("C-c C-r"     . ivy-resume)
+         )
+
+  :custom
+  (ivy-use-virtual-buffers t)
+  (ivy-height 10)
+  (ivy-count-format "(%d/%d) ")
+
+  :init
+  (ivy-mode t)
+
+  :config
+  (use-package ivy-rich
+    :ensure t
+
+    :config
+    (ivy-rich-mode t)
+    (setcdr (assq t ivy-format-functions-alist)
+	#'ivy-format-function-line)
+    )
+  )
+
+(use-package swiper
+  :ensure t
+  :pin melpa-stable
+  :after ivy
+
+  :bind (
+         ("C-s"         . swiper)
+         ("C-r"         . swiper-backward)
+         )
+
+  :init
+  (ivy-mode t)
+  )
+
 (use-package counsel
   :ensure t
   :pin melpa-stable
@@ -258,52 +311,6 @@
 
   :config
   (counsel-mode t)
-  )
-
-(use-package ivy
-  :ensure t
-  :pin melpa-stable
-  :diminish
-
-  :bind (
-         ;; Ivy-based interface to standard commands
-         ("C-c v"       . ivy-push-view)
-         ("C-c V"       . ivy-pop-view)
-
-
-         ;; Ivy-resume and other commands
-         ("C-c C-r"     . ivy-resume)
-         )
-
-  :custom
-  (ivy-use-virtual-buffers t)
-  (ivy-height 10)
-  (ivy-count-format "(%d/%d) ")
-
-  :init
-  (ivy-mode t)
-
-  :config
-  (use-package ivy-rich
-    :ensure t
-
-    :init
-    (ivy-rich-mode t)
-    )
-  )
-
-(use-package swiper
-  :ensure t
-  :pin melpa-stable
-  :after ivy
-
-  :bind (
-         ("C-s"         . swiper)
-         ("C-r"         . swiper-backward)
-         )
-
-  :init
-  (ivy-mode t)
   )
 
 ;;
@@ -396,6 +403,7 @@
   (use-package all-the-icons-ivy-rich
     :ensure t
     :if window-system
+    :after ivy
 
     :init
     (all-the-icons-ivy-rich-mode t)
@@ -676,7 +684,7 @@
   :defer t
   :no-require t
 
-  :hook (apache-mode . cmf/choose-line-nuber-mode)
+  :hook (apache-mode . cmf/choose-line-number-mode-hook)
 
   :mode (("\\.htaccess\\'"                   . apache-mode)
          ("access\\.conf\\'"                 . apache-mode)
@@ -856,6 +864,15 @@
       ;; set to nil or not.  For the time being, just notify the user.
       (message "Do not use full-screen mode when running under macOS!")
     )
+  )
+
+(use-package company-emoji
+  :ensure t
+  :pin melpa-stable
+
+  :hook (text-mode .
+		   (lambda ()
+		     (add-to-list 'company-backends 'company-emoji)))
   )
 
 (use-package company-shell
@@ -1091,6 +1108,7 @@
       :hook (lsp-mode . lsp-ui-mode)
 
       :custom
+      (lsp-ui-doc-alignment 'window)
       (lsp-ui-doc-position 'top)
       )
     )
@@ -1111,7 +1129,10 @@
               ("C-x p"                . php-insert-doc-block)
               )
 
-  :hook (php-mode . lsp-deferred)
+  :hook ((php-mode . lsp-deferred)
+         (php-mode .
+                   (lambda ()
+                     (setq lsp-imenu-index-symbol-kinds '(Method Function Class)))))
 
   :custom
   (php-insert-doc-access-tag nil)
