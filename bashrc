@@ -191,6 +191,7 @@ paths=('/usr/games'				\
        '/sbin'					\
        '/usr/local/sbin'			\
        "$HOME/.composer/vendor/bin"		\
+       "$HOME/.local/bin"			\
        "$HOME/vendor/bin"			\
        "$HOME/perl5/bin"			\
        "$HOME/bin"
