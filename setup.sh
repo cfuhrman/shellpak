@@ -299,6 +299,10 @@ goSetup ()
 		inform $L2 $TRUE "Installing gotags"
 		go get -u github.com/jstemmer/gotags
 	fi
+
+	# Install gopls
+	inform $L2 $TRUE "Installing go language server"
+	GO111MODULE=on go get golang.org/x/tools/gopls@latest
 }
 
 # Function: plSetup
