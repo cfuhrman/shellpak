@@ -90,7 +90,7 @@
  '(comment-multi-line t)
  '(comment-style (quote indent))
  '(custom-safe-themes
-   '("fce3524887a0994f8b9b047aef9cc4cc017c5a93a5fb1f84d300391fba313743" default))
+   '("1eee77e76b9cd3a2791dcee51ccb39002ccd830f2539be3aec3859c1bccf0112" "a3bdcbd7c991abd07e48ad32f71e6219d55694056c0c15b4144f370175273d16" "fce3524887a0994f8b9b047aef9cc4cc017c5a93a5fb1f84d300391fba313743" default))
  '(display-time-mode t)
  '(emerge-combine-versions-template "
 %b
@@ -102,6 +102,7 @@
  '(recentf-mode t)
  '(safe-local-variable-values
    '((org-latex-pdf-process "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f" "bibtex %b")))
+ '(scroll-bar-mode 'right)
  '(sh-indent-comment t)
  '(sh-indent-for-case-alt (quote +))
  '(sh-indent-for-case-label 0)
@@ -145,8 +146,8 @@ your Emacs Configuration"
 (require 'package)
 
 (setq package-archives
-      '(("melpa"        . "https://melpa.org/packages/")
-        ("melpa-stable" . "https://stable.melpa.org/packages/")
+      '(("melpa"        . "http://melpa.org/packages/")
+        ("melpa-stable" . "http://stable.melpa.org/packages/")
         ("gnu"          . "http://elpa.gnu.org/packages/"))
       )
 (setq package-check-signature nil)
@@ -229,7 +230,6 @@ your Emacs Configuration"
          ("C-c v"       . ivy-push-view)
          ("C-c V"       . ivy-pop-view)
 
-
          ;; Ivy-resume and other commands
          ("C-c C-r"     . ivy-resume)
          )
@@ -241,16 +241,6 @@ your Emacs Configuration"
 
   :init
   (ivy-mode t)
-
-  :config
-  (use-package ivy-rich
-    :ensure t
-
-    :config
-    (ivy-rich-mode t)
-    (setcdr (assq t ivy-format-functions-alist)
-	#'ivy-format-function-line)
-    )
   )
 
 (use-package swiper
@@ -311,6 +301,15 @@ your Emacs Configuration"
 
   :config
   (counsel-mode t)
+  )
+
+(use-package ivy-rich
+  :ensure t
+
+  :config
+  (ivy-rich-mode t)
+  (setcdr (assq t ivy-format-functions-alist)
+          #'ivy-format-function-line)
   )
 
 ;;
@@ -535,19 +534,6 @@ your Emacs Configuration"
   :custom
   (treemacs-follow-mode t)
   (treemacs-filewatch-mode t)
-
-  :config
-  (use-package treemacs-projectile
-    :ensure t
-    :pin melpa-stable
-    :after projectile
-    )
-
-  (use-package treemacs-magit
-    :ensure t
-    :pin melpa-stable
-    :after magit
-    )
   )
 
 (use-package undo-tree
@@ -794,6 +780,7 @@ your Emacs Configuration"
   :mode ("\\.sls\\'" . yaml-mode)
 
   :hook ((yaml-mode . cmf/choose-line-number-mode-hook)
+         (yaml-mode . lsp-deferred)
          (yaml-mode .
                     (lambda ()
                       (subword-mode t)
@@ -869,10 +856,11 @@ your Emacs Configuration"
 (use-package company-emoji
   :ensure t
   :pin melpa-stable
+  :after company
 
   :hook (text-mode .
-		   (lambda ()
-		     (add-to-list 'company-backends 'company-emoji)))
+                   (lambda ()
+                     (add-to-list 'company-backends 'company-emoji)))
   )
 
 (use-package company-shell
@@ -973,6 +961,11 @@ your Emacs Configuration"
   :bind (:map go-mode-map
               ("C-c C-j" . go-direx-pop-to-buffer))
 
+  :hook ((go-mode . lsp-deferred)
+         (go-mode .
+                  (lambda ()
+                    (setq lsp-imenu-index-symbol-kinds '(Constant Variable Method Function Class)))))
+
   :config
   (use-package company-go
     :ensure t
@@ -1069,6 +1062,7 @@ your Emacs Configuration"
     :custom
     (lsp-prefer-flymake nil)
     (lsp-file-watch-threshold 40000)
+    (lsp-response-timeout 30)
 
     :init
     (setq lsp-keymap-prefix "C-c C-l")
@@ -1186,11 +1180,15 @@ your Emacs Configuration"
   (projectile-tags-backend 'ggtags)
 
   :init
-  (when (or (file-directory-p "~/dev") (file-directory-p "~/org"))
-    (setq projectile-project-search-path '("~/dev" "~/org")))
   (setq projectile-switch-project-action #'projectile-dired)
 
   :config
+  (dolist (devpath '("~/dev/"
+                     "~/org/"
+                     ))
+    (if (file-directory-p devpath)
+        (add-to-list 'projectile-project-search-path devpath))
+    )
   (projectile-mode +1)
 
   (use-package counsel-projectile
@@ -1203,7 +1201,47 @@ your Emacs Configuration"
     )
   )
 
-;; TODO: Customize python development environment
+(use-package python
+  ;; This is a built-in mode
+
+  :config
+  (use-package lsp-python-ms
+    :ensure t
+    :pin melpa-stable
+
+    :hook (python-mode .
+                       (lambda ()
+                         (require 'lsp-python-ms)
+                         (lsp-deferred)))
+
+    :init
+    (setq lsp-python-ms-auto-install-server t)
+    )
+
+  (use-package sphinx-doc
+    :ensure t
+    :pin melpa-stable
+
+    :bind ("C-x p" . sphinx-doc)
+
+    :hook (python-mode .
+                       (lambda ()
+                         (require 'sphinx-doc)
+                         (sphinx-doc-mode t)))
+    )
+  
+  :custom
+  (python-shell-interpreter "python3")
+  )
+
+(use-package pyvenv
+  :ensure t
+  :pin melpa-stable
+  :after python
+
+  :config
+  (pyvenv-mode 1)
+  )
 
 (use-package rainbow-delimiters
   :ensure t

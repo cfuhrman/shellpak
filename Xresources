@@ -10,6 +10,12 @@
 aterm*transpscrollbar:  true
       aterm*saveLines:        2048
 
+! GNU Emacs resources
+! --------------------------------------------------------------------
+Emacs.pane.menubar.background: gray85
+Emacs.pane.menubar.foreground: black
+Emacs*shadowThickness: 1
+
 ! XTerm-specific resources
 ! --------------------------------------------------------------------
 
