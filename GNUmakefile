@@ -231,7 +231,7 @@ ${REMOTEHOSTS}:
 	@${RSYNC_BIN} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . ${USER}@$@:${SHELLDIR}
 	@${SSH} $@ ${SSH_SETUP_CMD}
 
-${DISTFILE}: clean clean-tags txt version
+${DISTFILE}: clean clean-tags version
 	@fossil tarball ${FOSSIL_BRANCH} ${DISTFILE}
 	@echo "Successfully created ${DISTFILE}"
 
