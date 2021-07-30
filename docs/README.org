@@ -100,7 +100,7 @@
    # Set up go programming environment
    $ ./setup.sh -g
 
-   # Set up PLSense
+   # Set up Perl::LanguageServer
    $ ./setup.sh -l
 
    # Set up python development environment

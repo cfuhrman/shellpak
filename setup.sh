@@ -307,56 +307,29 @@ goSetup ()
 
 # Function: plSetup
 #
-# Installs plSense for perl development
+# Installs Perl Language Server
+#
+# Note: Installation of IO::AIO via package manager (apt, zypper, yum) recommended
 
 plSetup ()
 {
-	local PLSENSE_REPO="https://github.com/aki2o/plsense.git"
-	local PLSENSE_VER="v0.3.4"
-	local PLSENSE_MODULE_PREREQUISITES=('Module::Install::CPANfile'	\
-					    'PPI::Document'		\
-					    'PPI::Lexer'		\
-					    'Log::Handler'		\
-					    'Config::Tiny'		\
-					    'Storable'           	\
- 					    'Class::Std::Storable'	\
-					    'Cache::FileCache'		\
-					    'List::AllUtils'
-					   )
+	local PERL_MODULES=("Coro"			\
+		       	    "Moose"			\
+	       		    "Perl::LanguageServer"
+			   )
 
-	if type -p plsense > /dev/null; then
-		inform $L1 $TRUE "PLSense is already installed."
-		return
-	fi
+	export PATH=~/perl5/bin:$PATH
+	export CC=$( which gcc )
 
-	inform $L1 $TRUE "Setting up PLSense for perl development"
+	inform $L1 $TRUE "Install Perl Language Server (this may take a while)"
 
-	for module in ${PLSENSE_MODULE_PREREQUISITES[@]}; do
-		inform $L2 $TRUE " ${module}"
+	for module in ${PERL_MODULES[@]}; do
+		inform $L2 $TRUE " ... ${module}"
 		cpan install $module
 	done
 
-	inform $L2 $TRUE "Installing PLSense"
-	temp_dir="$(mktemp -q -d -t ${0##*/}.XXXXXX 2>/dev/null || mktemp -q -d)"
-
-	git clone ${PLSENSE_REPO} $temp_dir
-	pushd . >/dev/null
-	cd $temp_dir
-	git checkout ${PLSENSE_VERSION}
-
-	# Standard Perl Installation
-	perl Makefile.PL &&			\
-	make             &&			\
-	make test        &&			\
-	make install
-
-	# Clean up
-	inform $L2 $TRUE "Cleaning up installation"
-	popd >/dev/null
-	rm -rf $temp_dir
-
-	inform $L1 $TRUE "Setting up PLSense (manual interaction will be necessary)"
-	$HOME/perl5/bin/plsense config
+	unset CC
+	inform $L2 $TRUE "Done"
 }
 
 # Function: pySetup
@@ -498,7 +471,7 @@ usage: ${0##*/} -h This screen                             \\
                    of backup files
                 -n Do _not_ link files                     \\
                 -g Set up/remove GoLang Development        \\
-                -l Set up PLSense                          \\
+                -l Set up Perl Language Server             \\
 		-p Set up Python Development               \\
                 -u Uninstall ShellPAK                      \\
                 -r perform a trial run with no changes made

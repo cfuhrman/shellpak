@@ -17,7 +17,7 @@ ac-dict/
 auto-save-list
 bookmarks
 config/
-elpa/
+elpa*/
 elpy/
 emojis/
 eshell/

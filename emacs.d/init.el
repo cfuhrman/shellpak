@@ -37,6 +37,7 @@
                 "~/go/bin"
                 "~/perl5/bin"
                 "~/vendor/bin"
+                "/Library/Developer/CommandLineTools/usr/bin"
                 "/Library/TeX/texbin"
                 "/usr/local/bin"
                 "/usr/pkg/bin"))
@@ -90,7 +91,7 @@
  '(comment-multi-line t)
  '(comment-style (quote indent))
  '(custom-safe-themes
-   '("1eee77e76b9cd3a2791dcee51ccb39002ccd830f2539be3aec3859c1bccf0112" "a3bdcbd7c991abd07e48ad32f71e6219d55694056c0c15b4144f370175273d16" "fce3524887a0994f8b9b047aef9cc4cc017c5a93a5fb1f84d300391fba313743" default))
+   '("1704976a1797342a1b4ea7a75bdbb3be1569f4619134341bd5a4c1cfb16abad4" "1eee77e76b9cd3a2791dcee51ccb39002ccd830f2539be3aec3859c1bccf0112" "a3bdcbd7c991abd07e48ad32f71e6219d55694056c0c15b4144f370175273d16" "fce3524887a0994f8b9b047aef9cc4cc017c5a93a5fb1f84d300391fba313743" default))
  '(display-time-mode t)
  '(emerge-combine-versions-template "
 %b
@@ -777,10 +778,12 @@ your Emacs Configuration"
   :ensure t
   :no-require t
 
-  :mode ("\\.sls\\'" . yaml-mode)
+  :mode (("\\.sls\\'" . yaml-mode)
+         ("\\.yml\\'" . yaml-mode))
 
   :hook ((yaml-mode . cmf/choose-line-number-mode-hook)
          (yaml-mode . lsp-deferred)
+         (yaml-mode . hl-todo-mode)
          (yaml-mode .
                     (lambda ()
                       (subword-mode t)
@@ -809,9 +812,20 @@ your Emacs Configuration"
             (setq fill-column 70)))
 
 ;; Packages
+(unless (eq (executable-find "clangd") nil)
+  (use-package c++-mode
+    ;; This is a built-in mode
+    :hook (c++-mode . lsp-deferred)
+    )
+
+  (use-package c-mode
+    ;; This is a built-in mode
+    :hook (c-mode . lsp-deferred)
+    )
+)
+
 (use-package company
   :ensure t
-  :pin melpa-stable
 
   :bind (:map company-active-map
               ("C-n" . company-select-next)
@@ -881,6 +895,8 @@ your Emacs Configuration"
   ;; This is a built-in mode
   :mode ("\\.cgi\\'" . cperl-mode)
 
+  :hook (cperl-mode . lsp-deferred)
+
   :custom
   (cperl-close-paren-offset -4)
   (cperl-continued-statement-offset 4)
@@ -912,15 +928,6 @@ your Emacs Configuration"
     (interactive)
     (save-excursion (mark-defun)
                     (perltidy-region))
-    )
-
-  (use-package company-plsense
-    :ensure t
-    :after company
-
-    :hook (cperl-mode .
-                      (lambda ()
-                        (add-to-list 'company-backends 'company-plsense)))
     )
   )
 
@@ -1207,6 +1214,7 @@ your Emacs Configuration"
   :config
   (use-package lsp-python-ms
     :ensure t
+    :defer t
     :pin melpa-stable
 
     :hook (python-mode .
@@ -1216,6 +1224,13 @@ your Emacs Configuration"
 
     :init
     (setq lsp-python-ms-auto-install-server t)
+    (dolist (pypath '("/usr/bin/python3"
+		      "/usr/local/bin/python3"
+		      "/usr/pkg/bin/python3"
+		      ))
+      (if (file-regular-p pypath)
+	  (setq lsp-python-ms-python-executable pypath)
+	))
     )
 
   (use-package sphinx-doc
@@ -1229,7 +1244,7 @@ your Emacs Configuration"
                          (require 'sphinx-doc)
                          (sphinx-doc-mode t)))
     )
-  
+
   :custom
   (python-shell-interpreter "python3")
   )

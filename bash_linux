@@ -64,7 +64,7 @@ if [[ $TERM =~ ^screen\-256color && -f /etc/redhat-release ]]; then
 
         # Grab version
         if grep ^CentOS /etc/redhat-release >/dev/null; then
-                REDHAT_VERSION=$( awk '{ print $3 }' /etc/redhat-release | awk -F\. '{ print $1 }' )
+                REDHAT_VERSION=$( sed 's/CentOS.*release.\([0-9]*\).*$/\1/' /etc/redhat-release )
         else
                 REDHAT_VERSION=$( awk '{ print $7 }' /etc/redhat-release | awk -F\. '{ print $1 }' )
         fi
