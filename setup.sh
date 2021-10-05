@@ -133,7 +133,6 @@ fi
 # Function: doUninstall
 #
 # Uninstalls shellpak
-
 doUninstall ()
 {
 
@@ -163,10 +162,7 @@ EOF
 
         select opt in Yes No
         do
-                # Bash versions >= 4.0 support doing ${opt^^} to get uppercase.
-                # Unfortunately, Apple still insists on shipping Bash 3.something
-                # in OS X, so use tr(1) to make $opt uppercase.
-                case $( echo $opt | tr '[:lower:]' '[:upper:]' ) in
+                case ${opt^^} in
 
                 YES)
                         echo ''
@@ -252,7 +248,6 @@ EOF
 # Function: goSetup
 #
 # Sets up directory structure for the go programming language
-
 goSetup ()
 {
 	local GOBIN=${GOPATH}/bin
@@ -310,12 +305,12 @@ goSetup ()
 # Installs Perl Language Server
 #
 # Note: Installation of IO::AIO via package manager (apt, zypper, yum) recommended
-
 plSetup ()
 {
-	local PERL_MODULES=("Coro"			\
-		       	    "Moose"			\
-	       		    "Perl::LanguageServer"
+	# Should AnyEvent (a requirement for Coro) fail, be sure to check output for DNS failures.  In some cases, an
+	# ISP may have their DNS configured to return a bogus address should a lookup fail, which can confuse the
+	# AnyEvent test suite.
+	local PERL_MODULES=("Perl::LanguageServer"
 			   )
 
 	export PATH=~/perl5/bin:$PATH
@@ -362,7 +357,6 @@ pySetup ()
 # Function: headerDisplay
 #
 # Displays a header for the world to see
-
 headerDisplay ()
 {
 
@@ -394,7 +388,6 @@ headerDisplay ()
 #   readlink(1) is neither available on Solaris nor AIX
 #
 # Links tmux.conf file depending on version
-
 linkTmuxConf ()
 {
 	local tmux_conf_symlink=$HOME/.tmux.conf
@@ -437,7 +430,6 @@ linkTmuxConf ()
 #   level   : 1 or 2
 #   newline : [0|1] whether to append newline
 #   msg     : Message to display
-
 inform ()
 {
         local level=$1
@@ -460,7 +452,6 @@ inform ()
 # Function: usage
 #
 # Displays usage
-
 usage ()
 {
 

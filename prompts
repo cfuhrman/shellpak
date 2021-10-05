@@ -58,7 +58,6 @@ fi
 # Function: doXTerm()
 #
 # Sets the title font if an xterm is detected
-
 doXTerm ()
 {
 
@@ -77,7 +76,6 @@ doXTerm ()
 # Function: promptCMF()
 #
 # Sets up prompt to my own preference
-
 promptCMF ()
 {
         doXTerm
@@ -92,7 +90,6 @@ promptCMF ()
 # Function: promptCMF256()
 #
 # Sets up prompt using 256 colors
-
 promptCMF256 ()
 {
 	doXTerm
@@ -104,7 +101,6 @@ promptCMF256 ()
 #
 # Method that uses whatever default prompt is used by the
 # current system
-
 promptDefault ()
 {
         # Only reset PS1 if there is a stored default
@@ -118,7 +114,6 @@ promptDefault ()
 # Function: promptDumb
 #
 # For dumb terminals
-
 promptDumb ()
 {
         doXTerm
@@ -133,7 +128,6 @@ promptDumb ()
 # Function: promptGENTOO
 #
 # For fans of Gentoo Linux
-
 promptGENTOO ()
 {
         doXTerm
@@ -147,7 +141,6 @@ promptGENTOO ()
 # Function: promptRED
 #
 # Sets up a font with reddish colors
-
 promptRED ()
 {
         doXTerm
@@ -162,7 +155,6 @@ promptRED ()
 # Function: promptTFCC()
 #
 # A generic TFCC prompt
-
 promptTFCC ()
 {
         DEFAULTPS1=$PS1
