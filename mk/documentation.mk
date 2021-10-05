@@ -145,4 +145,4 @@ texinfo: texi ${TXP_FILES}
 %-texi.pdf : %.texi ${TEXI2PDF_BIN}
 	${TEXI2PDF_BIN} -o $@ $<
 
-# Ende
+# documentation.mk ends here

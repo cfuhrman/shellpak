@@ -17,6 +17,7 @@ ac-dict/
 auto-save-list
 bookmarks
 config/
+eclipse.jdt.ls/
 elpa*/
 elpy/
 emojis/

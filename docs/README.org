@@ -27,7 +27,7 @@
 
 ** Requirements
 
-    - GNU Bash version 3.2 or greater
+    - GNU Bash version 4.0 or greater
     - GNU Emacs 26.1 or greater
     - GNU Make
     - rsync

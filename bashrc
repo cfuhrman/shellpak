@@ -53,7 +53,6 @@ PINE_REMOTE_CONFIG="{mail.example.com/ssl/novalidate-cert/user=cfuhrman@example.
 # Function: __sp_bashrc_set_browser
 #
 # Sets BROWSER environment variable.  See code for order of preference.
-
 __sp_bashrc_set_browser ()
 {
 
@@ -83,8 +82,6 @@ __sp_bashrc_set_browser ()
 # Function: __sp_bashrc_set_editor
 #
 # Sets EDITOR environment variable.  See code for order of preference.
-
-
 __sp_bashrc_set_editor ()
 {
 
@@ -125,7 +122,6 @@ __sp_bashrc_set_editor ()
 #  * less
 #  * view
 #  * more
-
 __sp_bashrc_set_pager ()
 {
 

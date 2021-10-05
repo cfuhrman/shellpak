@@ -147,8 +147,8 @@ your Emacs Configuration"
 (require 'package)
 
 (setq package-archives
-      '(("melpa"        . "http://melpa.org/packages/")
-        ("melpa-stable" . "http://stable.melpa.org/packages/")
+      '(("melpa"        . "https://melpa.org/packages/")
+        ("melpa-stable" . "https://stable.melpa.org/packages/")
         ("gnu"          . "http://elpa.gnu.org/packages/"))
       )
 (setq package-check-signature nil)
@@ -177,7 +177,7 @@ your Emacs Configuration"
       'y-or-n-p)
 
 (fset 'align-on-equal
-      [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g tab return ?= return])
+      [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g tab return ?= ?\[ ?^ ?> ?\] return])
 
 (fset 'align-on-hash-arrow
       [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g tab return ?= ?> return])
@@ -559,9 +559,6 @@ your Emacs Configuration"
 (use-package vc-fossil
   :ensure t
 
-  :init
-  (require 'vc-fossil)
-
   :config
   (add-to-list 'vc-handled-backends 'Fossil)
   )
@@ -635,9 +632,6 @@ your Emacs Configuration"
     :ensure t
 
     :hook (org-mode . org-bullets-mode)
-
-    :init
-    (require 'org-bullets)
     )
 
   (use-package org-fancy-priorities
@@ -771,7 +765,20 @@ your Emacs Configuration"
   :mode (("\\.xsd\\'"  . xml-mode)
          ("\\.wsdl\\'" . xml-mode))
 
-  :hook (nxml-mode . cmf/choose-line-number-mode-hook)
+  ;; NOTE: May need to download xmlls by hand in
+  ;; ~/.emacs.d/.cache/lsp/xmlls
+  :hook ((nxml-mode . cmf/choose-line-number-mode-hook)
+         (nxml-mode . cmf/nxml-hook)
+         (nxml-mode . lsp-deferred))
+
+  :config
+  (defun cmf/nxml-hook ()
+    "Hook for sane editing of XML files."
+    (auto-fill-mode -1)
+    )
+
+  :custom
+  (nxml-child-indent 4)
   )
 
 (use-package yaml-mode
@@ -860,9 +867,9 @@ your Emacs Configuration"
   :config
   (if (eq window-system 'ns)
       ;; DONT: Company-box and macOS do not behave properly when
-      ;; running under full screen mode (at at least under Mojave).
-      ;; The same is true regardless if ns-use-native-fullscreen is
-      ;; set to nil or not.  For the time being, just notify the user.
+      ;; running under full screen mode (at least under Mojave).  The
+      ;; same is true regardless if ns-use-native-fullscreen is set to
+      ;; nil or not.  For the time being, just notify the user.
       (message "Do not use full-screen mode when running under macOS!")
     )
   )

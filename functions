@@ -16,7 +16,6 @@
 #
 # Check for commonly installed GNU tools suite and aliases them as
 # appropriate.
-
 aliasCoreUtils ()
 {
 
