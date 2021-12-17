@@ -23,6 +23,7 @@ elpy/
 emojis/
 eshell/
 ext/
+flycheck_init.el
 ido.last
 lsp-cache/
 network-security.data

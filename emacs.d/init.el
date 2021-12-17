@@ -446,6 +446,11 @@ your Emacs Configuration"
 ;; --------------------------------------------------------------------
 
 ;; Packages
+(use-package dictionary
+  :ensure t
+  :pin melpa-stable
+  )
+
 (use-package flyspell
   :ensure t
 
@@ -660,6 +665,28 @@ your Emacs Configuration"
   :defer t
   )
 
+(use-package ansible
+  :ensure t
+  :pin melpa-stable
+  :defer t
+
+  :hook (yaml-mode .
+                   (lambda ()
+                     (ansible 1)))
+
+  :config
+  (use-package company-ansible
+    :ensure t
+    :pin melpa-stable
+    :no-require t
+    :after company
+
+    :hook (ansible-mode .
+                        (lambda ()
+                          (add-to-list 'company-backends 'company-ansible)))
+    )
+  )
+
 (use-package apache-mode
   :ensure t
   :defer t
@@ -709,13 +736,30 @@ your Emacs Configuration"
 
   :mode (("\\.cron\\(tab\\)?\\'" . crontab-mode)
          ("cron\\(tab\\)?\\."    . crontab-mode))
+
+  :hook ((crontab-mode . cmf/choose-line-number-mode-hook)
+         (crontab-mode . cmf/crontab-hook))
+
+  :config
+  (defun cmf/crontab-hook ()
+    "Hook for sane editing of crontab files."
+    (auto-fill-mode -1)
+    )
   )
 
 (use-package dockerfile-mode
   :ensure t
+  :defer t
   :pin melpa-stable
 
   :mode ("Dockerfile\\'" . dockerfile-mode)
+  )
+
+(use-package graphviz-dot-mode
+  :ensure t
+  :defer t
+  :no-require t
+  :pin melpa-stable
   )
 
 (use-package json-mode
@@ -948,6 +992,7 @@ your Emacs Configuration"
 
 (use-package flycheck
   :ensure t
+  :defer t
 
   :custom
   (flycheck-check-syntax-automatically (quote (idle-change)))
@@ -1083,6 +1128,15 @@ your Emacs Configuration"
 
     :config
     (lsp-enable-which-key-integration t)
+    (lsp-register-custom-settings
+     `(("intelephense.phpdoc.functionTemplate"
+	,(list :summary "$1"
+	       :tags (vector ""
+			     "@param ${1:$SYMBOL_TYPE} $SYMBOL_NAME $2"
+			     ""
+			     "@return ${1:$SYMBOL_TYPE} $2"
+			     ""
+			     "@throws ${1:$SYMBOL_TYPE} $2""" "$1")))))
 
     (if (window-system)
         (setq lsp-headerline-breadcrumb-icons-enable t)
@@ -1232,12 +1286,12 @@ your Emacs Configuration"
     :init
     (setq lsp-python-ms-auto-install-server t)
     (dolist (pypath '("/usr/bin/python3"
-		      "/usr/local/bin/python3"
-		      "/usr/pkg/bin/python3"
-		      ))
+                      "/usr/local/bin/python3"
+                      "/usr/pkg/bin/python3"
+                      ))
       (if (file-regular-p pypath)
-	  (setq lsp-python-ms-python-executable pypath)
-	))
+          (setq lsp-python-ms-python-executable pypath)
+        ))
     )
 
   (use-package sphinx-doc
@@ -1258,6 +1312,7 @@ your Emacs Configuration"
 
 (use-package pyvenv
   :ensure t
+  :defer t
   :pin melpa-stable
   :after python
 
@@ -1273,6 +1328,7 @@ your Emacs Configuration"
 
 (use-package sed-mode
   :ensure t
+  :defer t
   :no-require t
 
   :mode (
