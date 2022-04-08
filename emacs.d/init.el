@@ -90,6 +90,7 @@
  '(column-number-mode t)
  '(comment-multi-line t)
  '(comment-style (quote indent))
+ '(custom-file (locate-user-emacs-file "custom.el"))
  '(custom-safe-themes
    '("1704976a1797342a1b4ea7a75bdbb3be1569f4619134341bd5a4c1cfb16abad4" "1eee77e76b9cd3a2791dcee51ccb39002ccd830f2539be3aec3859c1bccf0112" "a3bdcbd7c991abd07e48ad32f71e6219d55694056c0c15b4144f370175273d16" "fce3524887a0994f8b9b047aef9cc4cc017c5a93a5fb1f84d300391fba313743" default))
  '(display-time-mode t)
@@ -97,6 +98,8 @@
 %b
 %a
 ")
+ '(global-auto-revert-mode t)
+ '(global-auto-revert-non-file-buffers t)
  '(global-prettify-symbols-mode t)
  '(log-edit-hook '(log-edit-show-files))
  ;; '(safe-local-variable-values '(buffer-auto-save-file-name))
@@ -114,6 +117,8 @@
  '(which-function-mode t)
  '(user-full-name cmf/full-name)
  '(user-mail-address cmf/mail-address)
+ '(warning-suppress-log-types '((comp)))
+ '(warning-suppress-types '((comp)))
  )
 
 (if (window-system)
@@ -148,7 +153,6 @@ your Emacs Configuration"
 
 (setq package-archives
       '(("melpa"        . "https://melpa.org/packages/")
-        ("melpa-stable" . "https://stable.melpa.org/packages/")
         ("gnu"          . "http://elpa.gnu.org/packages/"))
       )
 (setq package-check-signature nil)
@@ -213,7 +217,6 @@ your Emacs Configuration"
 ;; Packages
 (use-package ace-window
   :ensure t
-  :pin melpa-stable
 
   :bind ("C-x o" . ace-window)
 
@@ -223,7 +226,6 @@ your Emacs Configuration"
 
 (use-package ivy
   :ensure t
-  :pin melpa-stable
   :diminish
 
   :bind (
@@ -246,7 +248,6 @@ your Emacs Configuration"
 
 (use-package swiper
   :ensure t
-  :pin melpa-stable
   :after ivy
 
   :bind (
@@ -260,7 +261,6 @@ your Emacs Configuration"
 
 (use-package counsel
   :ensure t
-  :pin melpa-stable
   :after swiper
   :diminish
 
@@ -362,7 +362,6 @@ your Emacs Configuration"
 ;; Packages
 (use-package all-the-icons
   :ensure t
-  :pin melpa-stable
   :if window-system
 
   :config
@@ -377,24 +376,9 @@ your Emacs Configuration"
     )
   )
 
-;; all-the-icons-dired
-(use-package all-the-icons-dired
-  :ensure t
-  :after all-the-icons
-  :if window-system
-
-  :init
-  (require 'font-lock+)
-
-  :hook (dired-mode . all-the-icons-dired-mode)
-
-  :diminish all-the-icons-dired-mode
-  )
-
 (use-package all-the-icons-ivy
   :ensure t
   :if window-system
-  :pin melpa-stable
   :after (ivy all-the-icons)
 
   :config
@@ -428,7 +412,6 @@ your Emacs Configuration"
 
 (use-package emojify
   :ensure t
-  :pin melpa-stable
   :if window-system
 
   :custom
@@ -438,6 +421,12 @@ your Emacs Configuration"
   (global-emojify-mode)
   )
 
+(use-package treemacs-icons-dired
+  :ensure t
+  :if window-system
+
+  :hook (dired-mode . treemacs-icons-dired-enable-once)
+  )
 
 ;; EXTENSIONS
 ;;
@@ -448,7 +437,7 @@ your Emacs Configuration"
 ;; Packages
 (use-package dictionary
   :ensure t
-  :pin melpa-stable
+  :if (version< emacs-version "28.1")
   )
 
 (use-package flyspell
@@ -473,7 +462,6 @@ your Emacs Configuration"
 
 (use-package helpful
   :ensure t
-  :pin melpa-stable
   :commands (helpful-callable helpful helpful-command helpful-key)
 
   :bind
@@ -510,7 +498,6 @@ your Emacs Configuration"
 
 (use-package sudo-edit
   :ensure t
-  :pin melpa-stable
   :no-require t
 
   :custom
@@ -519,7 +506,6 @@ your Emacs Configuration"
 
 (use-package treemacs
   :ensure t
-  :pin melpa-stable
   :defer t
 
   :bind
@@ -540,6 +526,11 @@ your Emacs Configuration"
   :custom
   (treemacs-follow-mode t)
   (treemacs-filewatch-mode t)
+
+  :config
+  (use-package treemacs-magit
+    :ensure t
+    :after magit)
   )
 
 (use-package undo-tree
@@ -571,12 +562,12 @@ your Emacs Configuration"
 (unless (eq (executable-find "w3m") nil)
   (use-package w3m
     :ensure t
+    :defer t
     )
   )
 
 (use-package which-key
   :ensure t
-  :pin melpa-stable
   :diminish which-key-mode
 
   :init
@@ -661,13 +652,11 @@ your Emacs Configuration"
 
 (use-package adoc-mode
   :ensure t
-  :pin melpa-stable
   :defer t
   )
 
 (use-package ansible
   :ensure t
-  :pin melpa-stable
   :defer t
 
   :hook (yaml-mode .
@@ -677,7 +666,6 @@ your Emacs Configuration"
   :config
   (use-package company-ansible
     :ensure t
-    :pin melpa-stable
     :no-require t
     :after company
 
@@ -750,7 +738,6 @@ your Emacs Configuration"
 (use-package dockerfile-mode
   :ensure t
   :defer t
-  :pin melpa-stable
 
   :mode ("Dockerfile\\'" . dockerfile-mode)
   )
@@ -759,7 +746,6 @@ your Emacs Configuration"
   :ensure t
   :defer t
   :no-require t
-  :pin melpa-stable
   )
 
 (use-package json-mode
@@ -772,7 +758,6 @@ your Emacs Configuration"
 
 (use-package markdown-mode
   :ensure t
-  :pin melpa-stable
 
   :commands (markdown-mode gfm-mode)
 
@@ -793,7 +778,6 @@ your Emacs Configuration"
   :config
   (use-package company-restclient
     :ensure t
-    :pin melpa-stable
     :after company
 
     :hook ((restclient-mode . undo-tree-mode)
@@ -920,7 +904,6 @@ your Emacs Configuration"
 
 (use-package company-emoji
   :ensure t
-  :pin melpa-stable
   :after company
 
   :hook (text-mode .
@@ -930,7 +913,6 @@ your Emacs Configuration"
 
 (use-package company-shell
   :ensure t
-  :pin melpa-stable
   :commands shell-mode
   :after company
 
@@ -984,7 +966,6 @@ your Emacs Configuration"
 
 (use-package diff-hl
   :ensure t
-  :pin melpa-stable
 
   :config
   (global-diff-hl-mode)
@@ -1008,14 +989,11 @@ your Emacs Configuration"
 (use-package ggtags
   :ensure t
   :diminish ggtags-mode
-
-  :hook (prog-mode . ggtags-mode)
   )
 
 (use-package go-mode
   :ensure t
   :no-require t
-  :pin melpa-stable
 
   :bind (:map go-mode-map
               ("C-c C-j" . go-direx-pop-to-buffer))
@@ -1063,7 +1041,6 @@ your Emacs Configuration"
 
 (use-package hl-todo
   :ensure t
-  :pin melpa-stable
 
   :bind (
          ("C-c h p" . hl-todo-previous)
@@ -1100,7 +1077,6 @@ your Emacs Configuration"
 (unless (eq (executable-find "npm") nil)
   (use-package lsp-ivy
     :ensure t
-    :pin melpa-stable
     :after (ivy lsp)
     )
   )
@@ -1115,7 +1091,6 @@ your Emacs Configuration"
 (unless (eq (executable-find "npm") nil)
   (use-package lsp-mode
     :ensure t
-    :pin melpa-stable
     :commands (lsp lsp-deferred)
 
     :custom
@@ -1123,10 +1098,8 @@ your Emacs Configuration"
     (lsp-file-watch-threshold 40000)
     (lsp-response-timeout 30)
 
-    :init
-    (setq lsp-keymap-prefix "C-c C-l")
-
     :config
+    (define-key lsp-mode-map (kbd "C-c C-l") lsp-command-map)
     (lsp-enable-which-key-integration t)
     (lsp-register-custom-settings
      `(("intelephense.phpdoc.functionTemplate"
@@ -1148,7 +1121,6 @@ your Emacs Configuration"
     (unless (eq (executable-find "java") nil)
       (use-package lsp-java
         :ensure t
-        :pin melpa-stable
 
         :config
         (add-hook 'java-mode-hook #'lsp)
@@ -1157,7 +1129,6 @@ your Emacs Configuration"
 
     (use-package lsp-treemacs
       :ensure t
-      :pin melpa-stable
       :after treemacs
 
       :bind (:map lsp-mode-map
@@ -1168,6 +1139,12 @@ your Emacs Configuration"
       :ensure t
 
       :hook (lsp-mode . lsp-ui-mode)
+
+      :config
+      (if (eq window-system nil)
+	  (setq lsp-ui-doc-show-with-cursor t)
+	(setq lsp-ui-doc-show-with-mouse t)
+	)
 
       :custom
       (lsp-ui-doc-alignment 'window)
@@ -1208,7 +1185,6 @@ your Emacs Configuration"
 
   (use-package company-php
     :ensure t
-    :pin melpa-stable
     :after company
 
     :hook (php-mode .
@@ -1235,7 +1211,6 @@ your Emacs Configuration"
 
 (use-package projectile
   :ensure t
-  :pin melpa-stable
   :diminish projectile-mode
 
   :bind-keymap
@@ -1261,11 +1236,15 @@ your Emacs Configuration"
 
   (use-package counsel-projectile
     :ensure t
-    :pin melpa-stable
     :after counsel
 
     :config
     (counsel-projectile-mode)
+    )
+
+  (use-package treemacs-projectile
+    :ensure t
+    :after treemacs--buffer-name-prefix
     )
   )
 
@@ -1276,7 +1255,6 @@ your Emacs Configuration"
   (use-package lsp-python-ms
     :ensure t
     :defer t
-    :pin melpa-stable
 
     :hook (python-mode .
                        (lambda ()
@@ -1296,7 +1274,6 @@ your Emacs Configuration"
 
   (use-package sphinx-doc
     :ensure t
-    :pin melpa-stable
 
     :bind ("C-x p" . sphinx-doc)
 
@@ -1313,7 +1290,6 @@ your Emacs Configuration"
 (use-package pyvenv
   :ensure t
   :defer t
-  :pin melpa-stable
   :after python
 
   :config
@@ -1362,7 +1338,6 @@ your Emacs Configuration"
 
 (use-package yasnippet
   :ensure t
-  :pin melpa-stable
 
   :init
   (yas-global-mode t)

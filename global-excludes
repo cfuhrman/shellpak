@@ -3,6 +3,7 @@
 .abbrev_defs
 .cache
 .dap-breakpoints
+.fossil-settings
 .fslckout
 .icon-fonts-installed
 .lsp-session-v1
@@ -18,13 +19,16 @@ auto-save-list
 bookmarks
 config/
 eclipse.jdt.ls/
+eln-cache/
 elpa*/
 elpy/
 emojis/
 eshell/
 ext/
 flycheck_init.el
+games/
 ido.last
+intelephense/
 lsp-cache/
 network-security.data
 org-clock-save.el
