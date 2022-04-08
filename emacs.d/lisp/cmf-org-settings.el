@@ -94,14 +94,14 @@
 
   %?")
      ("n" "Note" entry
-      (file+datetree "~/org/notes.org")
+      (file+olp+datetree "~/org/notes.org")
       "* %^{Description}  %^G
   Added: %U
   Context: %a
 
   %?" :empty-lines 1)
      ("j" "Journal Entry" entry
-      (file+datetree "~/org/journal.org")
+      (file+olp+datetree "~/org/journal.org")
       "** %^{Heading} :JOURNAL:%^G
   Added: %U
   Mood: %^{mood}
@@ -228,7 +228,7 @@
 
 ;; Code borrowed from https://github.com/daviwil/emacs-from-scratch/blob/master/init.el
 (defun cmf/org-font-setup ()
-  "Sets up font settings for org-mode under Emacs."
+  "Set up font settings for `org-mode' under Emacs."
   (dolist (face '((org-level-1 . 1.75)
                   (org-level-2 . 1.50)
                   (org-level-3 . 1.25)
@@ -241,12 +241,12 @@
 			:weight 'regular :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
+  (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch :height 1.1)
   (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
   (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  ;; (set-face-attribute 'org-date         :height 1.1)
+  (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch) :height 1.1)
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch) :height 1.1)
   (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
   (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
   (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
