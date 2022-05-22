@@ -25,7 +25,7 @@
 ;;
 ;; LATER: Check out https://gitlab.com/koral/gcmh to see if that
 ;;        further impacts performance
-(setq gc-cons-threshold (* 50 1000 1000))
+(setq gc-cons-threshold (* 500 1000 1000))
 
 ;; Update load paths
 (add-to-list 'load-path "~/.emacs.d/lisp")
@@ -92,7 +92,7 @@
  '(comment-style (quote indent))
  '(custom-file (locate-user-emacs-file "custom.el"))
  '(custom-safe-themes
-   '("1704976a1797342a1b4ea7a75bdbb3be1569f4619134341bd5a4c1cfb16abad4" "1eee77e76b9cd3a2791dcee51ccb39002ccd830f2539be3aec3859c1bccf0112" "a3bdcbd7c991abd07e48ad32f71e6219d55694056c0c15b4144f370175273d16" "fce3524887a0994f8b9b047aef9cc4cc017c5a93a5fb1f84d300391fba313743" default))
+   '("9b54ba84f245a59af31f90bc78ed1240fca2f5a93f667ed54bbf6c6d71f664ac" "1704976a1797342a1b4ea7a75bdbb3be1569f4619134341bd5a4c1cfb16abad4" "1eee77e76b9cd3a2791dcee51ccb39002ccd830f2539be3aec3859c1bccf0112" "a3bdcbd7c991abd07e48ad32f71e6219d55694056c0c15b4144f370175273d16" "fce3524887a0994f8b9b047aef9cc4cc017c5a93a5fb1f84d300391fba313743" default))
  '(display-time-mode t)
  '(emerge-combine-versions-template "
 %b
@@ -350,6 +350,12 @@ your Emacs Configuration"
     :config
     (osx-location-watch)
     )
+
+  (use-package counsel-osx-app
+    :ensure t
+
+    :bind ("C-c m" . counsel-osx-app)
+    )
   )
 
 
@@ -407,7 +413,7 @@ your Emacs Configuration"
   :ensure t
 
   :config
-  (load-theme 'doom-nord)
+  (load-theme 'doom-sourcerer)
   )
 
 (use-package emojify
@@ -427,6 +433,7 @@ your Emacs Configuration"
 
   :hook (dired-mode . treemacs-icons-dired-enable-once)
   )
+
 
 ;; EXTENSIONS
 ;;
@@ -586,7 +593,7 @@ your Emacs Configuration"
 (use-package org
   ;; This is a built-in mode
   :bind (
-         ("C-c l" . org-store-link)
+         ("C-c C-o l" . org-store-link)
          ("C-c a" . org-agenda)
          ("C-c c" . org-capture)
          :map org-mode-map
@@ -989,6 +996,8 @@ your Emacs Configuration"
 (use-package ggtags
   :ensure t
   :diminish ggtags-mode
+
+  :hook (emacs-lisp-mode . ggtags-mode)
   )
 
 (use-package go-mode
@@ -1098,8 +1107,11 @@ your Emacs Configuration"
     (lsp-file-watch-threshold 40000)
     (lsp-response-timeout 30)
 
+    :init
+    (setq read-process-output-max (* 1024 1024)) ;; 1mb
+
     :config
-    (define-key lsp-mode-map (kbd "C-c C-l") lsp-command-map)
+    (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
     (lsp-enable-which-key-integration t)
     (lsp-register-custom-settings
      `(("intelephense.phpdoc.functionTemplate"
@@ -1123,7 +1135,7 @@ your Emacs Configuration"
         :ensure t
 
         :config
-        (add-hook 'java-mode-hook #'lsp)
+        (add-hook 'java-mode-hook 'lsp)
         )
       )
 
@@ -1367,6 +1379,6 @@ your Emacs Configuration"
 ;; --------------------------------------------------------------------
 
 ;; Make gc pauses faster by decreasing the threshold.
-(setq gc-cons-threshold (* 2 1000 1000))
+(setq gc-cons-threshold (* 200 1000 1000))
 
 ;;; init.el ends here

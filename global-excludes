@@ -3,6 +3,7 @@
 .abbrev_defs
 .cache
 .dap-breakpoints
+.elpa
 .fossil-settings
 .fslckout
 .icon-fonts-installed
