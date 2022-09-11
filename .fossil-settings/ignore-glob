@@ -1,0 +1,6 @@
+*.tar.gz
+*undo-tree~
+*~
+.DS_Store
+TAGS
+VERSION
