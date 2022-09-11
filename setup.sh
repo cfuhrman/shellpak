@@ -225,9 +225,9 @@ EOF
 
         # Restore .emacs file if it exists
         if [ -f ${BACKUPDIR}/.emacs ]; then
-            inform $L2 $FALSE "Restoring original .emacs"
-            mv ${BACKUPDIR}/.emacs ${HOME}
-            echo "${GREEN}done${NORMAL}"
+		inform $L2 $FALSE "Restoring original .emacs"
+		mv ${BACKUPDIR}/.emacs ${HOME}
+		echo "${GREEN}done${NORMAL}"
         fi
 
         # Finally remove SHELLDIR

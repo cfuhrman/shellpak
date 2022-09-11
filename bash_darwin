@@ -22,7 +22,8 @@ paths=('/opt/local/bin'				\
        '/opt/pkg/bin'				\
        '/opt/pkg/sbin'				\
        '/usr/local/git/bin'			\
-       '/opt/pkg/lib/perl5/site_perl/bin'	\
+       '/opt/homebrew/bin/'			\
+       '/usr/pkg/lib/perl5/site_perl/bin'	\
        '/Applications/oracle'			\
        '/usr/texbin'				\
        '/usr/local/opt/make/libexec/gnubin'	\

@@ -21,6 +21,7 @@
 
 ;; Variables
 (custom-set-variables
+ '(org-adapt-indentation t)
  '(org-agenda-custom-commands
    (quote
     (("n" "Agenda and all TODO's"

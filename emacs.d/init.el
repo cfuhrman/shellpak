@@ -33,6 +33,7 @@
 
 ;; Set exec path
 (dolist (path '("~/.composer/vendor/bin"
+		"~/.config/composer/vendor/bin"
                 "~/bin"
                 "~/go/bin"
                 "~/perl5/bin"
@@ -40,6 +41,7 @@
                 "/Library/Developer/CommandLineTools/usr/bin"
                 "/Library/TeX/texbin"
                 "/usr/local/bin"
+                "/opt/homebrew/bin"
                 "/usr/pkg/bin"))
   (if (file-directory-p path)
       (progn
@@ -69,6 +71,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(auto-revert-verbose nil)
  '(c-default-style
    (quote
     ((c-mode    . "cmf")
@@ -91,8 +94,6 @@
  '(comment-multi-line t)
  '(comment-style (quote indent))
  '(custom-file (locate-user-emacs-file "custom.el"))
- '(custom-safe-themes
-   '("9b54ba84f245a59af31f90bc78ed1240fca2f5a93f667ed54bbf6c6d71f664ac" "1704976a1797342a1b4ea7a75bdbb3be1569f4619134341bd5a4c1cfb16abad4" "1eee77e76b9cd3a2791dcee51ccb39002ccd830f2539be3aec3859c1bccf0112" "a3bdcbd7c991abd07e48ad32f71e6219d55694056c0c15b4144f370175273d16" "fce3524887a0994f8b9b047aef9cc4cc017c5a93a5fb1f84d300391fba313743" default))
  '(display-time-mode t)
  '(emerge-combine-versions-template "
 %b
@@ -215,6 +216,12 @@ your Emacs Configuration"
   )
 
 ;; Packages
+(use-package accent
+  :ensure t
+
+  :bind ("C-c C-a" . accent-menu)
+  )
+
 (use-package ace-window
   :ensure t
 
@@ -232,6 +239,9 @@ your Emacs Configuration"
          ;; Ivy-based interface to standard commands
          ("C-c v"       . ivy-push-view)
          ("C-c V"       . ivy-pop-view)
+
+         ;; Convenience shortcut for finding workspace symbols
+         ("C-c s"	. lsp-ivy-global-workspace-symbol)
 
          ;; Ivy-resume and other commands
          ("C-c C-r"     . ivy-resume)
@@ -302,6 +312,13 @@ your Emacs Configuration"
 
   :config
   (counsel-mode t)
+  )
+
+(use-package ivy-emoji
+  :ensure t
+  :after ivy
+
+  :bind ("C-c i e" . ivy-emoji) ;; mnemonics i e = insert emoji
   )
 
 (use-package ivy-rich
@@ -413,7 +430,7 @@ your Emacs Configuration"
   :ensure t
 
   :config
-  (load-theme 'doom-sourcerer)
+  (load-theme 'doom-sourcerer t)
   )
 
 (use-package emojify
@@ -503,6 +520,10 @@ your Emacs Configuration"
     )
   )
 
+(use-package powerthesaurus
+  :ensure t
+  )
+
 (use-package sudo-edit
   :ensure t
   :no-require t
@@ -555,6 +576,7 @@ your Emacs Configuration"
                       (undo-tree-mode t))))
 
   :custom
+  (undo-tree-history-directory-alist '(("" . "/tmp/cmf-undo-tree")))
   (undo-tree-visualizer-diff t)
   (undo-tree-visualizer-timestamps t)
   )
@@ -780,8 +802,8 @@ your Emacs Configuration"
   :ensure t
   :mode ("\\.rtt\\'" . restclient-mode)
 
-  ;; See https://github.com/kiwanami/emacs-calfw for setting up your
-  ;; own calendars
+  :hook (restclient-mode . auto-fill-mode);
+
   :config
   (use-package company-restclient
     :ensure t
@@ -847,6 +869,7 @@ your Emacs Configuration"
             (auto-fill-mode t)
             (eldoc-mode t)
             (electric-pair-mode t)
+            (indent-tabs-mode -1)
             (subword-mode t)
             (setq fill-column 120)))
 (add-hook 'emacs-lisp-mode-hook
@@ -1130,12 +1153,27 @@ your Emacs Configuration"
 
     ;; Stanza is required here to make sure lsp-mode is enabled when
     ;; editing Java files
+    ;;
+    ;; TODO: Figure out why LSP mode is automatically kicked-off under
+    ;;       GUI mode but not CLI mode
     (unless (eq (executable-find "java") nil)
       (use-package lsp-java
         :ensure t
 
-        :config
-        (add-hook 'java-mode-hook 'lsp)
+        :hook ((java-mode . lsp)
+               (java-mode .
+        		  (lambda ()
+			    (setq lsp-imenu-index-symbol-kinds '(Property Constant Variable Method Function Class))))
+               )
+
+	:config
+	(require 'dap-java)
+
+	:custom
+	(lsp-java-code-generation-generate-comments t)
+	(lsp-java-format-enabled nil)
+	(lsp-java-format-on-type-enabled nil)
+
         )
       )
 
@@ -1167,7 +1205,8 @@ your Emacs Configuration"
 
 (use-package make-mode
   ;; This is a built-in mode
-  :mode ("[Mm]akefile\\." . makefile-mode)
+  :mode (("[Mm]akefile\\'" . makefile-mode)
+         ("\\.mk\\'"       . makefile-mode))
   )
 
 (use-package php-mode
