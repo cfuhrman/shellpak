@@ -92,9 +92,9 @@ promptCMF ()
 # Sets up prompt using 256 colors
 promptCMF256 ()
 {
-	doXTerm
-	DEFAULTPS1=$PS1
-	PS1=${BLACK_BACKGROUND}${LIGHT_BLUE}'[ '${LIGHT_YELLOW}'\h'${LIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${LIGHT_BLUE}' ]-'${LIGHT_YELLOW}'\W '${CYAN}'$(__git_ps1 "(%s) ")'${BLACK_BACKGROUND}${BRIGHT_WHITE}'\$'${NO_COLOR}' '
+        doXTerm
+        DEFAULTPS1=$PS1
+        PS1=${BLACK_BACKGROUND}${LIGHT_BLUE}'[ '${LIGHT_YELLOW}'\h'${LIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${LIGHT_BLUE}' ]-'${LIGHT_YELLOW}'\W '${CYAN}'$(__git_ps1 "(%s) ")'${BLACK_BACKGROUND}${BRIGHT_WHITE}'\$'${NO_COLOR}' '
 }
 
 # Function: promptDefault
