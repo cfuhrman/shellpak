@@ -57,12 +57,12 @@ __sp_bashrc_set_browser ()
 {
 
         # Set preferred browsers in order of evaluation
-        browsers=('google-chrome'		\
-                  'chromium'			\
-                  'firefox'			\
-                  'mozilla'			\
-                  'w3m'				\
-                  'elinks'			\
+        browsers=('google-chrome'               \
+                  'chromium'                    \
+                  'firefox'                     \
+                  'mozilla'                     \
+                  'w3m'                         \
+                  'elinks'                      \
                   'lynx'
                  )
 
@@ -177,20 +177,20 @@ if [ "$PS1" ]; then
 fi
 
 # Determine PATH
-paths=('/usr/games'				\
-       '/opt/schily/bin'			\
-       '/usr/X11R6/bin'				\
-       '/usr/X11R7/bin'				\
-       '/usr/sbin'				\
-       '/opt/bin'				\
-       '/opt/sbin'				\
-       '/sbin'					\
-       '/usr/local/sbin'			\
-       "$HOME/.composer/vendor/bin"		\
-       "$HOME/.config/composer/vendor/bin"	\
-       "$HOME/.local/bin"			\
-       "$HOME/vendor/bin"			\
-       "$HOME/perl5/bin"			\
+paths=('/usr/games'                             \
+       '/opt/schily/bin'                        \
+       '/usr/X11R6/bin'                         \
+       '/usr/X11R7/bin'                         \
+       '/usr/sbin'                              \
+       '/opt/bin'                               \
+       '/opt/sbin'                              \
+       '/sbin'                                  \
+       '/usr/local/sbin'                        \
+       "$HOME/.composer/vendor/bin"             \
+       "$HOME/.config/composer/vendor/bin"      \
+       "$HOME/.local/bin"                       \
+       "$HOME/vendor/bin"                       \
+       "$HOME/perl5/bin"                        \
        "$HOME/bin"
       )
 

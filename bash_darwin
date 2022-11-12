@@ -17,17 +17,17 @@
 #
 
 # Determine PATH
-paths=('/opt/local/bin'				\
-       '/opt/local/sbin'			\
-       '/opt/pkg/bin'				\
-       '/opt/pkg/sbin'				\
-       '/usr/local/git/bin'			\
-       '/opt/homebrew/bin/'			\
-       '/usr/pkg/lib/perl5/site_perl/bin'	\
-       '/Applications/oracle'			\
-       '/usr/texbin'				\
-       '/usr/local/opt/make/libexec/gnubin'	\
-       '/usr/local/opt/ansible@2.9/bin'		\
+paths=('/opt/local/bin'                         \
+       '/opt/local/sbin'                        \
+       '/opt/pkg/bin'                           \
+       '/opt/pkg/sbin'                          \
+       '/usr/local/git/bin'                     \
+       '/opt/homebrew/bin/'                     \
+       '/usr/pkg/lib/perl5/site_perl/bin'       \
+       '/Applications/oracle'                   \
+       '/usr/texbin'                            \
+       '/usr/local/opt/make/libexec/gnubin'     \
+       '/usr/local/opt/ansible@2.9/bin'         \
        "${HOME}/perl5/bin"
 )
 
@@ -47,7 +47,7 @@ PATH=${PATH//::/:}
 
 # Place /opt/pkg/bin first if pkgsrc is present
 if [ -d /opt/pkg/bin ]; then
-	PATH=/opt/pkg/bin:${PATH//\/opt\/pkg\/bin\:/}
+        PATH=/opt/pkg/bin:${PATH//\/opt\/pkg\/bin\:/}
 fi
 
 # Place /usr/local/bin first if Homebrew is present

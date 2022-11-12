@@ -150,16 +150,16 @@ this?
 
 EOF
 
-	if [[ -d ${GOPATH} && $GOINSTALL -ne 0 ]]; then
-		cat <<EOF
+        if [[ -d ${GOPATH} && $GOINSTALL -ne 0 ]]; then
+        	cat <<EOF
 Note that contents in ${GOPATH} will be removed as well!!!!
 Better save it before continuing!
 
 EOF
-	fi
+        fi
 
-	echo '===================================================================='
-	echo ''
+        echo '===================================================================='
+        echo ''
 
         select opt in Yes No
         do
@@ -215,19 +215,19 @@ EOF
 
         done
 
-	if [ $GOINSTALL -ne 0 ]; then
-		inform $L2 $FALSE \
-		       "Removing go environment"
+        if [ $GOINSTALL -ne 0 ]; then
+        	inform $L2 $FALSE \
+        	       "Removing go environment"
 
-		rm -rf ${GOPATH}
-		echo "${GREEN}done${NORMAL}"
-	fi
+        	rm -rf ${GOPATH}
+        	echo "${GREEN}done${NORMAL}"
+        fi
 
         # Restore .emacs file if it exists
         if [ -f ${BACKUPDIR}/.emacs ]; then
-		inform $L2 $FALSE "Restoring original .emacs"
-		mv ${BACKUPDIR}/.emacs ${HOME}
-		echo "${GREEN}done${NORMAL}"
+        	inform $L2 $FALSE "Restoring original .emacs"
+        	mv ${BACKUPDIR}/.emacs ${HOME}
+        	echo "${GREEN}done${NORMAL}"
         fi
 
         # Finally remove SHELLDIR
@@ -251,81 +251,86 @@ EOF
 # Sets up directory structure for the go programming language
 goSetup ()
 {
-	local GOBIN=${GOPATH}/bin
-	local GOSRC=${GOPATH}/src
-	local GOGITHUB=${GOSRC}/github.com
+        local GOBIN=${GOPATH}/bin
+        local GOSRC=${GOPATH}/src
+        local GOGITHUB=${GOSRC}/github.com
 
-	if [ -d $GOPATH ]; then
-		inform $L1 $TRUE \
-		       "Go development has already been set up"
-		return
-	fi
+        if [ -d $GOPATH ]; then
+        	inform $L1 $TRUE \
+        	       "Go development has already been set up"
+        	return
+        fi
 
-	inform $L1 $TRUE "Setting up development environment for golang"
+        inform $L1 $TRUE "Setting up development environment for golang"
 
-	# Note we assume the github username is the same as the login
-	# name.
-	local goSetup_git_user=${GITHUB_USER_NAME:=${USER}}
+        # Note we assume the github username is the same as the login
+        # name.
+        local goSetup_git_user=${GITHUB_USER_NAME:=${USER}}
 
-	# Create the directories
-	for goDir in $GOPATH $GOBIN $GOSRC $GOGITHUB
-	do
-		mkdir -p $goDir
-	done
+        # Create the directories
+        for goDir in $GOPATH $GOBIN $GOSRC $GOGITHUB
+        do
+        	mkdir -p $goDir
+        done
 
-	if [ ! -d ${GOGITHUB}/$goSetup_git_user ]; then
-		mkdir ${GOGITHUB}/$goSetup_git_user
-	fi
+        if [ ! -d ${GOGITHUB}/$goSetup_git_user ]; then
+        	mkdir ${GOGITHUB}/$goSetup_git_user
+        fi
 
-	inform $L2 $TRUE "Environment set up for golang"
+        inform $L2 $TRUE "Environment set up for golang"
 
-	if ! type -p go >/dev/null; then
-		inform $L2 $TRUE \
-		       "${BOLD}$YELLOW}NOTICE:${NORMAL} Go binary not found in path"
-	fi
+        if ! type -p go >/dev/null; then
+        	inform $L2 $TRUE \
+        	       "${BOLD}$YELLOW}NOTICE:${NORMAL} Go binary not found in path"
+        fi
 
-	# Install gocode for auto-completion
-	if [ ! -f {$GOBIN}/gocode ]; then
-		inform $L2 $TRUE "Installing gocode"
-		go get -u github.com/nsf/gocode
-	fi
+        # Install gocode for auto-completion
+        if [ ! -f {$GOBIN}/gocode ]; then
+        	inform $L2 $TRUE "Installing gocode"
+        	go install -u github.com/nsf/gocode
+        fi
 
-	# Install gotags for go-direx
-	if [ ! -f {$GOBIN}/gotags ]; then
-		inform $L2 $TRUE "Installing gotags"
-		go get -u github.com/jstemmer/gotags
-	fi
+        # Install gotags for go-direx
+        if [ ! -f {$GOBIN}/gotags ]; then
+        	inform $L2 $TRUE "Installing gotags"
+        	go install -u github.com/jstemmer/gotags
+        fi
 
-	# Install gopls
-	inform $L2 $TRUE "Installing go language server"
-	GO111MODULE=on go get golang.org/x/tools/gopls@latest
+        # Install gopls
+        inform $L2 $TRUE "Installing go language server"
+        GO111MODULE=on go install golang.org/x/tools/gopls@latest
 }
 
 # Function: plSetup
 #
 # Installs Perl Language Server
 #
-# Note: Installation of IO::AIO via package manager (apt, zypper, yum) recommended
+# NOTE: Installation of the following perl libraries via your operating systems package manager (apt, zypper, dnf)
+#       strongly recommended prior to running this function:
+#
+#        - Coro
+#        - IO-AIO
+#        - Moose
 plSetup ()
 {
-	# Should AnyEvent (a requirement for Coro) fail, be sure to check output for DNS failures.  In some cases, an
-	# ISP may have their DNS configured to return a bogus address should a lookup fail, which can confuse the
-	# AnyEvent test suite.
-	local PERL_MODULES=("Perl::LanguageServer"
-			   )
+        # Should AnyEvent (a requirement for Coro) fail, be sure to check output for DNS failures.  In some cases, an
+        # ISP may have their DNS configured to return a bogus address should a lookup fail, which can confuse the
+        # AnyEvent test suite.
+        local PERL_MODULES=("Perl::LanguageServer"
+        		   )
 
-	export PATH=~/perl5/bin:$PATH
-	export CC=$( which gcc )
+        export PATH=~/perl5/bin:$PATH
+        export CC=$( which gcc )
 
-	inform $L1 $TRUE "Install Perl Language Server (this may take a while)"
+        inform $L1 $TRUE "Install Perl Language Server (this may take a while)"
 
-	for module in ${PERL_MODULES[@]}; do
-		inform $L2 $TRUE " ... ${module}"
-		cpan install $module
-	done
+        for module in ${PERL_MODULES[@]}; do
+        	inform $L2 $TRUE " ... ${module}"
+        	cpan install $module
+        done
 
-	unset CC
-	inform $L2 $TRUE "Done"
+        unset CC
+        inform $L2 $TRUE "Done"
 }
 
 # Function: pySetup
@@ -333,26 +338,26 @@ plSetup ()
 # Installs the tools necessary for python development
 pySetup ()
 {
-	local PYTHON_PKGS=('autopep8'		\
-			   'flake8'		\
-			   'jedi'		\
-			   'setuptools-black'	\
-			   'virtualenv'		\
-			   'yapf'
-			  )
+        local PYTHON_PKGS=('autopep8'		\
+        		   'flake8'		\
+        		   'jedi'		\
+        		   'setuptools-black'	\
+        		   'virtualenv'		\
+        		   'yapf'
+        		  )
 
-	# Make sure that pip is installed
-	if ! type ${PIP_BIN} >/dev/null; then
-		inform $L1 $TRUE "${RED}ERROR${NORMAL}: python ${PIP_BIN} is not installed on this system.  Cowardly aborting!"
-		exit 1
-	fi
+        # Make sure that pip is installed
+        if ! type ${PIP_BIN} >/dev/null; then
+        	inform $L1 $TRUE "${RED}ERROR${NORMAL}: python ${PIP_BIN} is not installed on this system.  Cowardly aborting!"
+        	exit 1
+        fi
 
-	inform $L1 $TRUE "Setting up development environment for python${PYTHON_VERSION}"
+        inform $L1 $TRUE "Setting up development environment for python${PYTHON_VERSION}"
 
-	for pyPkg in ${PYTHON_PKGS[@]}; do
-		inform $L2 $TRUE " ${pyPkg}"
-		${PIP_BIN} install --prefix=$HOME $pyPkg
-	done
+        for pyPkg in ${PYTHON_PKGS[@]}; do
+        	inform $L2 $TRUE " ${pyPkg}"
+        	${PIP_BIN} install --prefix=$HOME $pyPkg
+        done
 }
 
 # Function: headerDisplay
@@ -391,35 +396,35 @@ headerDisplay ()
 # Links tmux.conf file depending on version
 linkTmuxConf ()
 {
-	local tmux_conf_symlink=$HOME/.tmux.conf
+        local tmux_conf_symlink=$HOME/.tmux.conf
 
-	if ! type tmux >/dev/null 2>&1; then
-		inform $L1 $TRUE "tmux is not installed, so configuration files will not be set up"
-	else
-		if [ -h $tmux_conf_symlink ]; then
-			local real_tmux_conf=$( readlink $tmux_conf_symlink )
+        if ! type tmux >/dev/null 2>&1; then
+        	inform $L1 $TRUE "tmux is not installed, so configuration files will not be set up"
+        else
+        	if [ -h $tmux_conf_symlink ]; then
+        		local real_tmux_conf=$( readlink $tmux_conf_symlink )
 
-			if [[ -h $tmux_conf_symlink && ! -e $real_tmux_conf ]]; then
-				inform $L1 $TRUE "Removing stale tmux.conf link"
-				rm -f $tmux_conf_symlink
-			fi
+        		if [[ -h $tmux_conf_symlink && ! -e $real_tmux_conf ]]; then
+        			inform $L1 $TRUE "Removing stale tmux.conf link"
+        			rm -f $tmux_conf_symlink
+        		fi
 
-		fi
+        	fi
 
-		if [ ! -e $HOME/.tmux.conf ]; then
-			local tmux_version=$( tmux -V | sed 's/tmux \([0-9]\).[0-9][a-z]*/\1/' )
+        	if [ ! -e $HOME/.tmux.conf ]; then
+        		local tmux_version=$( tmux -V | sed 's/tmux \([0-9]\).[0-9][a-z]*/\1/' )
 
-			if [[ $tmux_version -eq 1 ]]; then
-				local tmux_conf=${SHELLDIR}/tmux-${tmux_version}.conf
-			else
-				local tmux_conf=${SHELLDIR}/tmux-2.conf
-			fi
+        		if [[ $tmux_version -eq 1 ]]; then
+        			local tmux_conf=${SHELLDIR}/tmux-${tmux_version}.conf
+        		else
+        			local tmux_conf=${SHELLDIR}/tmux-2.conf
+        		fi
 
-			inform $L1 $FALSE "Linking tmux configuration file"
-			ln -s $tmux_conf $tmux_conf_symlink
-			echo -e "${GREEN}done${NORMAL}"
-		fi
-	fi
+        		inform $L1 $FALSE "Linking tmux configuration file"
+        		ln -s $tmux_conf $tmux_conf_symlink
+        		echo -e "${GREEN}done${NORMAL}"
+        	fi
+        fi
 }
 
 # Function: inform
@@ -464,7 +469,7 @@ usage: ${0##*/} -h This screen                             \\
                 -n Do _not_ link files                     \\
                 -g Set up/remove GoLang Development        \\
                 -l Set up Perl Language Server             \\
-		-p Set up Python Development               \\
+        	-p Set up Python Development               \\
                 -u Uninstall ShellPAK                      \\
                 -r perform a trial run with no changes made
                    (implies -n)
@@ -511,17 +516,17 @@ do
                 inform $L1 $TRUE "Existing files to be backed up in ${BACKUPDIR}"
                 ;;
 
-	-g)
-		GOINSTALL=1
-		;;
+        -g)
+        	GOINSTALL=1
+        	;;
 
-	-p)
-		PYINSTALL=1
-		;;
+        -p)
+        	PYINSTALL=1
+        	;;
 
-	-l)
-		PLINSTALL=1
-		;;
+        -l)
+        	PLINSTALL=1
+        	;;
 
         -u)
                 UNINSTALL=1
@@ -614,17 +619,17 @@ fi
 
 # Do we want to set up our environment for golang development?
 if [ ${GOINSTALL} -ne 0 ]; then
-	goSetup
+        goSetup
 fi
 
 # Do we want to set up our environment for perl development?
 if [ ${PLINSTALL} -ne 0 ]; then
-	plSetup
+        plSetup
 fi
 
 # Do we want to set up our environment for python development?
 if [ ${PYINSTALL} -ne 0 ]; then
-	pySetup
+        pySetup
 fi
 
 # Set up appropriate symlinks
@@ -646,7 +651,7 @@ if [ ${NOLINK} -ne 1 ]; then
 
         done
 
-	linkTmuxConf
+        linkTmuxConf
 fi
 
 # Create ~/tmp directory if it doesn't exist

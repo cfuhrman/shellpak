@@ -76,10 +76,10 @@ if [[ ${OSTYPE} != 'OpenBSD' ]]; then
                 LC_ALL=${MYLOCALE}
         fi
 
-        export LANG				\
-               LC_COLLATE			\
-               LC_MONETARY			\
-               LC_NUMERIC			\
+        export LANG                             \
+               LC_COLLATE                       \
+               LC_MONETARY                      \
+               LC_NUMERIC                       \
                LC_ALL
 
 fi

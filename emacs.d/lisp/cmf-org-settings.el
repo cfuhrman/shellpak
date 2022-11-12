@@ -227,40 +227,6 @@
     ((sequence "TODO" "NEXT(n!)" "STARTED(s!/@)" "DEFERRED(f!/@)" "DELEGATED(l@/@)" "WAITING(w@/@)" "|" "CANCELED(x@)" "DONE(d@)"))))
  )
 
-;; Code borrowed from https://github.com/daviwil/emacs-from-scratch/blob/master/init.el
-(defun cmf/org-font-setup ()
-  "Set up font settings for `org-mode' under Emacs."
-  (dolist (face '((org-level-1 . 1.75)
-                  (org-level-2 . 1.50)
-                  (org-level-3 . 1.25)
-                  (org-level-4 . 1.2)
-                  (org-level-5 . 1.15)
-                  (org-level-6 . 1.13)
-                  (org-level-7 . 1.11)
-                  (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Cantarell"
-			:weight 'regular :height (cdr face)))
-
-  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch :height 1.1)
-  (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
-  ;; (set-face-attribute 'org-date         :height 1.1)
-  (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch) :height 1.1)
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch) :height 1.1)
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
-  (set-face-attribute 'line-number nil :inherit 'fixed-pitch)
-  (set-face-attribute 'line-number-current-line nil :inherit
-		      'fixed-pitch)
-  )
-
-;; Only set up fonts if this is a window-system (i.e., not CLI/terminal mode)
-(if (window-system)
-    (cmf/org-font-setup)
-  )
-
 (provide 'cmf-org-settings)
 
 ;;; cmf-org-settings.el ends here

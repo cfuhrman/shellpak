@@ -33,7 +33,7 @@
 
 ;; Set exec path
 (dolist (path '("~/.composer/vendor/bin"
-		"~/.config/composer/vendor/bin"
+                "~/.config/composer/vendor/bin"
                 "~/bin"
                 "~/go/bin"
                 "~/perl5/bin"
@@ -187,11 +187,15 @@ your Emacs Configuration"
 (fset 'align-on-hash-arrow
       [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g tab return ?= ?> return])
 
+(fset 'align-on-dollar-sign
+      [?\M-x ?a ?l ?i ?g ?n ?- ?r ?e ?g return ?\\ ?$ return])
+
 ;; Custom key bindings for commonly used commands
 (global-set-key [?\C-x ?\C-k ?0] 'normal-erase-is-backspace-mode)
 (global-set-key [?\C-x ?\C-k ?1] 'delete-trailing-whitespace)
 (global-set-key [?\C-x ?\C-k ?2] 'align-on-equal)
 (global-set-key [?\C-x ?\C-k ?3] 'align-on-hash-arrow)
+(global-set-key [?\C-x ?\C-k ?4] 'align-on-dollar-sign)
 
 ;; Mode customization
 (add-hook 'text-mode-hook 'auto-fill-mode)
@@ -237,14 +241,14 @@ your Emacs Configuration"
 
   :bind (
          ;; Ivy-based interface to standard commands
-         ("C-c v"       . ivy-push-view)
-         ("C-c V"       . ivy-pop-view)
+         ("C-c v"   . ivy-push-view)
+         ("C-c V"   . ivy-pop-view)
 
          ;; Convenience shortcut for finding workspace symbols
-         ("C-c s"	. lsp-ivy-global-workspace-symbol)
+         ("C-c s"   . lsp-ivy-global-workspace-symbol)
 
          ;; Ivy-resume and other commands
-         ("C-c C-r"     . ivy-resume)
+         ("C-c C-r" . ivy-resume)
          )
 
   :custom
@@ -312,6 +316,21 @@ your Emacs Configuration"
 
   :config
   (counsel-mode t)
+
+  (use-package counsel-web
+    :ensure t
+    :defer t
+
+    :config
+    ;; Define "C-c w" as a prefix key.
+    (defvar counsel-web-map
+      (let ((map (make-sparse-keymap "counsel-web")))
+        (define-key map (kbd "w") #'counsel-web-suggest)
+        (define-key map (kbd "s") #'counsel-web-search)
+        (define-key map (kbd ".") #'counsel-web-thing-at-point)
+        map))
+    (global-set-key (kbd "C-c w") counsel-web-map)
+    )
   )
 
 (use-package ivy-emoji
@@ -396,6 +415,14 @@ your Emacs Configuration"
       (message "Installing icon fonts")
       (all-the-icons-install-fonts t)
       (with-temp-buffer (write-file cmf/fonts-installed-file)))
+    )
+
+  (use-package all-the-icons-completion
+    :ensure t
+    :if window-system
+
+    :config
+    (all-the-icons-completion-mode)
     )
   )
 
@@ -522,6 +549,7 @@ your Emacs Configuration"
 
 (use-package powerthesaurus
   :ensure t
+  :defer t
   )
 
 (use-package sudo-edit
@@ -639,20 +667,6 @@ your Emacs Configuration"
   ;; org-mode specific variables are customized here
   (require 'cmf-org-settings)
 
-  (org-clock-persistence-insinuate)
-
-  ;; NOTE: Testing out this feature
-  (advice-add 'org-refile :after 'org-save-all-org-buffers)
-
-  (if (member system-type '(gnu/linux))
-      (setq org-file-apps
-            '((auto-mode . emacs)
-              ("\\.x?html?\\'" . "xdg-open %s")
-              ("\\.pdf\\'" . emacs)
-              ("\\.pdf::\\([0-9]+\\)\\'" . "xdg-open \"%s\" -p %1")
-              ("\\.pdf.xoj" . "xournal %s")))
-    )
-
   (use-package org-bullets
     :ensure t
 
@@ -669,6 +683,135 @@ your Emacs Configuration"
     ;; Customization for org-fancy-priorities
     (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕"))
     (setq org-lowest-priority ?D)
+    )
+
+  (use-package org-present
+    :ensure t
+
+    :bind
+    (:map org-present-mode-keymap
+          ("C-c a"   . org-present-beginning)
+          ("C-c e"   . org-present-end)
+          ("C-c n"   . org-present-next)
+          ("C-c p"   . org-present-prev)
+          ("<right>" . right-char)
+          ("<left>"  . left-char)
+          ("<up>"    . previous-line)
+          ("<down>"  . next-line))
+
+    :config
+    ;; Used with org-present
+    (use-package visual-fill-column
+      :ensure t
+
+      :custom
+      (visual-fill-column-width 155)
+      (visual-fill-column-center-text t)
+      )
+
+    (defun cmf/org-present-prepare-slide (buffer-name heading)
+      "Hook to run when each slide is presented."
+      ;; Show only top-level headlines
+      (org-overview)
+
+      ;; Unfold the current entry
+      (org-show-entry)
+
+      ;; Show only direct subheadings of the slide but don't expand them
+      (org-show-children)
+      )
+
+    (defun cmf/org-present-start ()
+      "Hook to run upon starting org-present mode."
+      (visual-fill-column-mode 1)
+      (visual-line-mode 1)
+
+      ;; Tweak font sizes
+      (setq-local face-remapping-alist '((default (:height 1.5) variable-pitch)
+                                         (header-line (:height 4.0) variable-pitch)
+                                         (org-document-title (:height 1.75) org-document-title)
+                                         (org-code (:height 1.25) org-code)
+                                         (org-table (:height 1.05) org-table)
+                                         (org-verbatim (:height 1.05) org-verbatim)
+                                         (org-block (:height 0.9) org-block)
+                                         (org-block-begin-line (:height 0.7) org-block)))
+      (setq header-line-format " ")
+
+      ;; Display inline images automatically
+      (org-display-inline-images)
+      )
+
+    (defun cmf/org-present-end ()
+      "Hook to run upon exiting org-present mode."
+      (visual-fill-column-mode 0)
+      (visual-line-mode 0)
+
+      ;; Reset font customization
+      (setq-local face-remapping-alist '((default default)
+                                         (org-code (:height 1.55 :inherit `shadow fixed-pitch) org-code)))
+
+      ;; Clear the header line string so that it isn't displayed
+      (setq header-line-format nil)
+
+      ;; Stop displaying inline images
+      (org-remove-inline-images)
+
+      ;; To be safe
+      (cmf/org-font-setup)
+      )
+
+    ;; Register hooks with org-present
+    (add-hook 'org-present-mode-hook 'cmf/org-present-start)
+    (add-hook 'org-present-mode-quit-hook 'cmf/org-present-end)
+    (add-hook 'org-present-after-navigate-functions 'cmf/org-present-prepare-slide)
+    )
+
+  ;; Code borrowed from https://github.com/daviwil/emacs-from-scratch/blob/master/init.el
+  (defun cmf/org-font-setup ()
+    "Set up font settings for `org-mode' under Emacs."
+    (dolist (face '((org-level-1 . 1.75)
+                    (org-level-2 . 1.50)
+                    (org-level-3 . 1.25)
+                    (org-level-4 . 1.2)
+                    (org-level-5 . 1.15)
+                    (org-level-6 . 1.13)
+                    (org-level-7 . 1.11)
+                    (org-level-8 . 1.1)))
+      (set-face-attribute (car face) nil :font "Cantarell"
+        		  :weight 'regular :height (cdr face)))
+
+    ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+    (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch :height 1.1)
+    (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
+    ;; (set-face-attribute 'org-date         :height 1.1)
+    (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch) :height 1.1)
+    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch) :height 1.1)
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
+    (set-face-attribute 'line-number nil :inherit 'fixed-pitch)
+    (set-face-attribute 'line-number-current-line nil :inherit
+                        'fixed-pitch)
+    )
+
+  (org-clock-persistence-insinuate)
+
+  ;; NOTE: Testing out this feature
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
+
+  (if (member system-type '(gnu/linux))
+      (setq org-file-apps
+            '((auto-mode . emacs)
+              ("\\.x?html?\\'" . "xdg-open %s")
+              ("\\.pdf\\'" . emacs)
+              ("\\.pdf::\\([0-9]+\\)\\'" . "xdg-open \"%s\" -p %1")
+              ("\\.pdf.xoj" . "xournal %s")))
+    )
+
+  ;; Only set up fonts if this is a window-system (i.e., not CLI/terminal mode)
+  (if (window-system)
+      (cmf/org-font-setup)
     )
   )
 
@@ -769,6 +912,8 @@ your Emacs Configuration"
   :defer t
 
   :mode ("Dockerfile\\'" . dockerfile-mode)
+
+  :hook (dockerfile-mode . lsp-deferred)
   )
 
 (use-package graphviz-dot-mode
@@ -1117,6 +1262,8 @@ your Emacs Configuration"
   :ensure t
   :defer t
 
+  :hook (jinja2-mode . cmf/choose-line-number-mode-hook)
+
   :mode ("\\.j2\\'" . jinja2-mode)
   )
 
@@ -1138,13 +1285,13 @@ your Emacs Configuration"
     (lsp-enable-which-key-integration t)
     (lsp-register-custom-settings
      `(("intelephense.phpdoc.functionTemplate"
-	,(list :summary "$1"
-	       :tags (vector ""
-			     "@param ${1:$SYMBOL_TYPE} $SYMBOL_NAME $2"
-			     ""
-			     "@return ${1:$SYMBOL_TYPE} $2"
-			     ""
-			     "@throws ${1:$SYMBOL_TYPE} $2""" "$1")))))
+        ,(list :summary "$1"
+               :tags (vector ""
+                             "@param ${1:$SYMBOL_TYPE} $SYMBOL_NAME $2"
+                             ""
+                             "@return ${1:$SYMBOL_TYPE} $2"
+                             ""
+                             "@throws ${1:$SYMBOL_TYPE} $2""" "$1")))))
 
     (if (window-system)
         (setq lsp-headerline-breadcrumb-icons-enable t)
@@ -1162,17 +1309,17 @@ your Emacs Configuration"
 
         :hook ((java-mode . lsp)
                (java-mode .
-        		  (lambda ()
-			    (setq lsp-imenu-index-symbol-kinds '(Property Constant Variable Method Function Class))))
+                          (lambda ()
+                            (setq lsp-imenu-index-symbol-kinds '(Property Constant Variable Method Function Class))))
                )
 
-	:config
-	(require 'dap-java)
+        :config
+        (require 'dap-java)
 
-	:custom
-	(lsp-java-code-generation-generate-comments t)
-	(lsp-java-format-enabled nil)
-	(lsp-java-format-on-type-enabled nil)
+        :custom
+        (lsp-java-code-generation-generate-comments t)
+        (lsp-java-format-enabled nil)
+        (lsp-java-format-on-type-enabled nil)
 
         )
       )
@@ -1192,9 +1339,9 @@ your Emacs Configuration"
 
       :config
       (if (eq window-system nil)
-	  (setq lsp-ui-doc-show-with-cursor t)
-	(setq lsp-ui-doc-show-with-mouse t)
-	)
+          (setq lsp-ui-doc-show-with-cursor t)
+        (setq lsp-ui-doc-show-with-mouse t)
+        )
 
       :custom
       (lsp-ui-doc-alignment 'window)
@@ -1321,6 +1468,12 @@ your Emacs Configuration"
       (if (file-regular-p pypath)
           (setq lsp-python-ms-python-executable pypath)
         ))
+    )
+
+  (use-package python-docstring
+    :ensure t
+
+    :hook (python-mode . python-docstring-mode)
     )
 
   (use-package sphinx-doc
