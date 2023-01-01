@@ -281,6 +281,7 @@ your Emacs Configuration"
   :bind (
          ("M-x"         . counsel-M-x)
          ("C-x C-f"     . counsel-find-file)
+         ("C-x d"       . counsel-dired)
          ("M-y"         . counsel-yank-pop)
          ("<f1> f"      . counsel-describe-function)
          ("<f1> v"      . counsel-describe-variable)
@@ -545,6 +546,16 @@ your Emacs Configuration"
 
     :bind ("C-x g" . magit-status)
     )
+  )
+
+(use-package mastodon
+  :ensure t
+
+  :hook ((mastodon-toot-mode . footnote-mode))
+
+  :custom
+  (mastodon-instance-url "https://mastodon.example.com")
+  (mastodon-active-user "your-username-here")
   )
 
 (use-package powerthesaurus
@@ -1442,7 +1453,7 @@ your Emacs Configuration"
 
   (use-package treemacs-projectile
     :ensure t
-    :after treemacs--buffer-name-prefix
+    :after treemacs
     )
   )
 
@@ -1450,24 +1461,14 @@ your Emacs Configuration"
   ;; This is a built-in mode
 
   :config
-  (use-package lsp-python-ms
+  (use-package lsp-pyright
     :ensure t
     :defer t
 
     :hook (python-mode .
                        (lambda ()
-                         (require 'lsp-python-ms)
+                         (require 'lsp-pyright)
                          (lsp-deferred)))
-
-    :init
-    (setq lsp-python-ms-auto-install-server t)
-    (dolist (pypath '("/usr/bin/python3"
-                      "/usr/local/bin/python3"
-                      "/usr/pkg/bin/python3"
-                      ))
-      (if (file-regular-p pypath)
-          (setq lsp-python-ms-python-executable pypath)
-        ))
     )
 
   (use-package python-docstring
