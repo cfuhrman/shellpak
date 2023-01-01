@@ -31,8 +31,10 @@ games/
 ido.last
 intelephense/
 lsp-cache/
+mastodon.plstore
 network-security.data
 org-clock-save.el
+persist/
 projectile-bookmarks.eld
 projectile.cache
 recentf

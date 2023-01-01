@@ -26,6 +26,7 @@
 #   - rsync(1)
 #   - bash(1) v3.0 or greater
 #   - GNU make compatible make(1)
+#   - bc(1)
 #
 # ====================================================================
 
@@ -282,23 +283,37 @@ goSetup ()
         if ! type -p go >/dev/null; then
         	inform $L2 $TRUE \
         	       "${BOLD}$YELLOW}NOTICE:${NORMAL} Go binary not found in path"
+                return
+        fi
+
+        local GOVERSION=$(go version | awk '{ print $3 }' | sed 's/^go\([0-9]*\.[0-9]*\).*/\1/')
+
+        # Choose installation command based on go version
+        if (( $(echo "$GOVERSION < 1.18" | bc -l) )); then
+                GOINSTALLCMD="get"
+                GOPKGVERSION=""
+        else
+                GOINSTALLCMD="install"
+                GOPKGVERSION="@latest"
         fi
 
         # Install gocode for auto-completion
         if [ ! -f {$GOBIN}/gocode ]; then
         	inform $L2 $TRUE "Installing gocode"
-        	go install -u github.com/nsf/gocode
+        	go ${GOINSTALLCMD} github.com/nsf/gocode${GOPKGVERSION}
         fi
 
         # Install gotags for go-direx
         if [ ! -f {$GOBIN}/gotags ]; then
         	inform $L2 $TRUE "Installing gotags"
-        	go install -u github.com/jstemmer/gotags
+        	go ${GOINSTALLCMD} github.com/jstemmer/gotags${GOPKGVERSION}
         fi
 
         # Install gopls
         inform $L2 $TRUE "Installing go language server"
-        GO111MODULE=on go install golang.org/x/tools/gopls@latest
+        GO111MODULE=on go ${GOINSTALLCMD} golang.org/x/tools/gopls@latest
+
+        inform $L1 $TRUE "Installation of go modules complete!"
 }
 
 # Function: plSetup
