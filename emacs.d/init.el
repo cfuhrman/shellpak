@@ -872,35 +872,6 @@ your Emacs Configuration"
          ("srm\\.conf\\'"                    . apache-mode))
   )
 
-(use-package auctex
-  :ensure t
-  :commands (latex-mode LaTeX-mode plain-tex-mode)
-
-  :config
-  (use-package company-auctex
-    :ensure t
-    :no-require t
-    :after company
-
-    :hook (auctex-mode .
-                       (lambda ()
-                         (add-to-list 'company-backends 'company-auctex)))
-
-    :config
-    (company-auctex-init)
-    )
-
-  (use-package company-bibtex
-    :ensure t
-    :no-require t
-    :after company
-
-    :hook (bibtex-mode .
-                       (lambda ()
-                         (add-to-list 'company-backends 'company-bibtex)))
-    )
-  )
-
 (use-package crontab-mode
   :ensure t
   :no-require t
@@ -994,6 +965,31 @@ your Emacs Configuration"
   (nxml-child-indent 4)
   )
 
+(use-package tex
+  :ensure auctex
+  :no-require t
+  :defer t
+
+  :config
+  (use-package company-auctex
+    :ensure t
+    :after (company latex)
+
+    :config
+    (company-auctex-init)
+    )
+
+  (use-package company-bibtex
+    :ensure t
+    :after (company)
+
+    :hook (bibtex-mode .
+                       (lambda ()
+                         (add-to-list 'company-backends
+                                      'company-bibtex)))
+    )
+  )
+
 (use-package yaml-mode
   :ensure t
   :no-require t
@@ -1059,12 +1055,14 @@ your Emacs Configuration"
                            (add-to-list 'company-backends 'company-capf)))
 
   :custom
-  (company-tooltip-align-annotations t)
-  (company-tooltip-minimum-width 27)
+  (company-dabbrev-downcase nil)
+  (company-dabbrev-ignore-case 'keep-prefix)
   (company-idle-delay 0.3)
-  (company-tooltip-limit 10)
   (company-minimum-prefix-length 3)
+  (company-tooltip-align-annotations t)
   (company-tooltip-flip-when-above t)
+  (company-tooltip-limit 10)
+  (company-tooltip-minimum-width 27)
 
   :init
   (global-company-mode)
