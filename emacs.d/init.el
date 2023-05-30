@@ -502,7 +502,8 @@ your Emacs Configuration"
   :ensure t
 
   :custom
-  (gptel-api-key "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")
+  ;; Get your key at https://platform.openai.com/account/api-keys
+  (gptel-api-key "*****")
   )
 
 (use-package dictionary
