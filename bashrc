@@ -55,7 +55,6 @@ PINE_REMOTE_CONFIG="{mail.example.com/ssl/novalidate-cert/user=cfuhrman@example.
 # Sets BROWSER environment variable.  See code for order of preference.
 __sp_bashrc_set_browser ()
 {
-
         # Set preferred browsers in order of evaluation
         browsers=('google-chrome'               \
                   'chromium'                    \
@@ -76,15 +75,13 @@ __sp_bashrc_set_browser ()
         done
 
         export BROWSER
-
-} # __sp_bashrc_set_browser()
+}
 
 # Function: __sp_bashrc_set_editor
 #
 # Sets EDITOR environment variable.  See code for order of preference.
 __sp_bashrc_set_editor ()
 {
-
         # Set preferred editors in order of evaluation
         editors=('emacs'                        \
                  'mg'                           \
@@ -110,8 +107,7 @@ __sp_bashrc_set_editor ()
         if [[ ${EDITOR} == 'emacs' && ${OSTYPE} != 'SunOS' ]]; then
                 EDITOR='emacs -nw'
         fi
-
-} # __sp_bashrc_set_editor()
+}
 
 # Function: __sp_bashrc_set_pager
 #
@@ -124,7 +120,6 @@ __sp_bashrc_set_editor ()
 #  * more
 __sp_bashrc_set_pager ()
 {
-
         # Should this be an emacs terminal, then set $PAGER to 'cat' since
         # emacs will do our paging for us
         if [ $TERM == 'dumb' ] || [ $TERM == 'emacs' ]; then
@@ -149,8 +144,7 @@ __sp_bashrc_set_pager ()
        fi
 
         export PAGER
-
-} # __sp_bashrc_set_pager()
+}
 
 # ----------------------------------------------------------------------
 

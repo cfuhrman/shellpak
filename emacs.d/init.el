@@ -350,6 +350,17 @@ your Emacs Configuration"
           #'ivy-format-function-line)
   )
 
+(use-package ivy-xref
+  :ensure t
+  :after ivy
+
+  :init
+  (when (>= emacs-major-version 27)
+    (setq xref-show-definitions-function #'ivy-xref-show-defs))
+
+  (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+  )
+
 ;;
 ;; Operating system specific code
 ;;
@@ -487,6 +498,13 @@ your Emacs Configuration"
 ;; --------------------------------------------------------------------
 
 ;; Packages
+(use-package gptel
+  :ensure t
+
+  :custom
+  (gptel-api-key "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")
+  )
+
 (use-package dictionary
   :ensure t
   :if (version< emacs-version "28.1")
@@ -777,6 +795,10 @@ your Emacs Configuration"
     (add-hook 'org-present-after-navigate-functions 'cmf/org-present-prepare-slide)
     )
 
+  (use-package ox-twbs
+    :ensure t
+    )
+
   ;; Code borrowed from https://github.com/daviwil/emacs-from-scratch/blob/master/init.el
   (defun cmf/org-font-setup ()
     "Set up font settings for `org-mode' under Emacs."
@@ -789,7 +811,7 @@ your Emacs Configuration"
                     (org-level-7 . 1.11)
                     (org-level-8 . 1.1)))
       (set-face-attribute (car face) nil :font "Cantarell"
-        		  :weight 'regular :height (cdr face)))
+                          :weight 'regular :height (cdr face)))
 
     ;; Ensure that anything that should be fixed-pitch in Org files appears that way
     (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch :height 1.1)
@@ -1021,9 +1043,7 @@ your Emacs Configuration"
             (auto-fill-mode t)
             (eldoc-mode t)
             (electric-pair-mode t)
-            (indent-tabs-mode -1)
-            (subword-mode t)
-            (setq fill-column 120)))
+            (subword-mode t)))
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
             (setq fill-column 70)))
@@ -1319,7 +1339,8 @@ your Emacs Configuration"
         :hook ((java-mode . lsp)
                (java-mode .
                           (lambda ()
-                            (setq lsp-imenu-index-symbol-kinds '(Property Constant Variable Method Function Class))))
+                            (setq lsp-imenu-index-symbol-kinds
+                                  '(Property Constant Variable Constructor Method Function Class))))
                )
 
         :config
@@ -1378,7 +1399,8 @@ your Emacs Configuration"
   :hook ((php-mode . lsp-deferred)
          (php-mode .
                    (lambda ()
-                     (setq lsp-imenu-index-symbol-kinds '(Method Function Class)))))
+                     (setq lsp-imenu-index-symbol-kinds '(Class Property Constuctor Method Function))
+                     (setq lsp-imenu-sort-methods '(name)))))
 
   :custom
   (php-insert-doc-access-tag nil)
@@ -1561,9 +1583,10 @@ your Emacs Configuration"
 ;; My own coding style
 (c-add-style "cmf"
              '("bsd"
-               (indent-tabs-mode . nil)
                (c-offsets-alist
-                (statement-cont . (first c-lineup-cascaded-calls +)))))
+                (statement-cont . (first c-lineup-cascaded-calls +)))
+               (indent-tabs-mode . nil)
+               (fill-column . 120)))
 
 
 ;; CLEAN UP
