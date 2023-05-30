@@ -18,7 +18,6 @@
 # appropriate.
 aliasCoreUtils ()
 {
-
         local NOGNU=
 
         # Do we have the GNU version of ls installed as gls?
@@ -51,7 +50,6 @@ aliasCoreUtils ()
         if [ "${NOGNU}" ]; then
                 alias nognu=${NOGNU#;}
         fi
-
-} # aliasCoreUtils()
+}
 
 # functions ends here

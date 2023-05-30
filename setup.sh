@@ -137,7 +137,6 @@ fi
 # Uninstalls shellpak
 doUninstall ()
 {
-
         echo ''
         echo '===================================================================='
         echo -ne "${BOLD}${RED}"
@@ -244,8 +243,7 @@ EOF
 
         echo ''
         echo "${BOLD}ShellPAK${NORMAL} removed from the home directory of ${USER} on ${CYAN}${HOSTNAME}${NORMAL}!"
-
-} # doUninstall()
+}
 
 # Function: goSetup
 #
@@ -380,7 +378,6 @@ pySetup ()
 # Displays a header for the world to see
 headerDisplay ()
 {
-
         # Make the version string magenta
         PRETTY_VERSION=${SHELLPAK_VERSION/\[/\[${MAGENTA}}
         PRETTY_VERSION=${PRETTY_VERSION/\]/${NORMAL}\]}
@@ -400,8 +397,7 @@ headerDisplay ()
         echo -n 'HOST : '
         hostname
         echo ''
-
-} # headerDisplay()
+}
 
 # Function: linkTmuxConf
 #
@@ -475,7 +471,6 @@ inform ()
 # Displays usage
 usage ()
 {
-
         cat 1>&2 <<STDERR
 usage: ${0##*/} -h This screen                             \\
                 -d (Default:\$HOME/SHELL) Target directory  \\
@@ -490,8 +485,7 @@ usage: ${0##*/} -h This screen                             \\
                    (implies -n)
 
 STDERR
-
-} # usage()
+}
 
 
 # --------------------------------------------------------------------

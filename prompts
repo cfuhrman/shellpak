@@ -60,7 +60,6 @@ fi
 # Sets the title font if an xterm is detected
 doXTerm ()
 {
-
         case $TERM in
 
         xterm*|rxvt*)
@@ -70,8 +69,7 @@ doXTerm ()
                 ;;
 
         esac
-
-}                                                 # doXTerm()
+}
 
 # Function: promptCMF()
 #
@@ -85,7 +83,7 @@ promptCMF ()
         PS4='+ '
 
         export DEFAULTPS1
-}                                                 # promptCMF()
+}
 
 # Function: promptCMF256()
 #
@@ -123,7 +121,7 @@ promptDumb ()
         PS4='+ '
 
         export DEFAULTPS1
-}                                                 # promptDumb()
+}
 
 # Function: promptGENTOO
 #
@@ -136,7 +134,7 @@ promptGENTOO ()
         PS2="\h> "
 
         export DEFAULTPS1
-}                                                 # promptGENTOO()
+}
 
 # Function: promptRED
 #
@@ -150,7 +148,7 @@ promptRED ()
         PS4='+ '
 
         export DEFAULTPS1
-}                                                 # promptRED()
+}
 
 # Function: promptTFCC()
 #
@@ -162,6 +160,6 @@ promptTFCC ()
         PS2='\h> '
 
         export DEFAULTPS1
-}                                                 # promptTFCC()
+}
 
 # prompts ends here
