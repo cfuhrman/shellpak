@@ -258,6 +258,13 @@ your Emacs Configuration"
 
   :init
   (ivy-mode t)
+
+  :config
+  (use-package ivy-hydra
+    :ensure t
+    :pin gnu
+    :after hydra
+    )
   )
 
 (use-package swiper
@@ -359,6 +366,10 @@ your Emacs Configuration"
     (setq xref-show-definitions-function #'ivy-xref-show-defs))
 
   (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+  )
+
+(use-package hydra
+  :ensure t
   )
 
 ;;
@@ -463,6 +474,20 @@ your Emacs Configuration"
 
   :custom
   (doom-modeline-vcs-max-length 14)
+
+  :config
+  (use-package nerd-icons
+    :ensure t
+    :if window-system
+
+    :config
+    (defvar cmf/nerd-icons-installed-file
+      "~/SHELL/emacs.d/.nerd-icon-fonts-installed")
+    (unless (file-exists-p cmf/nerd-icons-installed-file)
+      (message "Installing nerd icon fonts")
+      (nerd-icons-install-fonts t)
+      (with-temp-buffer (write-file cmf/nerd-icons-installed-file)))
+    )
   )
 
 (use-package doom-themes
@@ -1038,6 +1063,7 @@ your Emacs Configuration"
 ;; --------------------------------------------------------------------
 
 ;; Hook definitions
+(add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
 (add-hook 'prog-mode-hook 'cmf/choose-line-number-mode-hook)
 (add-hook 'prog-mode-hook
           (lambda ()
@@ -1060,7 +1086,7 @@ your Emacs Configuration"
     ;; This is a built-in mode
     :hook (c-mode . lsp-deferred)
     )
-)
+  )
 
 (use-package company
   :ensure t
@@ -1167,6 +1193,13 @@ your Emacs Configuration"
     (save-excursion (mark-defun)
                     (perltidy-region))
     )
+  )
+
+(use-package dap-mode
+  :after lsp
+
+  :config
+  (dap-auto-configure-mode)
   )
 
 (use-package diff-hl
@@ -1281,6 +1314,33 @@ your Emacs Configuration"
      ("LATER"           . "#d0bf8f"))))
   )
 
+(use-package java
+  ;; This is a built-in mode
+  :hook (java-mode . lsp)
+
+  :config
+  (use-package lsp-java
+    :ensure t
+    :after (hydra lsp-mode)
+
+    :hook ((java-mode . lsp)
+	   (java-mode .
+                     (lambda ()
+                       (setq lsp-imenu-index-symbol-kinds
+                             '(Property Constant Variable Constructor Method Function Class)))))
+
+    :config
+    (use-package dap-java
+      :ensure nil
+
+      :custom
+      (lsp-java-code-generation-generate-comments t)
+      (lsp-java-format-enabled nil)
+      (lsp-java-format-on-type-enabled nil)
+      )
+    )
+  )
+
 (unless (eq (executable-find "npm") nil)
   (use-package lsp-ivy
     :ensure t
@@ -1326,33 +1386,6 @@ your Emacs Configuration"
     (if (window-system)
         (setq lsp-headerline-breadcrumb-icons-enable t)
       (setq lsp-headerline-breadcrumb-icons-enable nil)
-      )
-
-    ;; Stanza is required here to make sure lsp-mode is enabled when
-    ;; editing Java files
-    ;;
-    ;; TODO: Figure out why LSP mode is automatically kicked-off under
-    ;;       GUI mode but not CLI mode
-    (unless (eq (executable-find "java") nil)
-      (use-package lsp-java
-        :ensure t
-
-        :hook ((java-mode . lsp)
-               (java-mode .
-                          (lambda ()
-                            (setq lsp-imenu-index-symbol-kinds
-                                  '(Property Constant Variable Constructor Method Function Class))))
-               )
-
-        :config
-        (require 'dap-java)
-
-        :custom
-        (lsp-java-code-generation-generate-comments t)
-        (lsp-java-format-enabled nil)
-        (lsp-java-format-on-type-enabled nil)
-
-        )
       )
 
     (use-package lsp-treemacs
