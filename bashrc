@@ -165,7 +165,7 @@ if [ "$PS1" ]; then
         if [ $TERM == 'dumb' ] || [ $TERM == 'emacs' ]; then
                 promptDumb
         else
-                promptCMF
+                promptGREEN
         fi
 
 fi

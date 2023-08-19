@@ -4,6 +4,7 @@
 .cache
 .dap-breakpoints
 .elpa
+.extension
 .fossil-settings
 .fslckout
 .icon-fonts-installed
