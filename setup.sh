@@ -38,7 +38,7 @@ RSYNC=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS="-Ccav --perms --chmod=go-rw --delete --exclude-from=${RSYNC_EXCLUDE}"
 MAKE=make
-COPYRIGHT='Copyright (c) 2000-2022 Christopher M. Fuhrman'
+COPYRIGHT='Copyright (c) 2000-2023 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 DRYRUN=""
 UNINSTALL=0

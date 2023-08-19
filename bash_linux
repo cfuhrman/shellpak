@@ -84,9 +84,6 @@ if [ $TERM != 'dumb' ] && [ $TERM != 'emacs' ]; then
         alias ls='ls --color'
 fi
 
-# Set up default ulimit
-ulimit -c unlimited
-
 # Set up colors for ip(8)
 export COLORFGBG=";0"
 

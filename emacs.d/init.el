@@ -300,7 +300,7 @@ your Emacs Configuration"
          ("M-i"         . counsel-imenu)
 
          ;; Ivy-based interface to shell and system tools
-         ("C-c c"       . counsel-compile)
+         ("C-c C"       . counsel-compile)
          ("C-c g"       . counsel-git)
          ("C-c j"       . counsel-git-grep)
          ("C-c L"       . counsel-git-log)
@@ -712,7 +712,6 @@ your Emacs Configuration"
 
   :init
   (require 'epa-file)
-  (require 'org-install)
   (require 'org-crypt)
 
   ;; Enable org-crypt as appropriate
@@ -1073,7 +1072,8 @@ your Emacs Configuration"
             (subword-mode t)))
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
-            (setq fill-column 70)))
+            (setq fill-column 70)
+            (setq indent-tabs-mode nil)))
 
 ;; Packages
 (unless (eq (executable-find "clangd") nil)
@@ -1235,9 +1235,6 @@ your Emacs Configuration"
   :ensure t
   :no-require t
 
-  :bind (:map go-mode-map
-              ("C-c C-j" . go-direx-pop-to-buffer))
-
   :hook ((go-mode . lsp-deferred)
          (go-mode .
                   (lambda ()
@@ -1260,10 +1257,6 @@ your Emacs Configuration"
     :ensure t
 
     :hook (completion-at-point-functions . go-complete-at-point)
-    )
-
-  (use-package go-direx
-    :ensure t
     )
 
   (use-package go-eldoc
@@ -1316,30 +1309,35 @@ your Emacs Configuration"
 
 (use-package java
   ;; This is a built-in mode
+
+  :custom
+  (lsp-java-code-generation-generate-comments t)
+  (lsp-java-format-enabled nil)
+  (lsp-java-format-on-type-enabled nil)
+    
   :hook (java-mode . lsp)
+  )
+
+(use-package lsp-java
+  :ensure t
+  :defer t
+  :after (hydra lsp)
+
+  :hook ((java-mode . lsp-java-boot-lens)
+         (java-mode .
+                    (lambda ()
+                      (setq lsp-imenu-index-symbol-kinds
+                            '(Property Constant Variable Constructor
+                                       Method Function Class))))
+         (lsp-mode . lsp-lens-mode))
 
   :config
-  (use-package lsp-java
-    :ensure t
-    :after (hydra lsp-mode)
-
-    :hook ((java-mode . lsp)
-	   (java-mode .
-                     (lambda ()
-                       (setq lsp-imenu-index-symbol-kinds
-                             '(Property Constant Variable Constructor Method Function Class)))))
-
-    :config
-    (use-package dap-java
-      :ensure nil
-
-      :custom
-      (lsp-java-code-generation-generate-comments t)
-      (lsp-java-format-enabled nil)
-      (lsp-java-format-on-type-enabled nil)
-      )
+  (require 'lsp-java-boot)
+  (use-package dap-java
+    :ensure nil
     )
   )
+
 
 (unless (eq (executable-find "npm") nil)
   (use-package lsp-ivy
