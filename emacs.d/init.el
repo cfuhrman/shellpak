@@ -2,7 +2,7 @@
 ;; ====================================================================
 ;;;
 ;; Copyright (c) 2008, 2016, 2021 Christopher M. Fuhrman
-;; All rights reserved
+;; All rights reserved.
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under terms of the Simplified BSD License (also
@@ -376,20 +376,19 @@ your Emacs Configuration"
 ;; Operating system specific code
 ;;
 
-(when (eq system-type 'gnu/linux)
-  (setq trash-directory "~/.local/share/Trash/files/emacs"
-        delete-by-moving-to-trash t
-        )
+;; Set trash-directory, creating it if we need to
+;; WARN: Will not work under Windows!
+(if (eq system-type 'darwin)
+    (setq delete-by-moving-to-trash t
+          trash-directory "~/.Trash/emacs")
+  (progn (setq delete-by-moving-to-trash t
+               trash-directory "~/.local/share/Trash/files/emacs")
+         (when (not (file-exists-p trash-directory))
+           (make-directory trash-directory t)))
+         )
 
-  ;; Make sure backup directory exists
-  (if (not (file-exists-p trash-directory))
-      (make-directory trash-directory t))
-  )
-
+;; macos/Darwin-specific code
 (when (eq system-type 'darwin)
-  (setq delete-by-moving-to-trash t
-        trash-directory "~/.Trash/emacs"
-        )
 
   (if (eq window-system nil)
       (normal-erase-is-backspace-mode 0)
@@ -639,9 +638,11 @@ your Emacs Configuration"
   (treemacs-filewatch-mode t)
 
   :config
-  (use-package treemacs-magit
-    :ensure t
-    :after magit)
+  (unless (eq (executable-find "git") nil)
+    (use-package treemacs-magit
+      :ensure t
+      :after magit)
+    )
   )
 
 (use-package undo-tree
@@ -1314,7 +1315,7 @@ your Emacs Configuration"
   (lsp-java-code-generation-generate-comments t)
   (lsp-java-format-enabled nil)
   (lsp-java-format-on-type-enabled nil)
-    
+
   :hook (java-mode . lsp)
   )
 

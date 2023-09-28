@@ -19,6 +19,6 @@ $1
 =head COPYRIGHT
 
 Copyright(c) `(format-time-string "%Y")` `(user-full-name)`
-All rights reserved
+All rights reserved.
 
 1;

@@ -55,6 +55,7 @@ FOSSIL_BRANCH=$(shell fossil info | grep "^tags" | awk -F\: '{print $$2}' | sed 
 FOSSIL_REPO=${HOME}/repos/public.fossil
 CKOUT_DATE=$(shell fossil info | grep "^checkout" | awk '{ print $$3 }' | sed 's/[-: ]//g')
 DISTFILE=shellpak-${FOSSIL_BRANCH}-${CKOUT_DATE}.tar.gz
+ZIPFILE=shellpak-${FOSSIL_BRANCH}-${CKOUT_DATE}.zip
 GIT_REPO=${HOME}/dev/shpak
 
 # Command options
@@ -144,6 +145,7 @@ clean-all: clean clean-elc clean-xkcd clean-tags
 
 clean-dist: 
 	@rm ${RM_OPTS} shellpak*.tar.gz
+	@rm ${RM_OPTS} shellpak*.zip
 	@rm ${RM_OPTS}r shellpak
 
 # WARNING: Will remove *all* installed packages.  Use with care!
@@ -165,6 +167,8 @@ git-import: .git
 	@echo 'git-import target has been replaced by git-export target'
 
 dist: ${DISTFILE}
+
+zip: ${ZIPFILE}
 
 version: VERSION
 
@@ -223,17 +227,21 @@ ${TXIDIRS}:
 
 ${LOCALHOSTS}:
 	@echo "Propagating to $@"
-	@${RSYNC_BIN} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . ${USER}@$@:${SHELLDIR}
+	@${RSYNC_BIN} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . $@:${SHELLDIR}
 	@${SSH} $@ ${SSH_SETUP_CMD}
 
 ${REMOTEHOSTS}:
 	@echo "Propagating to $@"
-	@${RSYNC_BIN} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . ${USER}@$@:${SHELLDIR}
+	@${RSYNC_BIN} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . $@:${SHELLDIR}
 	@${SSH} $@ ${SSH_SETUP_CMD}
 
 ${DISTFILE}: clean clean-tags version
 	@fossil tarball ${FOSSIL_BRANCH} ${DISTFILE}
 	@echo "Successfully created ${DISTFILE}"
+
+${ZIPFILE}: clean clean-tags version
+	@fossil zip ${FOSSIL_BRANCH} ${ZIPFILE}
+	@echo "Successfully created ${ZIPFILE}"
 
 .PHONY: subdirs ${SUBDIRS}
 .PHONY: subdirs ${CLEANDIRS}
