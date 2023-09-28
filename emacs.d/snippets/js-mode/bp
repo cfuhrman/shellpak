@@ -7,7 +7,7 @@
 // `(file-name-nondirectory (buffer-file-name))`
 // 
 // Copyright (c) `(format-time-string "%Y")` `(user-full-name)`
-// All rights reserved
+// All rights reserved.
 // 
 // Created on `(current-time-string)` `(car (cdr (current-time-zone)))`
 //

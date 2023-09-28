@@ -96,6 +96,7 @@ HOMEDOTFILES=('bash_logout'			\
               'mg'				\
               'nanorc'				\
               'perltidyrc'			\
+              'tmux.conf'			\
               'screenrc'			\
               'Xmodmap'				\
               'Xresources'
@@ -399,45 +400,6 @@ headerDisplay ()
         echo ''
 }
 
-# Function: linkTmuxConf
-#
-# Caveats:
-#   readlink(1) is neither available on Solaris nor AIX
-#
-# Links tmux.conf file depending on version
-linkTmuxConf ()
-{
-        local tmux_conf_symlink=$HOME/.tmux.conf
-
-        if ! type tmux >/dev/null 2>&1; then
-        	inform $L1 $TRUE "tmux is not installed, so configuration files will not be set up"
-        else
-        	if [ -h $tmux_conf_symlink ]; then
-        		local real_tmux_conf=$( readlink $tmux_conf_symlink )
-
-        		if [[ -h $tmux_conf_symlink && ! -e $real_tmux_conf ]]; then
-        			inform $L1 $TRUE "Removing stale tmux.conf link"
-        			rm -f $tmux_conf_symlink
-        		fi
-
-        	fi
-
-        	if [ ! -e $HOME/.tmux.conf ]; then
-        		local tmux_version=$( tmux -V | sed 's/tmux \([0-9]\).[0-9][a-z]*/\1/' )
-
-        		if [[ $tmux_version -eq 1 ]]; then
-        			local tmux_conf=${SHELLDIR}/tmux-${tmux_version}.conf
-        		else
-        			local tmux_conf=${SHELLDIR}/tmux-2.conf
-        		fi
-
-        		inform $L1 $FALSE "Linking tmux configuration file"
-        		ln -s $tmux_conf $tmux_conf_symlink
-        		echo -e "${GREEN}done${NORMAL}"
-        	fi
-        fi
-}
-
 # Function: inform
 #
 # Displays a message on STDOUT
@@ -649,7 +611,16 @@ if [ ${NOLINK} -ne 1 ]; then
 
                 # Set to current dot file (e.g., .bashrc)
                 DOTFILE=${HOME}/.${file}
+                LINKFILE=$(readlink ${DOTFILE})
 
+                # Remove existing link file if it does not link to
+                # desired file
+                if [[ -h ${DOTFILE} && ${SHELLDIR%/}/${file} != ${LINKFILE} ]]; then
+			inform $L2 $FALSE "Removing old link ${DOTFILE}"
+                        rm ${DOTFILE}
+			echo -e "${YELLOW}removed${NORMAL}"
+                fi
+                
                 # Should the link or file not exist, then link it as
                 # appropriate
                 if [ ! -e ${DOTFILE} ]; then
@@ -660,7 +631,6 @@ if [ ${NOLINK} -ne 1 ]; then
 
         done
 
-        linkTmuxConf
 fi
 
 # Create ~/tmp directory if it doesn't exist

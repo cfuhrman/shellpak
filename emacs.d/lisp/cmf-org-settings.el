@@ -2,7 +2,7 @@
 ;; ====================================================================
 ;;;
 ;; Copyright (c) 2016 Christopher M. Fuhrman
-;; All rights reserved
+;; All rights reserved.
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under terms of the Simplified BSD License (also

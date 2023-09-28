@@ -3,7 +3,6 @@
 # Configuration file for nano(1)
 #
 set regexp
-set smooth
 set speller aspell
 
 # Colors
