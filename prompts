@@ -19,7 +19,6 @@
 # file.
 #
 
-# COLOR DEFINITIONS
 BLACK_BACKGROUND='\[\033[0;40m\]'
 BRIGHT_BLUE='\[\033[1;34m\]'
 BRIGHT_RED='\[\033[1;31m\]'
@@ -39,7 +38,7 @@ CYAN='\[\033[0;36m\]'
 LIGHT_BLUE='\033[38;5;104m\]'
 LIGHT_YELLOW='\[\033[38;5;228m\]'
 
-# Default prompt
+# Public: Default prompt
 DEFAULTPS1=
 
 # Make sure GNU echo is used (especially under Solaris!)
@@ -49,10 +48,11 @@ else
         ECHO="echo"
 fi
 
-# Function: doXTerm()
+# Private: Sets the title font if an xterm is detected
 #
-# Sets the title font if an xterm is detected
-doXTerm ()
+# WARN: DO NOT unset this function as it will break other methods in
+# this file.
+setPromptCommand ()
 {
         case $TERM in
 
@@ -65,12 +65,10 @@ doXTerm ()
         esac
 }
 
-# Function: promptCMF()
-#
-# Sets up prompt to my own preference
+# Public: Sets up prompt to my own preference
 promptCMF ()
 {
-        doXTerm
+        setPromptCommand
         DEFAULTPS1=$PS1
         PS1=${BLACK_BACKGROUND}${BRIGHT_BLUE}'[ '${BRIGHT_YELLOW}'\h'${BRIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${BRIGHT_BLUE}' ]-'${BRIGHT_YELLOW}'\W '${CYAN}'$(__git_ps1 "(%s) ")'${BLACK_BACKGROUND}${BRIGHT_WHITE}'\$'${NO_COLOR}' '
         PS2='> '
@@ -79,19 +77,15 @@ promptCMF ()
         export DEFAULTPS1
 }
 
-# Function: promptCMF256()
-#
-# Sets up prompt using 256 colors
+# Public: Sets up prompt using 256 colors
 promptCMF256 ()
 {
-        doXTerm
+        setPromptCommand
         DEFAULTPS1=$PS1
         PS1=${BLACK_BACKGROUND}${LIGHT_BLUE}'[ '${LIGHT_YELLOW}'\h'${LIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${LIGHT_BLUE}' ]-'${LIGHT_YELLOW}'\W '${CYAN}'$(__git_ps1 "(%s) ")'${BLACK_BACKGROUND}${BRIGHT_WHITE}'\$'${NO_COLOR}' '
 }
 
-# Function: promptDefault
-#
-# Method that uses whatever default prompt is used by the
+# Public: Method that uses whatever default prompt is used by the
 # current system
 promptDefault ()
 {
@@ -103,12 +97,10 @@ promptDefault ()
         fi
 }
 
-# Function: promptDumb
-#
-# For dumb terminals
+# Public: Prompt suitable for dumb terminals
 promptDumb ()
 {
-        doXTerm
+        setPromptCommand
         DEFAULTPS1=$PS1
         PS1='[ \h-\@ ]-\W $(__git_ps1 "(%s) ")\$ '
         PS2='> '
@@ -117,12 +109,10 @@ promptDumb ()
         export DEFAULTPS1
 }
 
-# Function: promptGENTOO
-#
-# For fans of Gentoo Linux
+# Public: Prompt familiar to fans of Gentoo Linux
 promptGENTOO ()
 {
-        doXTerm
+        setPromptCommand
         DEFAULTPS1=$PS1
         PS1=${BRIGHT_GREEN}'\u'@'\h'${BRIGHT_BLUE}' \w '${YELLOW}'$(__git_ps1 "(%s) ")'${BRIGHT_BLUE}'\$'${NO_COLOR}' '
         PS2="\h> "
@@ -130,12 +120,10 @@ promptGENTOO ()
         export DEFAULTPS1
 }
 
-# Function: promptGREEN()
-#
-# Sets up prompt to my own preference
+# Public: Sets up a prompt with greenish-ish colors
 promptGREEN ()
 {
-        doXTerm
+        setPromptCommand
         DEFAULTPS1=$PS1
         PS1=${BRIGHT_BLUE}'[ '${BRIGHT_GREEN}'\h'${BRIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${BRIGHT_BLUE}' ]-'${BRIGHT_PURPLE}'\w '${CYAN}'$(__git_ps1 "(%s) ")'${BRIGHT_WHITE}'\$'${NO_COLOR}' '
         PS2='> '
@@ -144,12 +132,10 @@ promptGREEN ()
         export DEFAULTPS1
 }
 
-# Function: promptRED
-#
-# Sets up a font with reddish colors
+# Public: Sets up a prompt with reddish colors
 promptRED ()
 {
-        doXTerm
+        setPromptCommand
         DEFAULTPS1=$PS1
         PS1=${BLUE}'['${RED}'\@'${BLUE}'||'${BRIGHT_RED}'\u@\h:\w'${BRIGHT_YELLOW}'$(__git_ps1 " (%s)")'${BLUE}']'${BRIGHT_WHITE}'\$ '${NO_COLOR}
         PS2='> '
@@ -158,9 +144,7 @@ promptRED ()
         export DEFAULTPS1
 }
 
-# Function: promptTFCC()
-#
-# A generic TFCC prompt
+# Public: Prompt used at a former employer
 promptTFCC ()
 {
         DEFAULTPS1=$PS1

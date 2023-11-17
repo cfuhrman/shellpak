@@ -1,0 +1,61 @@
+#+TITLE: Running Emacs under MS-Windows
+#+AUTHOR: Christopher M. Fuhrman
+#+EMAIL: cfuhrman@pobox.com
+#+OPTIONS: email:t
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \pagestyle{fancyplain}
+#+LATEX_HEADER: \usepackage{bookmark}
+#+LATEX_HEADER: \hypersetup{urlcolor=blue}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue}
+#+LATEX_HEADER: \fancyhead[RE,LO]{\leftmark}
+#+LATEX_HEADER: \fancyhead[LE,RO]{\thepage}
+
+#+LATEX: \thispagestyle{empty}
+
+* Overview
+
+  Describes what is needed in order to run Emacs under MS-Windows.  Note this
+  document assumes that the user is able to install packages using Winget.
+
+* Required WinGet Packages
+
+** General Packages
+
+    - GNU.Emacs
+    - FSFhu.Hunspell
+    - Fossil.Fossil
+    - Git.Git
+    - OpenJS.NodeJS.LTS
+
+** Java development
+
+    - ojdkbuild.openjdk.11.jdk
+    - ojdkbuild.openjdk.17.jdk
+
+** Optional packages
+
+    - DEVCOM.JetBrainsMonoNerdFont
+
+* Fonts
+
+  This Emacs configuration makes use of the following [[https://fonts.google.com/][Google Fonts]]:
+
+   - [[https://fonts.google.com/noto/specimen/Noto+Sans+Mono?query=noto+sans+mono][Noto Sans Mono]]
+   - [[https://fonts.google.com/specimen/Cantarell?query=cantarell][Cantarell]]
+
+  After unzipping these files, install them by selecting the desired =*.tff=
+  files, right-clicking and select "Install".  Note that additional fonts which
+  are automatically downloaded by this Emacs configuration can be installed via
+  File Manager from =C:\Users\%YOURUSERNAME\AppData\Roaming=.  These fonts can
+  be installed in a similar manner.
+
+* Hunspell
+
+  The HunSpell package, as installed by =winget=, does not automatically
+  install a dictionary.  These dictionaries can be downloaded from [[https://cgit.freedesktop.org/libreoffice/dictionaries/plain][FreeDesktop
+  LibreOffice Dictionary]] site and then copied to =C:\Hunspell\=.
+
+* Caveats
+
+   - Projectile relies on certain external tools such as =cut= and =dos2unix=.
+     As such, certain features of projectile will not work properly under Windows.

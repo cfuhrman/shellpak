@@ -21,7 +21,10 @@
 stty start ''
 stty stop  ''
 
+# Private: Operating system name as determined by uname(1)
 OSTYPE=$(uname)
+
+# Public: Mail spool location
 MAIL=/var/mail/$LOGNAME
 
 # System Specific Stuff

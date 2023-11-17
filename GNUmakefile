@@ -20,6 +20,7 @@
 #   pdf         : Generate PDF documentation using LaTeX
 #   txt         : Generate plain-text documentation (UTF-8 encoding when available)
 #   texinfo     : Generate PDF documentation using texinfo (org-mode >= 8)
+#   tomdoc      : Generate TXT developer documentation using Tomdoc.sh
 #
 
 #
@@ -75,6 +76,20 @@ TAR=$(shell if [ `uname` != "Darwin" ] && type gtar >/dev/null; then echo 'gtar'
 DRYRUN_OPT=$(shell if echo ${DRYRUN} | egrep '[Yy][Ee][Ss]' >/dev/null ; then echo -n '-r'; fi)
 RM_OPTS=$(shell if [ `uname` != "OpenBSD" ]; then echo '-vf'; else echo '-f'; fi)
 
+# Tomdoc variables
+TOMDOC_BIN=./thirdparty/tomdoc.sh
+TOMDOC_DOC_DIR=./docs/tomdoc
+TOMDOC_FILES=${TOMDOC_DOC_DIR}/aliases.commands	\
+             ${TOMDOC_DOC_DIR}/aliases.hosts	\
+             ${TOMDOC_DOC_DIR}/bash_bsd		\
+             ${TOMDOC_DOC_DIR}/bash_darwin	\
+             ${TOMDOC_DOC_DIR}/bash_linux	\
+             ${TOMDOC_DOC_DIR}/bash_profile	\
+             ${TOMDOC_DOC_DIR}/bashrc		\
+             ${TOMDOC_DOC_DIR}/bash_unix_sv	\
+             ${TOMDOC_DOC_DIR}/functions	\
+             ${TOMDOC_DOC_DIR}/prompts		\
+             ${TOMDOC_DOC_DIR}/setup.sh
 
 #
 # Targets
@@ -105,7 +120,7 @@ gtags:
 local: ${LOCALHOSTS}
 	@echo 'All local hosts updated'
 
-remote: ${REMOTEHOSTS} ${POLARHOSTS}
+remote: ${REMOTEHOSTS}
 	@echo 'All remote hosts updated'
 
 disabled: ${DISABLEDHOSTS}
@@ -141,19 +156,21 @@ clean-tags: clean-gtags
 clean-gtags:
 	@rm ${RM_OPTS} GPATH GTAGS GRTAGS
 
-clean-all: clean clean-elc clean-xkcd clean-tags
+clean-all: clean clean-elc clean-xkcd clean-tags clean-tomdoc
 
 clean-dist: 
 	@rm ${RM_OPTS} shellpak*.tar.gz
 	@rm ${RM_OPTS} shellpak*.zip
 	@rm ${RM_OPTS}r shellpak
 
+clean-tomdoc:
+	@rm -rvf ${TOMDOC_DOC_DIR}
+
 # WARNING: Will remove *all* installed packages.  Use with care!
 clean-elpa: clean-elc
 	@rm ${RM_OPTS}r ${HOME}/.emacs.d/elpa/*
 
-public: readme
-	@rm ${RM_OPTS} docs/README.md
+public: clean-all
 	@echo 'Syncing with public repository'
 	${RSYNC_BIN} ${RSYNC_PUBLIC_OPTS} . ${PUBLICCO}
 
@@ -195,6 +212,7 @@ fossil:
 
 readme: markdown
 	@cp -rp docs/README.md .
+	${MAKE} -C docs clean
 
 docbook: emacs ${DBKDIRS}
 ${DBKDIRS}:
@@ -220,6 +238,15 @@ texinfo: emacs ${TXIDIRS}
 ${TXIDIRS}:
 	${MAKE} -C $(@:texinfo-%=%) texinfo
 
+# Development documentation via tomdoc.sh
+tomdoc: ${TOMDOC_FILES}
+${TOMDOC_DOC_DIR}:
+	@echo "Creating ${TOMDOC_DOC_DIR}"
+	@mkdir -p ${TOMDOC_DOC_DIR}
+
+${TOMDOC_FILES}: ${TOMDOC_DOC_DIR}
+	@echo "Generating $@.txt"
+	@${TOMDOC_BIN} $(shell echo `basename $@`) > $@.txt
 
 #
 # Host Targets

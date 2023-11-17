@@ -18,7 +18,7 @@
 # Provides aliases for various commands
 #
 
-# Setting for Pine/Alpine remote config
+# Private: Setting for Pine/Alpine remote config
 PINE_REMOTE_CONFIG="{mail.example.com/ssl/novalidate-cert/user=cfuhrman@example.com}INBOX.in-my-alpine-config"
 
 # Aliases

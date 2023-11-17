@@ -27,6 +27,18 @@
 ;;        further impacts performance
 (setq gc-cons-threshold (* 500 1000 1000))
 
+;; Make sure we are running a recent version of Emacs
+(defvar cmf/min_emacs_version "27.1")
+(if (version< emacs-version cmf/min_emacs_version)
+    (progn
+      (message "This version of Emacs (%s) is not supported by this
+configuration.  Use %s or greater.  Cowardly aborting!"
+               emacs-version
+               cmf/min_emacs_version)
+      (sleep-for 10)
+      (setq quit-flag t))
+  )
+
 ;; Update load paths
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path "~/.emacs.d/thirdparty")
@@ -58,8 +70,10 @@
 ;; Variable definitions
 (defvar cmf/full-name "Christopher M. Fuhrman")
 (defvar cmf/mail-address "cfuhrman@example.com")
-(defvar cmf/latitude ####)		; Determine your lat/long at maps.google.com
-(defvar cmf/longitude ####)
+(defvar cmf/locale "en_US")
+(defvar cmf/coding-system 'utf-8)
+(defvar cmf/latitude 51.4874225)        ; Determine your lat/long at maps.google.com
+(defvar cmf/longitude -0.0344233)
 (defvar cmf/location-name "San Jose, CA")
 (defvar cmf/time-zone "America/Los Angeles")
 (defvar cmf/time-zone-short-name "PST")
@@ -121,6 +135,21 @@
  '(warning-suppress-log-types '((comp)))
  '(warning-suppress-types '((comp)))
  )
+
+;; Force coding system
+(set-default-coding-systems cmf/coding-system)
+
+(if (eq system-type 'windows-nt)
+    (custom-set-faces
+     ;; custom-set-faces was added by Custom.
+     ;; If you edit it by hand, you could mess it up, so be careful.
+     ;; Your init file should contain only one such instance.
+     ;; If there is more than one, they won't work right.
+     ;;
+     ;; Noto Sans Mono can be downloaded from
+     ;; https://fonts.google.com/noto/specimen/Noto+Sans+Mono?query=noto+sans+mono
+     '(default ((t (:inherit nil :extend nil :stipple nil :background "#171717" :foreground "#c2c2b0" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 99 :width normal :foundry "GOOG" :family "Noto Sans Mono")))))
+  )
 
 (if (window-system)
     (tool-bar-mode -1)
@@ -522,14 +551,6 @@ your Emacs Configuration"
 ;; --------------------------------------------------------------------
 
 ;; Packages
-(use-package gptel
-  :ensure t
-
-  :custom
-  ;; Get your key at https://platform.openai.com/account/api-keys
-  (gptel-api-key "*****")
-  )
-
 (use-package dictionary
   :ensure t
   :if (version< emacs-version "28.1")
@@ -545,7 +566,22 @@ your Emacs Configuration"
          (text-mode . flyspell-mode))
 
   :config
-  (setq-default ispell-program-name "aspell")
+  (if (eq system-type 'windows-nt)
+      (progn
+        (setq ispell-dictionary "english")
+        (add-to-list 'ispell-local-dictionary-alist '(("english"
+                                                       "[[:alpha:]]"
+                                                       "[^[:alpha:]]"
+                                                       "[']"
+                                                       t
+                                                       ("-d" cmf/locale)
+                                                       nil
+                                                       utf-8)))
+        (setq ispell-hunspell-dictionary-alist ispell-local-dictionary-alist)
+        )
+    (setq-default ispell-program-name "aspell")
+    )
+
   (use-package flyspell-correct-ivy
     :ensure t
     :pin melpa
@@ -553,6 +589,13 @@ your Emacs Configuration"
 
   :custom
   (ispell-extra-args (quote ("--run-together")))
+  )
+
+(use-package gptel
+  :ensure t
+
+  :custom
+  (gptel-api-key "*****")
   )
 
 (use-package helpful
@@ -612,6 +655,13 @@ your Emacs Configuration"
 
   :custom
   (sudo-edit-indicator-mode t)
+  )
+
+(use-package dsvn
+  :ensure t
+
+  :config
+  (autoload 'svn-status "dsvn" "Run `svn status'." t)
   )
 
 (use-package treemacs
@@ -856,16 +906,14 @@ your Emacs Configuration"
 
   (org-clock-persistence-insinuate)
 
-  ;; NOTE: Testing out this feature
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
   (if (member system-type '(gnu/linux))
       (setq org-file-apps
             '((auto-mode . emacs)
               ("\\.x?html?\\'" . "xdg-open %s")
-              ("\\.pdf\\'" . emacs)
-              ("\\.pdf::\\([0-9]+\\)\\'" . "xdg-open \"%s\" -p %1")
-              ("\\.pdf.xoj" . "xournal %s")))
+              ("\\.pdf\\'" . "xdg-open \"%s\"")
+              ("\\.pdf::\\([0-9]+\\)\\'" . "xdg-open \"%s\"")))
     )
 
   ;; Only set up fonts if this is a window-system (i.e., not CLI/terminal mode)
@@ -973,6 +1021,12 @@ your Emacs Configuration"
   (setq markdown-command "multimarkdown")
   )
 
+(if (eq system-type 'windows-nt)
+    (use-package powershell
+      :ensure t
+      )
+  )
+
 (use-package restclient
   :ensure t
   :mode ("\\.rtt\\'" . restclient-mode)
@@ -1041,6 +1095,7 @@ your Emacs Configuration"
 (use-package yaml-mode
   :ensure t
   :no-require t
+  :after hl-todo
 
   :mode (("\\.sls\\'" . yaml-mode)
          ("\\.yml\\'" . yaml-mode))

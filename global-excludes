@@ -21,6 +21,7 @@ ac-dict/
 auto-save-list
 bookmarks
 config/
+docs/tomdoc/
 eclipse.jdt.ls/
 eln-cache/
 elpa*/

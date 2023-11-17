@@ -16,8 +16,8 @@
 # Sets up system environment for Mac OS X Darwin
 #
 
-# Determine PATH
-paths=('/opt/local/bin'                         \
+# Directories to evaluate for adding to PATH
+PATHS=('/opt/local/bin'                         \
        '/opt/local/sbin'                        \
        '/opt/pkg/bin'                           \
        '/opt/pkg/sbin'                          \
@@ -32,7 +32,7 @@ paths=('/opt/local/bin'                         \
 )
 
 # Pre-pend additional directories if required
-for path in ${paths[@]}; do
+for path in ${PATHS[@]}; do
 
         # We only want to add the directory if it exists
         if [ -d $path ]; then
@@ -41,9 +41,8 @@ for path in ${paths[@]}; do
 
 done
 
-# Get rid of pre-pended ':' and double colons
-PATH=${PATH#:}
-PATH=${PATH//::/:}
+PATH=${PATH#:}			# Get rid of pre-pended colons
+PATH=${PATH//::/:}		# Remove double colons
 
 # Place /opt/pkg/bin first if pkgsrc is present
 if [ -d /opt/pkg/bin ]; then
@@ -55,16 +54,18 @@ if [ -d /usr/local/Cellar ]; then
         PATH=/usr/local/bin:${PATH//\/usr\/local\/bin\:/}
 fi
 
-# Set MANPATH
+# Public: Specify path to man(1) pages
 MANPATH=/opt/local/man:/opt/local/share/man:$MANPATH:/usr/share/man:/usr/local/git/share/man:~/perl5/man:/opt/pkg/man
 
-# Enable LS Colors
+# Public: Set up colors for ls(1)
 CLICOLOR=1
+
+# Public: Configure colors for ls(1) output
 LSCOLORS=Exfxcxdxbxegedhbagacad
 
 export PATH MANPATH CLICOLOR LSCOLORS
 
-# Set up perl environment
+# Public: Set up perl environment
 PERL5LIB="${HOME}/perl5/lib/perl5${PERL5LIB+:}$PERL5LIB"
 PERL_LOCAL_LIB_ROOT="${HOME}/perl5${PERL_LOCAL_LIB_ROOT+:}$PERL_LOCAL_LIB_ROOT"
 PERL_MB_OPT="--install_base \"${HOME}/perl5\""
@@ -72,7 +73,7 @@ PERL_MM_OPT="INSTALL_BASE=${HOME}/perl5"
 
 export PERL5LIB PERL_LOCAL_LIB_ROOT PERL_MB_OPT PERL_MM_OPT
 
-# Needed for XML Parsing
+# Public: Set location of XML Catalogs
 export XML_CATALOG_FILES=/usr/local/etc/xml/catalog
 
 # Colorize ls(1)

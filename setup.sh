@@ -30,7 +30,6 @@
 #
 # ====================================================================
 
-# Variables
 SHELLDIR=${HOME}/SHELL
 BACKUPDIR=${HOME}/Backup/shell
 HOMETMPDIR=${HOME}/tmp
@@ -40,7 +39,7 @@ RSYNC_OPTS="-Ccav --perms --chmod=go-rw --delete --exclude-from=${RSYNC_EXCLUDE}
 MAKE=make
 COPYRIGHT='Copyright (c) 2000-2023 Christopher M. Fuhrman'
 OUTPUTSPACING=55
-DRYRUN=""
+DRYRUN=""			# Dry-run option to pass to rsync(1)
 UNINSTALL=0
 GOINSTALL=0
 GOPATH=${HOME}/go
@@ -51,8 +50,10 @@ NOLINK=0            # If set to 1 (true), then the following apply:
                     #   - ~/tmp directory will not be created
                     #   - Existing files in $HOME will not be backed up
 
-# Variables that can be overridden
+# Public: Indicates what python version to use
 : ${PYTHON_VERSION:=3}
+
+# Public: Indicates location of pip program
 : ${PIP_BIN:=pip3}
 
 # Read only constants
@@ -86,7 +87,7 @@ else
         NORMAL=$(tput -T ${TERM} sgr0)
 fi
 
-# Dot-files to link
+# Private: List of dot-files to link
 HOMEDOTFILES=('bash_logout'			\
               'bash_profile'			\
               'bashrc'				\
@@ -102,9 +103,11 @@ HOMEDOTFILES=('bash_logout'			\
               'Xresources'
              )
 
+# Private: List of possible locations to search for make(1) binary
+#
 # Use GNU Make if available, otherwise blindly assume that the system
-# make is compatible.
-makepaths=('/usr/pkg/bin/gmake'                 \
+# make is compatible
+MAKEPATHS=('/usr/pkg/bin/gmake'                 \
            '/usr/local/bin/gmake'               \
            '/usr/bin/gnumake'                   \
            '/opt/csw/bin/gmake'                 \
@@ -115,7 +118,7 @@ makepaths=('/usr/pkg/bin/gmake'                 \
            '/usr/bin/make'
           )
 
-for makeprog in ${makepaths[@]}; do
+for makeprog in ${MAKEPATHS[@]}; do
         if [ -e ${makeprog} ]; then
                 MAKE=${makeprog}
                 break
@@ -133,9 +136,7 @@ fi
 # Functions
 # --------------------------------------------------------------------
 
-# Function: doUninstall
-#
-# Uninstalls shellpak
+# Private: Uninstalls shellpak
 doUninstall ()
 {
         echo ''
@@ -246,9 +247,7 @@ EOF
         echo "${BOLD}ShellPAK${NORMAL} removed from the home directory of ${USER} on ${CYAN}${HOSTNAME}${NORMAL}!"
 }
 
-# Function: goSetup
-#
-# Sets up directory structure for the go programming language
+# Function: Sets up directory structure for the go programming language
 goSetup ()
 {
         local GOBIN=${GOPATH}/bin
@@ -315,21 +314,22 @@ goSetup ()
         inform $L1 $TRUE "Installation of go modules complete!"
 }
 
-# Function: plSetup
+# Private: Installs Perl Language Server
 #
-# Installs Perl Language Server
+# NOTE: Installation of the following perl libraries via your
+# operating systems package manager (apt, zypper, dnf) strongly
+# recommended prior to running this function:
 #
-# NOTE: Installation of the following perl libraries via your operating systems package manager (apt, zypper, dnf)
-#       strongly recommended prior to running this function:
+#  * Coro
+#  * IO-AIO
+#  * Moose
 #
-#        - Coro
-#        - IO-AIO
-#        - Moose
 plSetup ()
 {
-        # Should AnyEvent (a requirement for Coro) fail, be sure to check output for DNS failures.  In some cases, an
-        # ISP may have their DNS configured to return a bogus address should a lookup fail, which can confuse the
-        # AnyEvent test suite.
+        # Should AnyEvent (a requirement for Coro) fail, be sure to
+        # check output for DNS failures.  In some cases, an ISP may
+        # have their DNS configured to return a bogus address should a
+        # lookup fail, which can confuse the AnyEvent test suite.
         local PERL_MODULES=("Perl::LanguageServer"
         		   )
 
@@ -347,9 +347,7 @@ plSetup ()
         inform $L2 $TRUE "Done"
 }
 
-# Function: pySetup
-#
-# Installs the tools necessary for python development
+# Private: Installs the tools necessary for python development
 pySetup ()
 {
         local PYTHON_PKGS=('autopep8'		\
@@ -374,12 +372,10 @@ pySetup ()
         done
 }
 
-# Function: headerDisplay
-#
-# Displays a header for the world to see
+# Private: Displays a header for the world to see
 headerDisplay ()
 {
-        # Make the version string magenta
+        # Private: Determines formatting of version string
         PRETTY_VERSION=${SHELLPAK_VERSION/\[/\[${MAGENTA}}
         PRETTY_VERSION=${PRETTY_VERSION/\]/${NORMAL}\]}
 
@@ -400,15 +396,11 @@ headerDisplay ()
         echo ''
 }
 
-# Function: inform
+# Private: Displays a message on STDOUT
 #
-# Displays a message on STDOUT
-#
-# Parameters:
-#
-#   level   : 1 or 2
-#   newline : [0|1] whether to append newline
-#   msg     : Message to display
+# level   - 1 or 2
+# newline - [0|1] whether to append newline
+# msg     - Message to display
 inform ()
 {
         local level=$1
@@ -428,9 +420,7 @@ inform ()
         fi
 }
 
-# Function: usage
-#
-# Displays usage
+# Private: Displays usage
 usage ()
 {
         cat 1>&2 <<STDERR
@@ -609,7 +599,6 @@ if [ ${NOLINK} -ne 1 ]; then
         # Set up links
         for file in ${HOMEDOTFILES[@]}; do
 
-                # Set to current dot file (e.g., .bashrc)
                 DOTFILE=${HOME}/.${file}
                 LINKFILE=$(readlink ${DOTFILE})
 
