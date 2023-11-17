@@ -31,11 +31,11 @@ if [ "x$SHLVL" != 'x1' ] && [ -e '/etc/profile.d' ]; then
 
 fi
 
-# Determine PATH
-paths=( '/usr/games' )
+# Directories to evaluate for adding to PATH
+PATHS=( '/usr/games' )
 
 # Append additional directories if required
-for path in ${paths[@]}; do
+for path in ${PATHS[@]}; do
 
         # We only want to add the directory if it exists
         if [ -d $path ]; then
@@ -44,18 +44,18 @@ for path in ${paths[@]}; do
 
 done
 
-# Get rid of pre-pended ':' and double colons
-PATH=${PATH#:}
-PATH=${PATH//::/:}
+PATH=${PATH#:}			# Get rid of pre-pended colons
+PATH=${PATH//::/:}		# Remove double colons
 
-# Linux distros tend to put the mail spool in a slightly different
-# location
+# Public: Specify location of mail spool under Linux
 MAIL=/var/spool/mail/$LOGNAME
 
 export MAIL PATH
 
-# Set file operation verbose flags
+# Deprecated: Flag to pass to ls(1), mv(1), rm(1), etc.,
 export FILE_OPS_FLAGS='v'
+
+# Deprecated: Flag to pass to rm(1)
 export FILE_OPS_RM_FLAGS=${FILE_OPS_FLAGS}
 
 # Older versions of RedHat do not support screen-256color, so reset TERM if
@@ -84,7 +84,7 @@ if [ $TERM != 'dumb' ] && [ $TERM != 'emacs' ]; then
         alias ls='ls --color'
 fi
 
-# Set up colors for ip(8)
+# Public: Set up colors for ip(8)
 export COLORFGBG=";0"
 
 # bash_linux ends here

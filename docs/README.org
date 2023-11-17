@@ -42,6 +42,7 @@
     - OpenBSD
     - Ubuntu
     - openSUSE
+    - MS-Windows (/*experimental!* (Emacs only)/)
 
 * Obtaining ShellPAK
 

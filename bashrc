@@ -17,7 +17,7 @@
 # such as xterm windows and such
 #
 
-# We need to set SHELLDIR up here lest breakage occur
+# Public: Location of shell files
 SHELLDIR=$HOME/SHELL
 export SHELLDIR
 
@@ -34,15 +34,14 @@ if [ -f ${SHELLDIR}/VERSION ]; then
         export SHELLPAK_VERSION
 fi
 
-# Set some variables useful in determining our environment
-export HOSTNAME=$(hostname)
-export OSTYPE=$(uname)
-export OSVERSION=$(uname -r)
+export HOSTNAME=$(hostname)	# Name of host from hostname(1)
+export OSTYPE=$(uname)		# Operating system name from uname(8)
+export OSVERSION=$(uname -r)	# Operating system version from uname(8)
 
-# I live on the American West Coast
+# Public: Sets up preferred timezone
 export TZ='America/Los_Angeles'
 
-# Make sure gpg-agent(1) knows what tty it's on
+# Public: Indicates to gpg-agent(1) what tty it's on
 export GPG_TTY=$(tty)
 
 # Setting for Pine/Alpine remote config
@@ -50,12 +49,11 @@ PINE_REMOTE_CONFIG="{mail.example.com/ssl/novalidate-cert/user=cfuhrman@example.
 
 # ----------------------------------------------------------------------
 
-# Function: __sp_bashrc_set_browser
+# Private: Sets BROWSER environment variable
 #
-# Sets BROWSER environment variable.  See code for order of preference.
+# See code for order of preference.
 __sp_bashrc_set_browser ()
 {
-        # Set preferred browsers in order of evaluation
         browsers=('google-chrome'               \
                   'chromium'                    \
                   'firefox'                     \
@@ -77,12 +75,11 @@ __sp_bashrc_set_browser ()
         export BROWSER
 }
 
-# Function: __sp_bashrc_set_editor
+# Private: Sets EDITOR environment variable
 #
-# Sets EDITOR environment variable.  See code for order of preference.
+# See code for order of preference.
 __sp_bashrc_set_editor ()
 {
-        # Set preferred editors in order of evaluation
         editors=('emacs'                        \
                  'mg'                           \
                  'nano'                         \
@@ -109,15 +106,9 @@ __sp_bashrc_set_editor ()
         fi
 }
 
-# Function: __sp_bashrc_set_pager
+# Private: Sets PAGER environment variable
 #
-# Sets PAGER environment variable
-#
-# Order of preference:
-#
-#  * less
-#  * view
-#  * more
+# See code for order of preference
 __sp_bashrc_set_pager ()
 {
         # Should this be an emacs terminal, then set $PAGER to 'cat' since
@@ -126,7 +117,6 @@ __sp_bashrc_set_pager ()
                 PAGER='cat'
         else
 
-                # Set preferred pagers in order of evaluation
                 pagers=('less'                  \
                         'more'                  \
                         'view'
@@ -170,8 +160,8 @@ if [ "$PS1" ]; then
 
 fi
 
-# Determine PATH
-paths=('/usr/games'                             \
+# Directories to evaluate for adding to PATH
+PATHS=('/usr/games'                             \
        '/opt/schily/bin'                        \
        '/usr/X11R6/bin'                         \
        '/usr/X11R7/bin'                         \
@@ -189,7 +179,7 @@ paths=('/usr/games'                             \
       )
 
 # Pre-pend additional directories if required
-for path in ${paths[@]}; do
+for path in ${PATHS[@]}; do
 
         # Determine if this directory is already in $PATH
         if [ -d $path ]; then
@@ -198,11 +188,10 @@ for path in ${paths[@]}; do
 
 done
 
-# Get rid of pre-pended ':' and double colons
-PATH=${PATH#:}
-PATH=${PATH//::/:}
+PATH=${PATH#:}			# Get rid of pre-pended colons
+PATH=${PATH//::/:}		# Remove double colons
 
-# Set default for awk
+# Public: Default program for awk(1)
 AWK=awk
 
 # Set up GOPATH
@@ -217,7 +206,6 @@ fi
 
 export PATH
 
-# Set up perl environment
 PERL5LIB="${HOME}/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
 PERL_LOCAL_LIB_ROOT="${HOME}/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
 PERL_MB_OPT="--install_base \"${HOME}/perl5\""; export PERL_MB_OPT;
@@ -267,27 +255,23 @@ __sp_bashrc_set_pager
 # Bash Command History
 # --------------------------------------------------------------------
 
+# Public: Commands to exclude from history
+#
 # Do *not* append the following to our history: consecutive duplicate
-# commands, ls, bg and fg, and exit
+# commands, ls, bg and fg, and exit.  Note the last pattern
+# is to not keep dangerous commands in the history file.  Who really
+# needs to repeat the shutdown(8) command accidentally from your
+# command history?
 HISTIGNORE='\&:fg:bg:ls:pwd:cd ..:cd ~-:cd -:cd:jobs:set -x:ls -l:ls -al'
-
-# Don't keep useless history commands.  Note the last pattern is to not
-# keep dangerous commands in the history file.  Who really needs to
-# repeat the shutdown(8) command accidentally from your command
-# history?
 HISTIGNORE=${HISTIGNORE}':%1:%2:popd:top:alpine:mutt:clear:shutdown*'
 export HISTIGNORE
 
 # Save multi-line commands in history as single line
 shopt -s cmdhist
 
-# Disk is cheap.  Memory is cheap.  My memory isn't!  Keep a lot of
-# history by default.  10K lines seems to go back about 6 months, and
-# captures all of the wacky one-off shell scripts that I might want
-# again later.
-export HISTSIZE=10000
-export HISTFILESIZE=${HISTSIZE}
-export HISTTIMEFORMAT="[%F %T]: "
+export HISTSIZE=10000		# Number of commands to keep in history
+export HISTFILESIZE=${HISTSIZE}	# Sets max size of history
+export HISTTIMEFORMAT="[%F %T]: " # Time format of history
 
 #
 # Bash behavior settings
@@ -316,8 +300,7 @@ shopt -s extglob
 # Set up some default settings
 umask 022
 
-# Host-specific processing.  We only do this if the host-specific file
-# exists
+# Private: Array containing parts of FQDN
 HOSTBITS=(${HOSTNAME//./ })
 
 # Extract domain name based on length of HOSTBITS

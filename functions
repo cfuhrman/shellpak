@@ -12,9 +12,7 @@
 #
 # ====================================================================
 
-# Function: aliasCoreUtils
-#
-# Check for commonly installed GNU tools suite and aliases them as
+# Public: Check for commonly installed GNU tools suite and aliases them as
 # appropriate.
 aliasCoreUtils ()
 {

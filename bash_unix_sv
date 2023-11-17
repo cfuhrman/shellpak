@@ -21,8 +21,8 @@
 # Try to overcome limitations of UnixWARE
 stty intr ^C
 
-# Determine PATH
-paths=('/usr/local/bin'                         \
+# Directories to evaluate for adding to PATH
+PATHS=('/usr/local/bin'                         \
        '/usr/pkg/bin'                           \
        '/usr/ccs/bin'                           \
        '/usr/sfw/bin'                           \
@@ -36,7 +36,7 @@ paths=('/usr/local/bin'                         \
       )
 
 # Pre-pend additional directories if required
-for path in ${paths[@]}; do
+for path in ${PATHS[@]}; do
 
         # We only want to add the directory if it exists
         if [ -d $path ]; then
@@ -45,9 +45,8 @@ for path in ${paths[@]}; do
 
 done
 
-# Get rid of pre-pended ':' and double colons
-PATH=${PATH#:}
-PATH=${PATH//::/:}
+PATH=${PATH#:}			# Get rid of pre-pended colons
+PATH=${PATH//::/:}		# Remove double colons
 
 export PATH
 
@@ -76,8 +75,7 @@ if [[ ${OSTYPE} == 'SunOS' ]]; then
 
 else
 
-        # Set file operation verbose flags
-        export FILE_OPS_RM_FLAGS='e'
+        export FILE_OPS_RM_FLAGS='e' # Deprecated
 
         # On my Mac at home, Terminal.app sets ${TERM} to 'xterm-color' or
         # 'xterm-256color', which some SysV systems don't grok.  So change it
