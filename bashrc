@@ -21,6 +21,16 @@
 SHELLDIR=$HOME/SHELL
 export SHELLDIR
 
+# Set WINHOME if it is present.  Note that this block of code assumes
+# that the UNIX username is the same as the Windows username
+if [ -d /mnt/c/Users/${USER} ]; then
+	export WINHOME=/mnt/c/Users/${USER}
+elif [ -n ${USERPROFILE} ]; then
+	export WINHOME=${USERPROFILE}
+else
+	export WINHOME=
+fi
+
 # Includes
 source $SHELLDIR/functions
 source $SHELLDIR/prompts
@@ -54,10 +64,10 @@ PINE_REMOTE_CONFIG="{mail.example.com/ssl/novalidate-cert/user=cfuhrman@example.
 # See code for order of preference.
 __sp_bashrc_set_browser ()
 {
-        browsers=('google-chrome'               \
-                  'chromium'                    \
+        browsers=('sensible-browser'            \
                   'firefox'                     \
-                  'mozilla'                     \
+                  'google-chrome'               \
+                  'chromium'                    \
                   'w3m'                         \
                   'elinks'                      \
                   'lynx'
@@ -80,11 +90,12 @@ __sp_bashrc_set_browser ()
 # See code for order of preference.
 __sp_bashrc_set_editor ()
 {
-        editors=('emacs'                        \
-                 'mg'                           \
-                 'nano'                         \
-                 'vim'                          \
-                 'vi'
+        editors=('emacs'			\
+                 'sensible-editor'		\
+                 'mg'				\
+                 'nano'				\
+                 'vim'				\
+                 'vi'				\
                 )
 
         for edit in ${editors[@]}; do
@@ -117,8 +128,9 @@ __sp_bashrc_set_pager ()
                 PAGER='cat'
         else
 
-                pagers=('less'                  \
-                        'more'                  \
+                pagers=('sensible-pager'	\
+                        'less'			\
+                        'more'			\
                         'view'
                        )
 
@@ -146,7 +158,7 @@ fi
 # First check and see if we're an interactive shell
 if [ "$PS1" ]; then
 
-        if [ "x`tput kbs`" != 'x' ]; then
+        if [ "x`tput kbs`" != 'x' ] && [ ! $OSTYPE != ^MINGW64_NT* ]; then
                 stty erase `tput kbs`
         fi
 
@@ -161,20 +173,21 @@ if [ "$PS1" ]; then
 fi
 
 # Directories to evaluate for adding to PATH
-PATHS=('/usr/games'                             \
-       '/opt/schily/bin'                        \
-       '/usr/X11R6/bin'                         \
-       '/usr/X11R7/bin'                         \
-       '/usr/sbin'                              \
-       '/opt/bin'                               \
-       '/opt/sbin'                              \
-       '/sbin'                                  \
-       '/usr/local/sbin'                        \
-       "$HOME/.composer/vendor/bin"             \
-       "$HOME/.config/composer/vendor/bin"      \
-       "$HOME/.local/bin"                       \
-       "$HOME/vendor/bin"                       \
-       "$HOME/perl5/bin"                        \
+PATHS=('/usr/games'				\
+       '/opt/schily/bin'			\
+       '/usr/X11R6/bin'				\
+       '/usr/X11R7/bin'				\
+       '/usr/sbin'				\
+       '/opt/bin'				\
+       '/opt/sbin'				\
+       '/sbin'					\
+       '/usr/local/sbin'			\
+       "$HOME/.composer/vendor/bin"		\
+       "$HOME/.config/composer/vendor/bin"	\
+       "$HOME/.dotnet/tools"			\
+       "$HOME/.local/bin"			\
+       "$HOME/vendor/bin"			\
+       "$HOME/perl5/bin"			\
        "$HOME/bin"
       )
 
@@ -210,6 +223,11 @@ PERL5LIB="${HOME}/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
 PERL_LOCAL_LIB_ROOT="${HOME}/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
 PERL_MB_OPT="--install_base \"${HOME}/perl5\""; export PERL_MB_OPT;
 PERL_MM_OPT="INSTALL_BASE=${HOME}/perl5"; export PERL_MM_OPT;
+
+# Make sure dotnet programs know where it is installed
+if [ -d /usr/share/dotnet ]; then
+	export DOTNET_ROOT=/usr/share/dotnet
+fi
 
 
 # OS-Specific variable(s)

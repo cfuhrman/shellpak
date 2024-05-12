@@ -39,13 +39,27 @@ configuration.  Use %s or greater.  Cowardly aborting!"
       (setq quit-flag t))
   )
 
+;; Set real-home to desired home path based on operating system
+(defvar cmf/real-home (getenv "HOME"))
+
 ;; Update load paths
-(add-to-list 'load-path "~/.emacs.d/lisp")
-(add-to-list 'load-path "~/.emacs.d/thirdparty")
+(if (eq system-type 'windows-nt)
+    (progn
+      (setq cmf/real-home (replace-regexp-in-string "\\\\" "\/"
+                                                    (getenv
+                                                     "HOMEPATH") t t))
+      (add-to-list 'load-path (concat cmf/real-home "/AppData/Roaming/.emacs.d/lisp"))
+      (add-to-list 'load-path (concat cmf/real-home "/AppData/Roaming/.emacs.d/thirdparty"))
+      )
+  (progn
+    (add-to-list 'load-path (concat cmf/real-home "/.emacs.d/lisp"))
+    (add-to-list 'load-path (concat cmf/real-home "/.emacs.d/thirdparty")))
+  )
 
 ;; Set exec path
 (dolist (path '("~/.composer/vendor/bin"
                 "~/.config/composer/vendor/bin"
+                "~/.dotnet/tools"
                 "~/bin"
                 "~/go/bin"
                 "~/perl5/bin"
@@ -146,9 +160,11 @@ configuration.  Use %s or greater.  Cowardly aborting!"
      ;; Your init file should contain only one such instance.
      ;; If there is more than one, they won't work right.
      ;;
-     ;; Noto Sans Mono can be downloaded from
-     ;; https://fonts.google.com/noto/specimen/Noto+Sans+Mono?query=noto+sans+mono
-     '(default ((t (:inherit nil :extend nil :stipple nil :background "#171717" :foreground "#c2c2b0" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 99 :width normal :foundry "GOOG" :family "Noto Sans Mono")))))
+     ;; Cascadia Code can be downloaded via
+     ;; https://github.com/microsoft/cascadia-code
+     '(default ((t (:inherit nil :slant normal :weight normal :height
+                             110 :width normal :foundary "outline" :family "Cascadia Code"))))
+     '(fixed-pitch ((t (:family "Cascadia Code")))))
   )
 
 (if (window-system)
@@ -475,6 +491,16 @@ your Emacs Configuration"
     :config
     (all-the-icons-completion-mode)
     )
+
+  (use-package all-the-icons-dired
+    :ensure t
+
+    :hook (dired-mode . all-the-icons-dired-mode)
+
+    :custom
+    (all-the-icons-dired-monochrome nil)
+    )
+
   )
 
 (use-package all-the-icons-ivy
@@ -484,6 +510,12 @@ your Emacs Configuration"
 
   :config
   (all-the-icons-ivy-setup)
+
+  (use-package all-the-icons-ibuffer
+    :ensure t
+
+    :hook (ibuffer-mode . all-the-icons-ibuffer-mode)
+    )
 
   (use-package all-the-icons-ivy-rich
     :ensure t
@@ -554,6 +586,16 @@ your Emacs Configuration"
 (use-package dictionary
   :ensure t
   :if (version< emacs-version "28.1")
+  )
+
+(unless (eq (executable-find "dotnet") nil)
+  (use-package dotnet
+    :ensure t
+
+    :hook ((csharp-mode . dotnet-mode)
+           (dired-mode . dotnet-mode))    ; Allows running dotnet in
+                                          ; dired buffer
+    )
   )
 
 (use-package flyspell
@@ -649,6 +691,46 @@ your Emacs Configuration"
   :defer t
   )
 
+(use-package projectile
+  :ensure t
+  :diminish projectile-mode
+
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+
+  :custom
+  (projectile-completion-system 'ivy)
+  (projectile-enable-caching t)
+  (projectile-indexing-method 'alien)
+  (projectile-tags-backend 'ggtags)
+
+  :init
+  (setq projectile-switch-project-action #'projectile-dired)
+
+  :config
+  (dolist (devpath '("/dev/"
+                     "/org/"
+                     ))
+    (if (file-directory-p (concat cmf/real-home devpath))
+        (add-to-list 'projectile-project-search-path (concat
+                                                      cmf/real-home devpath)))
+    )
+  (projectile-mode +1)
+
+  (use-package counsel-projectile
+    :ensure t
+    :after counsel
+
+    :config
+    (counsel-projectile-mode)
+    )
+
+  (use-package treemacs-projectile
+    :ensure t
+    :after treemacs
+    )
+  )
+
 (use-package sudo-edit
   :ensure t
   :no-require t
@@ -691,7 +773,8 @@ your Emacs Configuration"
   (unless (eq (executable-find "git") nil)
     (use-package treemacs-magit
       :ensure t
-      :after magit)
+      :after magit
+      )
     )
   )
 
@@ -871,6 +954,12 @@ your Emacs Configuration"
     (add-hook 'org-present-after-navigate-functions 'cmf/org-present-prepare-slide)
     )
 
+  (unless (eq (executable-find "pandoc") nil)
+    (use-package ox-pandoc
+      :ensure t
+      )
+    )
+
   (use-package ox-twbs
     :ensure t
     )
@@ -1000,6 +1089,12 @@ your Emacs Configuration"
   :no-require t
   )
 
+(use-package js-mode
+  ;; This is a built-in mode
+
+  :hook (js-mode . lsp-deferred)
+  )
+
 (use-package json-mode
   :ensure t
 
@@ -1092,23 +1187,25 @@ your Emacs Configuration"
     )
   )
 
-(use-package yaml-mode
-  :ensure t
-  :no-require t
-  :after hl-todo
+(unless (eq (executable-find "npm") nil)
+  (use-package yaml-mode
+    :ensure t
+    :no-require t
+    :after hl-todo
 
-  :mode (("\\.sls\\'" . yaml-mode)
-         ("\\.yml\\'" . yaml-mode))
+    :mode (("\\.sls\\'" . yaml-mode)
+           ("\\.yml\\'" . yaml-mode))
 
-  :hook ((yaml-mode . cmf/choose-line-number-mode-hook)
-         (yaml-mode . lsp-deferred)
-         (yaml-mode . hl-todo-mode)
-         (yaml-mode .
-                    (lambda ()
-                      (subword-mode t)
-                      (auto-fill-mode -1)))
-         )
-  )
+    :hook ((yaml-mode . cmf/choose-line-number-mode-hook)
+           (yaml-mode . lsp-deferred)
+           (yaml-mode . hl-todo-mode)
+           (yaml-mode .
+                      (lambda ()
+                        (subword-mode t)
+                        (auto-fill-mode -1)))
+           )
+    )
+)
 
 
 ;; PROGRAMMING
@@ -1198,6 +1295,17 @@ your Emacs Configuration"
                      (add-to-list 'company-backends 'company-emoji)))
   )
 
+(use-package company-org-block
+  :ensure t
+
+  :hook ((org-mode . (lambda ()
+                       (setq-local company-backends '(company-org-block))
+                       (company-mode +1))))
+
+  :custom
+  (company-org-block-edit-style 'auto) ;; 'auto, 'prompt, or 'inline
+  )
+
 (use-package company-shell
   :ensure t
   :commands shell-mode
@@ -1251,6 +1359,28 @@ your Emacs Configuration"
     )
   )
 
+(unless (eq (executable-find "dotnet") nil)
+  ;; NOTE: omnisharp C# language server appears to have issues
+  ;;       installing under MS-Windows environment so csharp-ls is
+  ;;       recommended
+  (use-package csharp-mode
+    ;; This is a built-in mode on Emacs >= 29.1
+
+    :hook (csharp-mode . lsp-deferred)
+    :mode ("\\.csproj\\'" . nxml-mode)
+
+    :init
+    ;; csharp-mode is built in as of Emacs 29.1, so only install if
+    ;; necessary.
+    (if (and (version< emacs-version "29.1")
+             (not(package-installed-p 'csharp-mode)))
+        (package-install 'csharp-mode)
+        )
+
+    :config
+    )
+  )
+
 (use-package dap-mode
   :after lsp
 
@@ -1287,44 +1417,46 @@ your Emacs Configuration"
   :hook (emacs-lisp-mode . ggtags-mode)
   )
 
-(use-package go-mode
-  :ensure t
-  :no-require t
-
-  :hook ((go-mode . lsp-deferred)
-         (go-mode .
-                  (lambda ()
-                    (setq lsp-imenu-index-symbol-kinds '(Constant Variable Method Function Class)))))
-
-  :config
-  (use-package company-go
+(unless (eq (executable-find "go") nil)
+  (use-package go-mode
     :ensure t
-    :after company
+    :no-require t
 
-    :hook (go-mode .
-                   (lambda ()
-                     (add-to-list 'company-backends 'company-go)))
+    :hook ((go-mode . lsp-deferred)
+           (go-mode .
+                    (lambda ()
+                      (setq lsp-imenu-index-symbol-kinds '(Constant Variable Method Function Class)))))
 
-    :init
-    (add-hook 'before-save-hook #'gofmt-before-save)
-    )
+    :config
+    (use-package company-go
+      :ensure t
+      :after company
 
-  (use-package go-complete
-    :ensure t
+      :hook (go-mode .
+                     (lambda ()
+                       (add-to-list 'company-backends 'company-go)))
 
-    :hook (completion-at-point-functions . go-complete-at-point)
-    )
+      :init
+      (add-hook 'before-save-hook #'gofmt-before-save)
+      )
 
-  (use-package go-eldoc
-    :ensure t
-    :after eldoc
+    (use-package go-complete
+      :ensure t
 
-    :hook (go-mode . go-eldoc-setup)
-    )
+      :hook (completion-at-point-functions . go-complete-at-point)
+      )
 
-  (use-package go-snippets
-    :ensure t
-    :after yasnippet
+    (use-package go-eldoc
+      :ensure t
+      :after eldoc
+
+      :hook (go-mode . go-eldoc-setup)
+      )
+
+    (use-package go-snippets
+      :ensure t
+      :after yasnippet
+      )
     )
   )
 
@@ -1374,32 +1506,31 @@ your Emacs Configuration"
   :hook (java-mode . lsp)
   )
 
-(use-package lsp-java
-  :ensure t
-  :defer t
-  :after (hydra lsp)
+(unless (eq (executable-find "java") nil)
+  (use-package lsp-java
+    :ensure t
+    :defer t
+    :after (hydra lsp)
 
-  :hook ((java-mode . lsp-java-boot-lens)
-         (java-mode .
-                    (lambda ()
-                      (setq lsp-imenu-index-symbol-kinds
-                            '(Property Constant Variable Constructor
-                                       Method Function Class))))
-         (lsp-mode . lsp-lens-mode))
+    :hook ((java-mode . lsp-java-boot-lens)
+           (java-mode .
+                      (lambda ()
+                        (setq lsp-imenu-index-symbol-kinds
+                              '(Property Constant Variable Constructor
+                                         Method Function Class))))
+           (lsp-mode . lsp-lens-mode))
 
-  :config
-  (require 'lsp-java-boot)
-  (use-package dap-java
-    :ensure nil
+    :config
+    (require 'lsp-java-boot)
+    (use-package dap-java
+      :ensure nil
+      )
     )
   )
 
-
-(unless (eq (executable-find "npm") nil)
-  (use-package lsp-ivy
-    :ensure t
-    :after (ivy lsp)
-    )
+(use-package lsp-ivy
+  :ensure t
+  :after (ivy lsp)
   )
 
 (use-package jinja2-mode
@@ -1411,60 +1542,59 @@ your Emacs Configuration"
   :mode ("\\.j2\\'" . jinja2-mode)
   )
 
-(unless (eq (executable-find "npm") nil)
-  (use-package lsp-mode
+(use-package lsp-mode
+  :ensure t
+  :commands (lsp lsp-deferred)
+
+  :custom
+  (lsp-prefer-flymake nil)
+  (lsp-file-watch-threshold 40000)
+  (lsp-response-timeout 30)
+
+  :init
+  (setq read-process-output-max (* 1024 1024)) ;; 1mb
+
+  :config
+  (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+  (lsp-enable-which-key-integration t)
+
+  (lsp-register-custom-settings
+   `(("intelephense.phpdoc.functionTemplate"
+      ,(list :summary "$1"
+             :tags (vector ""
+                           "@param ${1:$SYMBOL_TYPE} $SYMBOL_NAME $2"
+                           ""
+                           "@return ${1:$SYMBOL_TYPE} $2"
+                           ""
+                           "@throws ${1:$SYMBOL_TYPE} $2""" "$1")))))
+
+  (if (window-system)
+      (setq lsp-headerline-breadcrumb-icons-enable t)
+    (setq lsp-headerline-breadcrumb-icons-enable nil)
+    )
+
+  (use-package lsp-treemacs
     :ensure t
-    :commands (lsp lsp-deferred)
+    :after treemacs
 
-    :custom
-    (lsp-prefer-flymake nil)
-    (lsp-file-watch-threshold 40000)
-    (lsp-response-timeout 30)
+    :bind (:map lsp-mode-map
+                ("C-x t s" . lsp-treemacs-symbols))
+    )
 
-    :init
-    (setq read-process-output-max (* 1024 1024)) ;; 1mb
+  (use-package lsp-ui
+    :ensure t
+
+    :hook (lsp-mode . lsp-ui-mode)
 
     :config
-    (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-    (lsp-enable-which-key-integration t)
-    (lsp-register-custom-settings
-     `(("intelephense.phpdoc.functionTemplate"
-        ,(list :summary "$1"
-               :tags (vector ""
-                             "@param ${1:$SYMBOL_TYPE} $SYMBOL_NAME $2"
-                             ""
-                             "@return ${1:$SYMBOL_TYPE} $2"
-                             ""
-                             "@throws ${1:$SYMBOL_TYPE} $2""" "$1")))))
-
-    (if (window-system)
-        (setq lsp-headerline-breadcrumb-icons-enable t)
-      (setq lsp-headerline-breadcrumb-icons-enable nil)
+    (if (eq window-system nil)
+        (setq lsp-ui-doc-show-with-cursor t)
+      (setq lsp-ui-doc-show-with-mouse t)
       )
 
-    (use-package lsp-treemacs
-      :ensure t
-      :after treemacs
-
-      :bind (:map lsp-mode-map
-                  ("C-x t s" . lsp-treemacs-symbols))
-      )
-
-    (use-package lsp-ui
-      :ensure t
-
-      :hook (lsp-mode . lsp-ui-mode)
-
-      :config
-      (if (eq window-system nil)
-          (setq lsp-ui-doc-show-with-cursor t)
-        (setq lsp-ui-doc-show-with-mouse t)
-        )
-
-      :custom
-      (lsp-ui-doc-alignment 'window)
-      (lsp-ui-doc-position 'top)
-      )
+    :custom
+    (lsp-ui-doc-alignment 'window)
+    (lsp-ui-doc-position 'top)
     )
   )
 
@@ -1474,94 +1604,60 @@ your Emacs Configuration"
          ("\\.mk\\'"       . makefile-mode))
   )
 
-(use-package php-mode
-  :ensure t
-  :no-require t
-
-  :bind (:map php-mode-map
-              ("C-c -"                . php-current-class)
-              ("C-c ="                . php-current-namespace)
-              ("C-x p"                . php-insert-doc-block)
-              )
-
-  :hook ((php-mode . lsp-deferred)
-         (php-mode .
-                   (lambda ()
-                     (setq lsp-imenu-index-symbol-kinds '(Class Property Constuctor Method Function))
-                     (setq lsp-imenu-sort-methods '(name)))))
-
-  :custom
-  (php-insert-doc-access-tag nil)
-  (php-enable-psr2-coding-style)
-  (php-lineup-cascaded-calls t)
-  (phpcbf-standard "PSR2")
-
-  :config
-  (require 'php-doc)
-  (require 'phpcbf)
-
-  (use-package company-php
+(unless (eq (executable-find "npm") nil)
+  (use-package php-mode
     :ensure t
-    :after company
+    :no-require t
 
-    :hook (php-mode .
-                    (lambda ()
-                      (add-to-list 'company-backends 'company-ac-php-backend
-                                   )))
+    :bind (:map php-mode-map
+                ("C-c -"                . php-current-class)
+                ("C-c ="                . php-current-namespace)
+                ("C-x p"                . php-insert-doc-block)
+                )
+
+    :hook ((php-mode . lsp-deferred)
+           (php-mode .
+                     (lambda ()
+                       (setq lsp-imenu-index-symbol-kinds '(Class Property Constuctor Method Function))
+                       (setq lsp-imenu-sort-methods '(name)))))
+
+    :custom
+    (php-insert-doc-access-tag nil)
+    (php-enable-psr2-coding-style)
+    (php-lineup-cascaded-calls t)
+    (phpcbf-standard "PSR2")
+
+    ;; Purchase your intelephense license key at https://intelephense.com/
+    ;; (lsp-intelephense-licence-key "*******") ;
 
     :config
-    (ac-php-core-eldoc-setup)
-    )
+    (require 'php-doc)
+    (require 'phpcbf)
 
-  (use-package php-eldoc
-    :ensure t
-    :after eldoc
+    (use-package company-php
+      :ensure t
+      :after company
 
-    :config
-    (php-eldoc-enable)
-    )
+      :hook (php-mode .
+                      (lambda ()
+                        (add-to-list 'company-backends 'company-ac-php-backend
+                                     )))
 
-  (use-package phpunit
-    :ensure t
-    )
-  )
+      :config
+      (ac-php-core-eldoc-setup)
+      )
 
-(use-package projectile
-  :ensure t
-  :diminish projectile-mode
+    (use-package php-eldoc
+      :ensure t
+      :after eldoc
 
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
+      :config
+      (php-eldoc-enable)
+      )
 
-  :custom
-  (projectile-completion-system 'ivy)
-  (projectile-enable-caching t)
-  (projectile-indexing-method 'alien)
-  (projectile-tags-backend 'ggtags)
-
-  :init
-  (setq projectile-switch-project-action #'projectile-dired)
-
-  :config
-  (dolist (devpath '("~/dev/"
-                     "~/org/"
-                     ))
-    (if (file-directory-p devpath)
-        (add-to-list 'projectile-project-search-path devpath))
-    )
-  (projectile-mode +1)
-
-  (use-package counsel-projectile
-    :ensure t
-    :after counsel
-
-    :config
-    (counsel-projectile-mode)
-    )
-
-  (use-package treemacs-projectile
-    :ensure t
-    :after treemacs
+    (use-package phpunit
+      :ensure t
+      )
     )
   )
 
@@ -1625,9 +1721,12 @@ your Emacs Configuration"
          )
   )
 
-(use-package sh-mode
-  ;; This is a built-in mode
-  :hook (sh-mode . lsp)
+(unless (eq (executable-find "npm") nil)
+  (use-package sh-mode
+    ;; This is a built-in mode
+
+    :hook (sh-mode . lsp)
+    )
   )
 
 (use-package sql
@@ -1647,6 +1746,24 @@ your Emacs Configuration"
     (sql-indent-first-column-regexp
      "^\\s-*\\(create\\|d\\(?:elete\\|rop\\)\\|from\\|group\\|having\\|in\\(?:sert\\|t\\(?:ersect\\|o\\)\\)\\|order\\|se\\(?:\\(?:lec\\)?t\\)\\|truncate\\|commit\\|u\\(?:nion\\|pdate\\)\\|where\\)\\(\\b\\|\\s-\\)")
     )
+  )
+
+;; Needed for editing ASP.NET Razor pages
+(use-package web-mode
+  :ensure t
+  :no-require t
+
+  ;; LATER: Consider using web-mode for *.html pages
+  :mode (("\\.cshtml" . web-mode)
+         ("\\.blade"  . web-mode)
+         ("\\.svelte" . web-mode))
+
+  :config
+  (setq web-mode-engines-alist
+	'(("razor"  . "\\.cshtml\\'")
+	  ("blade"  . "\\.blade\\.")
+	  ("svelte" . "\\.svelte\\."))
+        )
   )
 
 (use-package yasnippet

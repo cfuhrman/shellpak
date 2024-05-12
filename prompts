@@ -48,6 +48,13 @@ else
         ECHO="echo"
 fi
 
+# Determine if git(1) is installed on this system
+if type -p git >/dev/null; then
+	export GIT_INSTALLED=1
+else
+	export GIT_INSTALLED=0
+fi
+
 # Private: Sets the title font if an xterm is detected
 #
 # WARN: DO NOT unset this function as it will break other methods in
@@ -70,8 +77,15 @@ promptCMF ()
 {
         setPromptCommand
         DEFAULTPS1=$PS1
-        PS1=${BLACK_BACKGROUND}${BRIGHT_BLUE}'[ '${BRIGHT_YELLOW}'\h'${BRIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${BRIGHT_BLUE}' ]-'${BRIGHT_YELLOW}'\W '${CYAN}'$(__git_ps1 "(%s) ")'${BLACK_BACKGROUND}${BRIGHT_WHITE}'\$'${NO_COLOR}' '
-        PS2='> '
+
+	# Prompt is determined based on if git(1) is installed
+	if [ $GIT_INSTALLED -eq 1 ]; then
+		PS1=${BLACK_BACKGROUND}${BRIGHT_BLUE}'[ '${BRIGHT_YELLOW}'\h'${BRIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${BRIGHT_BLUE}' ]-'${BRIGHT_YELLOW}'\W '${CYAN}'$(__git_ps1 "(%s) ")'${BLACK_BACKGROUND}${BRIGHT_WHITE}'\$'${NO_COLOR}' '
+	else
+		PS1=${BLACK_BACKGROUND}${BRIGHT_BLUE}'[ '${BRIGHT_YELLOW}'\h'${BRIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${BRIGHT_BLUE}' ]-'${BRIGHT_YELLOW}'\W '${BLACK_BACKGROUND}${BRIGHT_WHITE}'\$'${NO_COLOR}' '
+	fi
+
+	PS2='> '
         PS4='+ '
 
         export DEFAULTPS1
@@ -82,7 +96,13 @@ promptCMF256 ()
 {
         setPromptCommand
         DEFAULTPS1=$PS1
-        PS1=${BLACK_BACKGROUND}${LIGHT_BLUE}'[ '${LIGHT_YELLOW}'\h'${LIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${LIGHT_BLUE}' ]-'${LIGHT_YELLOW}'\W '${CYAN}'$(__git_ps1 "(%s) ")'${BLACK_BACKGROUND}${BRIGHT_WHITE}'\$'${NO_COLOR}' '
+
+	# Prompt is determined based on if git(1) is installed
+	if [ $GIT_INSTALLED -eq 1 ]; then
+		PS1=${BLACK_BACKGROUND}${LIGHT_BLUE}'[ '${LIGHT_YELLOW}'\h'${LIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${LIGHT_BLUE}' ]-'${LIGHT_YELLOW}'\W '${CYAN}'$(__git_ps1 "(%s) ")'${BLACK_BACKGROUND}${BRIGHT_WHITE}'\$'${NO_COLOR}' '
+	else
+		PS1=${BLACK_BACKGROUND}${LIGHT_BLUE}'[ '${LIGHT_YELLOW}'\h'${LIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${LIGHT_BLUE}' ]-'${LIGHT_YELLOW}'\W '${BLACK_BACKGROUND}${BRIGHT_WHITE}'\$'${NO_COLOR}' '
+	fi
 }
 
 # Public: Method that uses whatever default prompt is used by the
@@ -102,7 +122,14 @@ promptDumb ()
 {
         setPromptCommand
         DEFAULTPS1=$PS1
-        PS1='[ \h-\@ ]-\W $(__git_ps1 "(%s) ")\$ '
+
+	# Prompt is determined based on if git(1) is installed
+	if [ $GIT_INSTALLED -eq 1 ]; then
+		PS1='[ \h-\@ ]-\W $(__git_ps1 "(%s) ")\$ '
+	else
+		PS1='[ \h-\@ ]-\W \$ '
+	fi
+
         PS2='> '
         PS4='+ '
 
@@ -114,7 +141,14 @@ promptGENTOO ()
 {
         setPromptCommand
         DEFAULTPS1=$PS1
-        PS1=${BRIGHT_GREEN}'\u'@'\h'${BRIGHT_BLUE}' \w '${YELLOW}'$(__git_ps1 "(%s) ")'${BRIGHT_BLUE}'\$'${NO_COLOR}' '
+
+	# Prompt is determined based on if git(1) is installed
+	if [ $GIT_INSTALLED -eq 1 ]; then
+		PS1=${BRIGHT_GREEN}'\u'@'\h'${BRIGHT_BLUE}' \w '${YELLOW}'$(__git_ps1 "(%s) ")'${BRIGHT_BLUE}'\$'${NO_COLOR}' '
+	else
+		PS1=${BRIGHT_GREEN}'\u'@'\h'${BRIGHT_BLUE}' \w '${BRIGHT_BLUE}'\$'${NO_COLOR}' '
+	fi
+
         PS2="\h> "
 
         export DEFAULTPS1
@@ -125,7 +159,14 @@ promptGREEN ()
 {
         setPromptCommand
         DEFAULTPS1=$PS1
-        PS1=${BRIGHT_BLUE}'[ '${BRIGHT_GREEN}'\h'${BRIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${BRIGHT_BLUE}' ]-'${BRIGHT_PURPLE}'\w '${CYAN}'$(__git_ps1 "(%s) ")'${BRIGHT_WHITE}'\$'${NO_COLOR}' '
+
+	# Prompt is determined based on if git(1) is installed
+	if [ $GIT_INSTALLED -eq 1 ]; then
+		PS1=${BRIGHT_BLUE}'[ '${BRIGHT_GREEN}'\h'${BRIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${BRIGHT_BLUE}' ]-'${BRIGHT_PURPLE}'\w '${CYAN}'$(__git_ps1 "(%s) ")'${BRIGHT_WHITE}'\$'${NO_COLOR}' '	
+	else
+		PS1=${BRIGHT_BLUE}'[ '${BRIGHT_GREEN}'\h'${BRIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${BRIGHT_BLUE}' ]-'${BRIGHT_PURPLE}'\w '${BRIGHT_WHITE}'\$'${NO_COLOR}' '
+	fi
+        
         PS2='> '
         PS4='+ '
 
@@ -137,7 +178,14 @@ promptRED ()
 {
         setPromptCommand
         DEFAULTPS1=$PS1
-        PS1=${BLUE}'['${RED}'\@'${BLUE}'||'${BRIGHT_RED}'\u@\h:\w'${BRIGHT_YELLOW}'$(__git_ps1 " (%s)")'${BLUE}']'${BRIGHT_WHITE}'\$ '${NO_COLOR}
+
+	# Prompt is determined based on if git(1) is installed
+	if [ $GIT_INSTALLED -eq 1 ]; then 
+		PS1=${BLUE}'['${RED}'\@'${BLUE}'||'${BRIGHT_RED}'\u@\h:\w'${BRIGHT_YELLOW}'$(__git_ps1 " (%s)")'${BLUE}']'${BRIGHT_WHITE}' \$ '${NO_COLOR}
+	else
+		PS1=${BLUE}'['${RED}'\@'${BLUE}'||'${BRIGHT_RED}'\u@\h:\w'${BLUE}']'${BRIGHT_WHITE}' \$ '${NO_COLOR}
+	fi
+
         PS2='> '
         PS4='+ '
 

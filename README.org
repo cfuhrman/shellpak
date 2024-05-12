@@ -1,1 +1,147 @@
-docs/README.org
+#+TITLE: ShellPAK README
+#+AUTHOR: Christopher M. Fuhrman
+#+EMAIL: cfuhrman@pobox.com
+#+OPTIONS: email:t
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \pagestyle{fancyplain}
+
+#+LATEX: \thispagestyle{empty}
+
+* Description
+
+  ShellPAK allows for the automatic installation and configuration of
+  my personal [[http://www.gnu.org/software/bash/][GNU Bash]] shell environment as well as the configuration
+  of the following programs:
+
+   - [[http://git-scm.com][Git]]
+   - [[http://www.gnu.org/software/emacs/][GNU Emacs]]
+   - [[https://www.nano-editor.org/][GNU Nano]]
+   - [[http://www.gnu.org/software/screen/][GNU Screen]]
+   - [[https://www.gnu.org/software/indent/][GNU Indent]]
+   - [[http://homepage.boetes.org/software/mg/][mg Text Editor]]
+   - [[http://search.cpan.org/~shancock/Perl-Tidy-20140711/lib/Perl/Tidy.pod][Perl::Tidy]]
+   - [[http://tmux.sourceforge.net][tmux]]
+
+  This code is specific to my own needs and is here in the hopes it
+  will be useful as a reference.
+
+** Requirements
+
+    - GNU Bash version 4.0 or greater
+    - GNU Emacs 27.1 or greater
+    - GNU Make
+    - rsync
+
+** Supported Platforms
+
+   The following operating systems are supported:
+
+    - CentOS
+    - macOS (Mac OS X)
+    - NetBSD
+    - OpenBSD
+    - Ubuntu
+    - openSUSE
+    - MS-Windows (/*experimental!* (Emacs only)/)
+
+* Obtaining ShellPAK
+
+  As of <2014-07-30 Wed>, [[https://chiselapp.com/user/cfuhrman/repository/shpak/home][ShellPAK]] is managed by the [[http://fossil-scm.org][Fossil]]
+  distributed version control system.  To check out a repository:
+
+  #+begin_src sh
+  # Clone the repository
+  $ fossil clone https://chiselapp.com/user/cfuhrman/repository/shpak ~/shellpak.fossil
+
+  # Check out the repository
+  $ mkdir shellpak
+  $ cd shellpak
+  $ fossil open ~/shellpak.fossil
+  #+end_src
+
+  Further information on Fossil can be found at this [[http://www.fossil-scm.org/index.html/doc/trunk/www/quickstart.wiki][Quick Start
+  Guide]].
+
+** Alternate Repositories
+
+   [[https://chiselapp.com/user/cfuhrman/repository/shpak/home][ShellPAK]] is also available for checkout from the following
+   locations:
+
+    - Git :: [[https://github.com/cfuhrman/shellpak][GitHub]]
+    - Fossil :: [[https://fossil.fuhrwerks.com/shpak][FuhrWerks]]
+
+   Be aware that portions of the ShellPAK infrastructure relies on
+   Fossil.  Conversion to support the conventions of an alternative
+   revision control system is an exercise left to the user.
+
+* Installation
+
+  #+begin_src sh
+  # Install ShellPAK
+  $ ./setup.sh
+  #+end_src
+
+  Note that during installation, ShellPAK will store dot-files (e.g.,
+  =bashrc=, =bash_profile=, etc) in =~/Backup/shell= (or whatever is
+  specified by the =-b= flag).  These files will be restored during
+  un-installation (via the =-u= flag)
+
+** Other setup options
+
+   #+begin_src sh
+   # Perform a dry-run
+   $ ./setup.sh -r
+
+   # Install into another directory
+   $ ./setup.sh -d /path/to/directory
+
+   # Do not automatically link files during installation
+   $ ./setup.sh -n
+
+   # Set up go programming environment
+   $ ./setup.sh -g
+
+   # Set up Perl::LanguageServer
+   $ ./setup.sh -l
+
+   # Set up python development environment
+   $ ./setup.sh -p
+
+   # Set up python3 development environment
+   $ PYTHON_VERSION=3 PIP_BIN=pip3 setup.sh -p
+
+   # Remove ShellPAK
+   $ ./setup.sh -u
+
+   # Remove ShellPAK & go environment
+   $ ./setup.sh -u -g
+
+   # Change backup directory
+   $ ./setup.sh -b /path/to/directory
+
+   # List runtime options
+   $ ./setup.sh -h
+   #+end_src
+
+   Previous versions of =setup.sh= provided options for installation
+   of Emacs packages.  This is no longer required as Emacs will now
+   automatically install necessary packages on startup.
+
+* Bugs
+
+  Please report any bugs or feature requests by [[https://chiselapp.com/user/cfuhrman/repository/shpak/reportlist][filing a ticket]] via
+  the ShellPAK repository website.
+
+* Author
+
+  Christopher M. Fuhrman
+  [[mailto:cfuhrman@pobox.com][cfuhrman@pobox.com]]
+
+* Copyright
+
+  Copyright (c) 2000-2024 Christopher M. Fuhrman
+  All rights reserved.
+
+  All files contained herein can be redistributed and/or modified
+  under the terms of the Simplified BSD License (also known as the
+  "2-Clause License" or "FreeBSD License".) unless otherwise noted.

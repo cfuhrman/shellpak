@@ -2,12 +2,16 @@
 #
 # Configuration file for nano(1)
 #
+set breaklonglines
+set fill 100
 set regexp
 set speller aspell
+set tabstospaces
+set unix
 
 # Colors
-set titlecolor     white,red
-set statuscolor    white,red
+set titlecolor     brightwhite,red
+set statuscolor    brightwhite,red
 set errorcolor     red,white
-set keycolor       white,red
-
+set keycolor       brightwhite,red
+set functioncolor  brightwhite,black

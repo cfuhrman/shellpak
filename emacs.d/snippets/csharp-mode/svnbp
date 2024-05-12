@@ -1,12 +1,9 @@
 # -*- mode: snippet -*-
-# name : PHP File Boilerplate
-# expand-env: ((yas/indent-line 'fixed))
-#
+# name: Boiler Plate for C-Sharp Files with RCS/SVN Id
 # --
-<?php
 
-/** 
- * `(file-name-nondirectory (buffer-file-name))`
+/**
+ * $Id$
  *
  * Copyright (c) `(format-time-string "%Y")` `(user-full-name)`
  * All rights reserved.

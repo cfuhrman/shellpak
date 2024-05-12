@@ -74,23 +74,7 @@ if [[ ${OSTYPE} == 'SunOS' ]]; then
         ulimit -c unlimited
 
 else
-
         export FILE_OPS_RM_FLAGS='e' # Deprecated
-
-        # On my Mac at home, Terminal.app sets ${TERM} to 'xterm-color' or
-        # 'xterm-256color', which some SysV systems don't grok.  So change it
-        # to a generic xterm.  Also, if we encounter screen(1), then set
-        # terminal to vt220
-        if [[ ${TERM} =~ ^xterm\-[0-9]*color ]]; then
-                echo 'Resetting TERM to xterm'
-                TERM='xterm'
-                export TERM
-        elif [[ ${TERM} =~ ^screen ]]; then
-                echo 'Resetting TERM to vt220'
-                TERM='vt220'
-                export TERM
-        fi
-
 fi
 
 # bash_unix_sv ends here

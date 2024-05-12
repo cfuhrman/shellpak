@@ -1,11 +1,8 @@
 # -*- mode: snippet -*-
-# name : PHP File Boilerplate
-# expand-env: ((yas/indent-line 'fixed))
-#
+# name: Boiler Plate for C-Sharp Files
 # --
-<?php
 
-/** 
+/**
  * `(file-name-nondirectory (buffer-file-name))`
  *
  * Copyright (c) `(format-time-string "%Y")` `(user-full-name)`
