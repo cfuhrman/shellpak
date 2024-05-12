@@ -158,13 +158,16 @@ clean-gtags:
 
 clean-all: clean clean-elc clean-xkcd clean-tags clean-tomdoc
 
-clean-dist: 
+clean-dist:
 	@rm ${RM_OPTS} shellpak*.tar.gz
 	@rm ${RM_OPTS} shellpak*.zip
 	@rm ${RM_OPTS}r shellpak
 
 clean-tomdoc:
 	@rm -rvf ${TOMDOC_DOC_DIR}
+
+clean-cache:
+	@rm ${RM_OPTS}r ${HOME}/.emacs.d/eln-cache
 
 # WARNING: Will remove *all* installed packages.  Use with care!
 clean-elpa: clean-elc
@@ -261,6 +264,15 @@ ${REMOTEHOSTS}:
 	@echo "Propagating to $@"
 	@${RSYNC_BIN} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . $@:${SHELLDIR}
 	@${SSH} $@ ${SSH_SETUP_CMD}
+
+${DISABLEDHOSTS}:
+	@echo "Propagating to $@"
+	@${RSYNC_BIN} ${RSYNC_OPTS} ${RSYNC_CONN_OPTS} . $@:${SHELLDIR}
+	@${SSH} $@ ${SSH_SETUP_CMD}
+
+#
+# Distribution targets
+#
 
 ${DISTFILE}: clean clean-tags version
 	@fossil tarball ${FOSSIL_BRANCH} ${DISTFILE}

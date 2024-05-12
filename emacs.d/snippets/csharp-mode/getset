@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: Variable with get/set property
+#
+# key: getset
+# --
+/// <summary>
+/// $5
+/// </summary>
+/// <value>$6</value>
+$1 $2 $3 { get; set; }

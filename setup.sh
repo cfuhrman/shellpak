@@ -30,6 +30,7 @@
 #
 # ====================================================================
 
+HOME=${HOME%/}			# Strip trailing slash
 SHELLDIR=${HOME}/SHELL
 BACKUPDIR=${HOME}/Backup/shell
 HOMETMPDIR=${HOME}/tmp
@@ -37,8 +38,9 @@ RSYNC=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS="-Ccav --perms --chmod=go-rw --delete --exclude-from=${RSYNC_EXCLUDE}"
 MAKE=make
-COPYRIGHT='Copyright (c) 2000-2023 Christopher M. Fuhrman'
+COPYRIGHT='Copyright (c) 2000-2024 Christopher M. Fuhrman'
 OUTPUTSPACING=55
+CWD_IS_SHELL_HOME=$( [ ${SHELLDIR} != ${PWD} ]; echo $? )
 DRYRUN=""			# Dry-run option to pass to rsync(1)
 UNINSTALL=0
 GOINSTALL=0
@@ -99,6 +101,7 @@ HOMEDOTFILES=('bash_logout'			\
               'perltidyrc'			\
               'tmux.conf'			\
               'screenrc'			\
+              'selected_editor'			\
               'Xmodmap'				\
               'Xresources'
              )
@@ -509,7 +512,7 @@ if [ ${UNINSTALL} -eq 1 ]; then
 fi
 
 # Is rsync installed on this system?
-if ! type rsync >/dev/null; then
+if [ ${CWD_IS_SHELL_HOME} -eq 0 ] && ! type rsync >/dev/null; then
         inform $L1 $TRUE "${RED}ERROR${NORMAL}: rsync is not installed on this system.  Cowardly aborting!"
         exit 1
 fi
@@ -568,7 +571,7 @@ fi
 # Now, rsync over necessary files, but only if we are not a directory
 # that matches SHELLDIR.  This gets around issues such as when $HOME
 # resides in a symlinked directory.
-if [[ ${SHELLDIR#$(dirname "$(dirname "$SHELLDIR")")/} != ${PWD#$(dirname "$(dirname "$PWD")")/} ]]; then
+if [ ${CWD_IS_SHELL_HOME} -eq 0 ]; then
 
         # Now rsync(1) things over
         inform $L1 $TRUE "Synchronize ${SHELLDIR}"
@@ -609,7 +612,7 @@ if [ ${NOLINK} -ne 1 ]; then
                         rm ${DOTFILE}
 			echo -e "${YELLOW}removed${NORMAL}"
                 fi
-                
+
                 # Should the link or file not exist, then link it as
                 # appropriate
                 if [ ! -e ${DOTFILE} ]; then
