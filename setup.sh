@@ -10,6 +10,8 @@
 # modify it under the terms of the Simplified BSD License (also
 # known as the "2-Clause License" or "FreeBSD License".)
 #
+# Created Thu Jan 16 14:08:02 2003 UTC
+#
 # --------------------------------------------------------------------
 #
 # DESCRIPTION:
@@ -347,6 +349,8 @@ plSetup ()
         done
 
         unset CC
+	inform $L2 $TRUE						\
+	"Setup may need to be run twice with the \"-l\" option to ensure installation of Perl::LanguageServer"
         inform $L2 $TRUE "Done"
 }
 

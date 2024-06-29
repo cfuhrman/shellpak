@@ -10,6 +10,8 @@
 # modify it under the terms of the Simplified BSD License (also
 # known as the "2-Clause License" or "FreeBSD License".) 
 #
+# Created Sun Jul 10 19:56:16 2005 UTC
+#
 # ====================================================================
 
 # Public: Check for commonly installed GNU tools suite and aliases them as

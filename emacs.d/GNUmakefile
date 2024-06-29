@@ -1,6 +1,8 @@
 #
 # emacs.d/GNUmakefile
 #
+# Created Mon Aug  4 02:23:07 2014 UTC
+#
 
 SUBDIRS+=lisp
 SUBDIRS+=thirdparty

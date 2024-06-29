@@ -7,9 +7,7 @@
 .extension
 .fossil-settings
 .fslckout
-.icon-fonts-installed
 .lsp-session-v1
-.nerd-icon-fonts-installed
 .org-id-locations
 .python-environments
 GPATH

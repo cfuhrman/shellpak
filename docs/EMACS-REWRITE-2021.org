@@ -56,7 +56,7 @@
   Comparing terminal-mode start up times on my 13" 2017 Macbook Pro (Intel
   i5-6267U) between my previous configuration and the new rewritten one, I've
   seen start-up times go from an average of 5.87 seconds to an average of 2.65
-  seconds, a 222% increase!  This was done by reducing the number of packages
+  seconds, a 55% increase!  This was done by reducing the number of packages
   installed as well as optimizing the configuration such that only packages I
   need are loaded at start-up.  All others are loaded dynamically as needed.
 
