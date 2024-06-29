@@ -1,6 +1,8 @@
 #
 # mk/subclean.mk
 #
+# Created Sun Aug  3 19:46:31 2014 PST
+#
 
 RM_OPTS=$(shell if [ `uname` != "OpenBSD" ]; then echo '-vf'; else echo '-f'; fi)
 

@@ -1,10 +1,12 @@
 #!/bin/bash
 # ====================================================================
 #
-# hostaliases
+# aliases.hosts
 # 
 # Place convenience aliases for commonly access secure-shell hosts
 # here
+#
+# Created Thu Jul 24 16:50:14 2014 UTC
 #
 # ====================================================================
 

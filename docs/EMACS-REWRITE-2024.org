@@ -1,0 +1,170 @@
+#+TITLE: GNU Emacs Configuration Re-write 2004
+#+AUTHOR: Christopher M. Fuhrman
+#+EMAIL: cfuhrman@pobox.com
+#+OPTIONS: email:t
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \pagestyle{fancyplain}
+#+LATEX_HEADER: \usepackage{bookmark}
+#+LATEX_HEADER: \hypersetup{urlcolor=blue}
+#+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue}
+#+LATEX_HEADER: \fancyhead[RE,LO]{\leftmark}
+#+LATEX_HEADER: \fancyhead[LE,RO]{\thepage}
+
+#+LATEX: \thispagestyle{empty}
+
+* Background
+
+  It's been over three years since my last Emacs configuration re-write, so this
+  time around, I began to focus on breaking up my configuration into individual
+  files making the configuration much more modular.  In addition, I wished to
+  remove packages I did not use that often as well as optimize package loading
+  where possible.  This document provides an overview of how my Emacs
+  configuration was broken up as well as some fun statistics illustrating
+  start-up speed improvements.
+
+
+* Compatibility
+
+  This configuration is compatible with GNU Emacs 27.1 or greater running under
+  Linux, Windows 11 and possibly BSD operating systems.  As I no longer use a
+  Mac on a regular basis, no testing was done under that environment.  Consider
+  use of this configuration under macOS at your own risk.
+
+* Packages
+
+** New Packages
+
+   The following new packages are installed:
+
+    - [[https://github.com/dholm/benchmark-init-el][benchmark-init]] :: A package for profiling calls to =require= and =load=
+      functions in Emacs Lisp.
+    - [[https://github.com/mkcms/ivy-yasnippet][ivy-yasnippet]] :: Select a snippet to expand with Ivy
+
+** Removed Packages
+
+   The following packages were removed as they were not used or provided
+   duplicate functionality to other packages.
+
+    - [[https://codeberg.org/egirl/company-emoji][company-emoji]]
+    - [[https://github.com/iqbalansari/emacs-emojify][emojify]]
+    - [[http://github.com/SavchenkoValeriy/emacs-powerthesaurus][powerthesaurus]]
+    - [[https://github.com/Alexander-Miller/treemacs][treemacs-icons-dired]]
+
+* Organization
+
+  This GNU Emacs configuration has been broken up into the following modules.
+  An attempt has been made to break up functionality into sections I consider
+  logical[fn:1] although opinions differ.  If you have strong opinions about how
+  things should be organized, feel free to fork this project and organize it to
+  your heart's content.
+
+** cmf-appearance.el
+
+   This file contains aspects that control the appearance of Emacs.  This
+   includes color theming and Modeline configuration in addition to customizing
+   the use of icons.  If a package or customization stanza controls how Emacs
+   /looks/, then it goes in this file.
+
+*** Specific customizations
+
+    * Theme :: [[https://github.com/clearfeld/vscode-theme-doom-sourcerer][Doom Sourcerer]]
+    * Modeline :: [[https://github.com/seagle0128/doom-modeline][Doom Modeline]]
+    * Font (MS-Windows) :: [[https://github.com/microsoft/cascadia-code][Cascadia Code]]
+    * Font (All others) :: [[https://dejavu-fonts.github.io/][DejaVu Sans Mono]]
+
+** cmf-enhancements
+
+   This is functionality that /enhances/ GNU Emacs by adding new features.
+   This section includes Macros, custom keybindings, mode customization as well
+   as the addition of packages that add functionality.  Notable packages
+   include:
+
+    * [[https://github.com/karthink/gptel][gptel]]
+    * [[https://codeberg.org/martianh/mastodon.el][mastodon]]
+    * [[https://github.com/pashky/restclient.el][restclient]]
+
+** cmf-file-support
+
+   This is for adding support for specific files that are not otherwise
+   addressed by cmf-programming.  Generally speaking, if the file type isn't
+   related to a specific programming language, it is addressed here.  Most
+   notable additions are:
+
+    * [[https://github.com/emacs-php/apache-mode][apache-mode]]
+    * [[https://github.com/spotify/dockerfile-mode][dockerfile-mode]]
+    * [[https://github.com/json-emacs/json-mode][json-mode]]
+    * [[https://github.com/yoshiki/yaml-mode][yaml-mode]]
+
+** cmf-ide
+
+   This file contains settings and packages that turn Emacs into a modern,
+   powerful IDE on par with VS Code and the Jetbrains family of products.  In my
+   mind, an IDE includes the ability to work with more than just programming
+   languages, so this file contains support for features also useful for
+   authoring and publishing.
+
+*** Notable packages
+
+    This list is /not/ comprehensive.
+
+     * [[https://github.com/emacs-lsp/dap-mode][dap-mode]] :: For debugging
+     * [[https://www.flycheck.org/en/latest/][flycheck]] :: On-the-fly syntax checking
+     * [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] :: Language Server Protocol client providing IntelliSense-like
+       functionality
+     * [[https://magit.vc/][Magit]]
+     * [[https://projectile.mx/][Projectile]] :: Project interaction library
+     * [[https://github.com/Alexander-Miller/treemacs][Treemacs]] :: A tree-layout file explorer
+     * [[https://tumbleweed.nu/r/vc-fossil/doc/tip/README.md][vc-fossil]]
+     * [[https://github.com/joaotavora/yasnippet][YASnippet]] :: A template system
+
+** cmf-org
+
+   My personal [[https://orgmode.org/][org-mode]] configuration.
+
+** cmf-programming
+
+   This file includes support for a large number of programming languages
+   including PHP, C#, Perl, Python and GoLang.
+
+** cmf-publishing
+
+   This file contains support for publishing/authoring environments including
+   markdown and LaTeX.
+
+** cmf-ui
+
+   User interface enhancements, including packages for Window navigation and
+   text completion.  Notable packages include:
+
+    * [[https://company-mode.github.io/][company-mode]] :: Text-completion mode
+    * [[https://github.com/abo-abo/swiper][Ivy]] :: A generic completion framework that includes replacements for
+      common Emacs commands
+
+* Observed improvements
+
+  The following are start-up times, in seconds, for various types of machines
+  including percentage improvement.  Note this was done running Emacs in console
+  mode as opposed to graphical mode.
+
+  | Machine          | CPU                          | OS               | Before | After | % inc |
+  |------------------+------------------------------+------------------+--------+-------+-------|
+  | 2011 MacBook Pro | Intel i7-2640M (4)           | Zorin OS 17 Lite |   3.41 |  1.77 | 48.09 |
+  | Sys76 Thelio R2  | AMD Ryzen 7 3800X (16)       | Zorin OS 17 PRo  |   2.29 |  1.22 | 46.72 |
+  | Dell XPS 13      | 12th Gen Intel i7-1260P (16) | Ubuntu 22.04 LTS |   1.32 |  0.72 | 45.45 |
+  | NUC7i3BNH        | Intel i3-7100U (4)           | Debian 12        |   3.19 |  1.79 | 43.88 |
+  | GEEKCOM A5 Mini  | AMD Ryzen 7 5800H            | Windows 11       |   4.85 |  2.86 | 41.03 |
+  #+TBLFM: @2$6=floor(((@2$4 - @2$5) / @2$4) * 10000) / 100::@3$6=floor(((@3$4 - @3$5) / @3$4) * 10000) / 100::@4$6=floor(((@4$4 - @4$5) / @4$4) * 10000) / 100::@5$6=floor(((@5$4 - @5$5) / @5$4) * 10000) / 100::@6$6=floor(((@6$4 - @6$5) / @6$4) * 10000) / 100
+
+  These results were unexpected, as I would have thought that loading up
+  individual files would take longer!
+
+* Caveats
+
+  1. As I no longer use an Apple Macintosh machine, no testing was done under
+     macOS.  This configuration is not guaranteed to work.
+  2. Projectile has issues when navigating a CVS-based project under MS-Windows.
+
+
+* Footnotes
+
+[fn:1] Logical at least to me!

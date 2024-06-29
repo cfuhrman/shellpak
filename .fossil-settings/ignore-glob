@@ -2,5 +2,8 @@
 *undo-tree~
 *~
 .DS_Store
+emacs.d/GPATH
+emacs.d/GRTAGS
+emacs.d/GTAGS
 TAGS
 VERSION
