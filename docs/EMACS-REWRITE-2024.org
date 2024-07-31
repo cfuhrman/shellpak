@@ -69,8 +69,7 @@
 
     * Theme :: [[https://github.com/clearfeld/vscode-theme-doom-sourcerer][Doom Sourcerer]]
     * Modeline :: [[https://github.com/seagle0128/doom-modeline][Doom Modeline]]
-    * Font (MS-Windows) :: [[https://github.com/microsoft/cascadia-code][Cascadia Code]]
-    * Font (All others) :: [[https://dejavu-fonts.github.io/][DejaVu Sans Mono]]
+    * Font (Main) :: [[https://www.jetbrains.com/lp/mono/][JetBrains Mono]]
 
 ** cmf-enhancements
 
@@ -111,10 +110,10 @@
      * [[https://www.flycheck.org/en/latest/][flycheck]] :: On-the-fly syntax checking
      * [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] :: Language Server Protocol client providing IntelliSense-like
        functionality
-     * [[https://magit.vc/][Magit]]
+     * [[https://magit.vc/][Magit]] :: Git porcelain for Emacs
      * [[https://projectile.mx/][Projectile]] :: Project interaction library
      * [[https://github.com/Alexander-Miller/treemacs][Treemacs]] :: A tree-layout file explorer
-     * [[https://tumbleweed.nu/r/vc-fossil/doc/tip/README.md][vc-fossil]]
+     * [[https://tumbleweed.nu/r/vc-fossil/doc/tip/README.md][vc-fossil]] :: Support for the [[https://fossil-scm.org][Fossil]] SCM
      * [[https://github.com/joaotavora/yasnippet][YASnippet]] :: A template system
 
 ** cmf-org

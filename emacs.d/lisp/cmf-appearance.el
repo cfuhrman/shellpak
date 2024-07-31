@@ -35,29 +35,13 @@
 ;; Default Face Configuration
 ;;
 
-(if (eq system-type 'windows-nt)
-    (if (find-font (font-spec :name "Cascadia Code"))
-        (custom-set-faces
-         ;; custom-set-faces was added by Custom.
-         ;; If you edit it by hand, you could mess it up, so be careful.
-         ;; Your init file should contain only one such instance.
-         ;; If there is more than one, they won't work right.
-         ;;
-         ;; Cascadia Code can be downloaded via
-         ;; https://github.com/microsoft/cascadia-code
-         '(default ((t (:inherit nil :slant normal :weight normal :height
-                                 110 :width normal :foundary "outline" :family "Cascadia Code"))))
-         '(fixed-pitch ((t (:family "Cascadia Code")))))
-      )
-  (if (find-font (font-spec :name "DejaVu Sans Mono"))
-      (custom-set-faces
-       ;; custom-set-faces was added by Custom.
-       ;; If you edit it by hand, you could mess it up, so be careful.
-       ;; Your init file should contain only one such instance.
-       ;; If there is more than one, they won't work right.
-       '(default ((t (:inherit nil :slant normal :weight regular :height
-                               110 :width normal :family "DejaVu Sans Mono")))))
-    )
+(if (find-font (font-spec :name "JetBrains Mono"))
+    (custom-set-faces
+     ;; custom-set-faces was added by Custom.
+     ;; If you edit it by hand, you could mess it up, so be careful.
+     ;; Your init file should contain only one such instance.
+     ;; If there is more than one, they won't work right.
+     '(default ((t (:foundry "JB" :family "JetBrains Mono" :height 110)))))
   )
 
 ;; Remove tool-bar
@@ -131,7 +115,7 @@
   :custom
   (doom-modeline-vcs-max-length 14)
 
-  :config
+  :init
   (use-package nerd-icons
     :ensure t
     :if window-system
@@ -149,6 +133,35 @@
 
   :config
   (load-theme 'doom-sourcerer t)
+  )
+
+;; Enables ligature support for JetBrains Mono font
+(use-package ligature
+  :ensure t
+
+  :config
+  ;; Enable the "www" ligature in every possible major mode
+  (ligature-set-ligatures 't '("www"))
+  ;; Enable traditional ligature support in eww-mode, if the
+  ;; `variable-pitch' face supports it
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+  ;; Enable all relevant ligatures in programming modes
+  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                                       "\\\\" "://"))
+  ;; Enables ligature checks globally in all buffers. You can also do it
+  ;; per mode with `ligature-mode'.
+  (global-ligature-mode t)
   )
 
 

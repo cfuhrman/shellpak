@@ -217,10 +217,7 @@
     :hook (lsp-mode . lsp-ui-mode)
 
     :config
-    (if (eq window-system nil)
-        (setq lsp-ui-doc-show-with-cursor t)
-      (setq lsp-ui-doc-show-with-mouse t)
-      )
+    (setq lsp-ui-doc-show-with-cursor t)
 
     :custom
     (lsp-ui-doc-alignment 'window)
@@ -345,7 +342,6 @@
   :custom
   (yas-wrap-around-region t)
   )
-
 
 
 (provide 'cmf-ide)

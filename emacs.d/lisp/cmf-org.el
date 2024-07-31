@@ -391,6 +391,8 @@
   ;; Code borrowed from https://github.com/daviwil/emacs-from-scratch/blob/master/init.el
   (defun cmf/org-font-setup ()
     "Set up font settings for `org-mode' under Emacs."
+
+    ;; Set up org-mode headings to appropriate sizes
     (dolist (face '((org-level-1 . 1.75)
                     (org-level-2 . 1.50)
                     (org-level-3 . 1.25)
@@ -401,20 +403,16 @@
                     (org-level-8 . 1.1)))
       (set-face-attribute (car face) nil :font "Cantarell"
                           :weight 'regular :height (cdr face)))
-
-    ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-    (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch :height 1.1)
-    (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
-    (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
-    ;; (set-face-attribute 'org-date         :height 1.1)
-    (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch) :height 1.1)
-    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch) :height 1.1)
-    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-    (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
-    (set-face-attribute 'line-number nil :inherit 'fixed-pitch)
-    (set-face-attribute 'line-number-current-line nil :inherit
-                        'fixed-pitch)
+    
+    ;; Set default org-mode fonts for blocks, codes, etc.,
+    (set-face-attribute 'org-code nil
+                        :foundry "CTDB"
+                        :family "Fira Code"
+                        :foreground nil)
+    (set-face-attribute 'org-block nil
+                        :inherit 'org-code)
+    (set-face-attribute 'org-verbatim nil
+                        :inherit 'org-code)
     )
 
   (org-clock-persistence-insinuate)

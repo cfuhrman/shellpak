@@ -436,6 +436,7 @@ usage: ${0##*/} -h This screen                             \\
                 -b (Default:\$HOME/Backup/shell) Location   \\
                    of backup files
                 -n Do _not_ link files                     \\
+                -e Install emacs configuration only        \\
                 -g Set up/remove GoLang Development        \\
                 -l Set up Perl Language Server             \\
         	-p Set up Python Development               \\
@@ -451,7 +452,7 @@ STDERR
 
 headerDisplay
 
-args=$(getopt d:b:hlnrpgu $*)
+args=$(getopt d:b:hlenrpgu $*)
 
 set -- $args
 
@@ -483,6 +484,10 @@ do
                 BACKUPDIR=$2; shift;
                 inform $L1 $TRUE "Existing files to be backed up in ${BACKUPDIR}"
                 ;;
+        -e)
+		HOMEDOTFILES=('emacs.d')
+		inform $L1 $TRUE 'Only emacs configuration will be installed'
+		;;
 
         -g)
         	GOINSTALL=1
@@ -539,6 +544,7 @@ if [ ${NOLINK} -ne 1 ]; then
 
         # Iterate through each dot-file, copying it over as
         # appropriate
+        inform $L1 $TRUE "Backing up existing files to ${BACKUPDIR}"
         for file in ${HOMEDOTFILES[@]}; do
 
                 DOTFILE="${HOME}/.${file}"

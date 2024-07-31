@@ -32,6 +32,14 @@
     - GNU Make
     - rsync
 
+*** Emacs Font Requirements
+
+    This Emacs configuration makes use of the following fonts:
+
+     - [[https://fonts.google.com/specimen/Cantarell][Cantarell]]
+     - [[https://github.com/tonsky/FiraCode][Fira Code]]
+     - [[https://www.jetbrains.com/lp/mono/][JetBrains Mono]]
+
 ** Supported Platforms
 
    The following operating systems are supported:
@@ -97,6 +105,9 @@
 
    # Do not automatically link files during installation
    $ ./setup.sh -n
+
+   # Only install emacs configuration
+   $ ./setup.sh -e
 
    # Set up go programming environment
    $ ./setup.sh -g

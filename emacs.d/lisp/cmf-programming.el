@@ -34,8 +34,8 @@
      (awk-mode  . "awk")
      (other     . "cmf"))))
  '(emerge-combine-versions-template "
-%b
 %a
+%b
 ")
  '(show-paren-mode t)
  )
@@ -385,7 +385,12 @@
   (use-package sh-mode
     ;; This is a built-in mode
 
-    :hook (sh-mode . lsp)
+    :hook (
+           (sh-mode . lsp)
+           (sh-mode .
+                    (lambda ()
+                      (setq indent-tabs-mode nil)))
+           )
 
     :custom
     (sh-indent-comment t)

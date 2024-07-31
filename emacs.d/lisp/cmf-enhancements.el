@@ -163,7 +163,11 @@
 
   :custom
   (sudo-edit-indicator-mode t)
-  )
+
+  :config
+  (custom-set-faces
+   '(sudo-edit-header-face ((t (:background "firebrick" :foreground "white" :box (:line-width (2 . 2) :color "grey75" :style released-button))))))
+   )
 
 (unless (eq (executable-find "w3m") nil)
   (use-package w3m
