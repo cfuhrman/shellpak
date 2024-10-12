@@ -174,17 +174,6 @@
           #'ivy-format-function-line)
   )
 
-(use-package ivy-xref
-  :ensure t
-  :after ivy
-
-  :init
-  (when (>= emacs-major-version 27)
-    (setq xref-show-definitions-function #'ivy-xref-show-defs))
-
-  (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
-  )
-
 (use-package swiper
   :ensure t
   :after ivy
@@ -273,7 +262,7 @@
                       (undo-tree-mode t))))
 
   :custom
-  (undo-tree-history-directory-alist '(("" . "/tmp/cmf-undo-tree")))
+  (undo-tree-history-directory-alist '(("" . "~/.emacs.d/undo")))
   (undo-tree-visualizer-diff t)
   (undo-tree-visualizer-timestamps t)
   )
@@ -282,7 +271,7 @@
   :ensure t
   :diminish which-key-mode
 
-  :init
+  :config
   (which-key-mode)
 
   :custom

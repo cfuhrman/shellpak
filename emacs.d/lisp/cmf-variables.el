@@ -51,6 +51,7 @@
  '(calendar-view-holidays-initially-flag nil)
  '(custom-file (locate-user-emacs-file "custom.el"))
  '(delete-by-moving-to-trash t)
+ '(send-mail-function 'sendmail-send-it)
  '(user-full-name cmf/full-name)
  '(user-mail-address cmf/mail-address)
  )

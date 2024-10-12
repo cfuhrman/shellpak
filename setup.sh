@@ -627,8 +627,13 @@ if [ ${NOLINK} -ne 1 ]; then
                 # appropriate
                 if [ ! -e ${DOTFILE} ]; then
                         inform $L2 $FALSE "Linking ${DOTFILE}"
-                        ln -s ${SHELLDIR}/${file} ${DOTFILE}
-                        echo -e "${GREEN}done${NORMAL}"
+
+                        if [ -e ${SHELLDIR}/${file} ]; then
+                                ln -s ${SHELLDIR}/${file} ${DOTFILE}
+                                echo -e "${GREEN}done${NORMAL}"
+                        else
+                                echo -e "${RED}not found${NORMAL}"
+                        fi
                 fi
 
         done

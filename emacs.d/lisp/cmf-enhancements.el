@@ -17,17 +17,12 @@
 ;;  Contains macros and customizations that change behavior or enhance
 ;;  functionality.
 ;;
-;; WARN: cmf-ui *must* be loaded before this file
-;;
 
 ;;; Code:
 
-;;
-;; Variables
-;;
-
+(require 'cmf-ide)
+(require 'cmf-ui)
 (require 'cmf-variables)
-
 
 ;;
 ;; Macros
@@ -136,6 +131,17 @@
       :config
       (osx-location-watch)
       )
+  )
+
+(use-package multiple-cursors
+  :ensure t
+
+  :bind (
+         ("C-S-c C-S-c" . mc/edit-lines)
+         ("C->"         . mc/mark-next-like-this)
+         ("C-<"         . mc/mark-previous-like-this)
+         ("C-c C-<"     . mc/mark-all-like-this)
+         )
   )
 
 (use-package restclient

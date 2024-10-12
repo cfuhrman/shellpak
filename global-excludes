@@ -43,6 +43,7 @@ request
 session.*
 tramp
 transient/
+undo/
 url/
 workspace/
 xkcd/

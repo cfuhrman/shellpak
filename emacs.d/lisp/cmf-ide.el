@@ -18,14 +18,11 @@
 ;; This includes packages for working with code or projects in
 ;; general.
 ;;
-;; WARN: This *must* be loaded before the following packages:
-;;
-;;        - cmf-enhancements
-;;        - cmf-file-support
-;;        - cmf-programming
-;;
 
 ;;; Code:
+
+(require 'cmf-ui)
+
 
 ;;
 ;; Variables
@@ -77,7 +74,7 @@
   (flycheck-idle-change-delay 3)
   (flycheck-phpcs-standard "PSR2")
 
-  :init
+  :config
   (global-flycheck-mode)
   )
 
@@ -146,20 +143,35 @@
      ("FIXME"           . "#cc9393")
      ("XXX+"            . "#cc9393")
      ("\\?\\?\\?+"      . "#cc9393")
-     ("WARN"            . "#cd5555")
+     ("WARN"            . font-lock-warning-face)
      ("BUG"             . "#8c5353")
      ("LATER"           . "#d0bf8f"))))
   )
 
+(use-package indent-bars
+  :ensure t
+
+  :hook (prog-mode . indent-bars-mode)
+  )
+
+(use-package ivy-xref
+  :ensure t
+  :after ivy
+
+  :init
+  (when (>= emacs-major-version 27)
+    (setq xref-show-definitions-function #'ivy-xref-show-defs))
+
+  (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+  )
+
 (use-package log-edit
   ;; This is a built-in mode
-  :mode (
-         ("COMMIT.*"   . log-edit-mode)
+  :mode (("COMMIT.*"   . log-edit-mode)
          ("ci-comment" . log-edit-mode)
          ("bzr_log\\." . log-edit-mode)
          ("cvs*"       . log-edit-mode)
-         ("pico\\."    . log-edit-mode)
-         )
+         ("pico\\."    . log-edit-mode))
   )
 
 (use-package lsp-mode
@@ -252,6 +264,7 @@
   :config
   (dolist (devpath '("~/dev/"
                      "~/org/"
+                     "~/source/repos/"
                      ))
     (if (file-directory-p (expand-file-name devpath
                                             user-emacs-directory))
@@ -324,10 +337,8 @@
   :ensure t
   :diminish yasnippet-mode
 
-  :init
-  (yas-global-mode t)
-
   :config
+  (yas-global-mode t)
   (use-package yasnippet-snippets
     :ensure t
     )
@@ -338,7 +349,7 @@
 
     :bind (("C-x C-k =" . ivy-yasnippet))
     )
-  
+
   :custom
   (yas-wrap-around-region t)
   )

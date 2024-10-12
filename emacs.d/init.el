@@ -124,7 +124,7 @@ https://github.com/daviwil/emacs-from-scratch/blob/master/init.el"
 
 (setq package-archives
       '(("melpa"        . "https://melpa.org/packages/")
-        ("gnu"          . "http://elpa.gnu.org/packages/"))
+        ("gnu"          . "https://elpa.gnu.org/packages/"))
       )
 (setq package-check-signature nil)
 
@@ -172,11 +172,11 @@ https://github.com/daviwil/emacs-from-scratch/blob/master/init.el"
 ;; Programming environment customization
 (require 'cmf-programming)
 
-;; Publishing customization
-(require 'cmf-publishing)
-
 ;; Add support for specific file types
 (require 'cmf-file-support)
+
+;; Publishing customization
+(require 'cmf-publishing)
 
 ;; Add enhancements
 (require 'cmf-enhancements)

@@ -62,6 +62,8 @@ ZIPFILE=shellpak-${FOSSIL_BRANCH}-${CKOUT_DATE}.zip
 GIT_REPO=${HOME}/dev/shpak
 
 # Command options
+RCLONE_BIN=rclone
+RCLONE_OPTS=-c --exclude-from=global-excludes
 RSYNC_BIN=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS=-Ccavz --exclude='svn-commit*' --exclude='.AppleDouble' --exclude='*~' --exclude='.DS_Store' --exclude-from=${RSYNC_EXCLUDE} --delete --timeout=30
@@ -111,13 +113,9 @@ update: clean setup.sh
 	@echo 'Executing setup.sh for ShellPAK update'
 	@${SETUP_BIN} ${DRYRUN_OPT}
 
-tags: gtags
-
-# Note that this target may not work as expected when used on a case
-# insensitive file system (e.g., default HFS+ Apple file system)
-gtags:
-	@echo 'Generating tags using global(1)'
-	@gtags
+windows: rclone emacs-dir
+	@echo 'Copying emacs configuration under MS-Windows'
+	${RCLONE_BIN} copy emacs.d ${HOMEPATH}/AppData/Roaming/.emacs.d ${RCLONE_OPTS}
 
 local: ${LOCALHOSTS}
 	@echo 'All local hosts updated'
@@ -128,7 +126,7 @@ remote: ${REMOTEHOSTS}
 disabled: ${DISABLEDHOSTS}
 	@echo 'All disabled hosts updated (Are they working now?)'
 
-clean: clean-echo ${CLEANDIRS} clean-dist clean-tags
+clean: clean-echo ${CLEANDIRS} clean-dist
 	@rm ${RM_OPTS} *.bak
 	@rm ${RM_OPTS} *~
 	@rm ${RM_OPTS} *-baseline*
@@ -153,12 +151,7 @@ clean-xkcd:
 	@echo 'Removing left-over xkcd comics:'
 	@rm ${RM_OPTS}r ${HOME}/.emacs.d/xkcd/*
 
-clean-tags: clean-gtags
-
-clean-gtags:
-	@rm ${RM_OPTS} GPATH GTAGS GRTAGS
-
-clean-all: clean clean-elc clean-xkcd clean-tags clean-tomdoc
+clean-all: clean clean-elc clean-xkcd clean-tomdoc
 
 clean-dist:
 	@rm ${RM_OPTS} shellpak*.tar.gz
@@ -210,6 +203,15 @@ emacs:
 
 fossil:
 	@which fossil >/dev/null
+
+rclone:
+	@which rclone >/dev/null
+
+# Directory targets
+emacs-dir: ${HOMEPATH}/AppData/Roaming/.emacs.d
+
+${HOMEPATH}/AppData/Roaming/.emacs.d:
+	mkdir -p ${HOMEPATH}/AppData/Roaming/.emacs.d
 
 #
 # Documentation Targets
@@ -276,11 +278,11 @@ ${DISABLEDHOSTS}:
 # Distribution targets
 #
 
-${DISTFILE}: clean clean-tags version
+${DISTFILE}: clean version
 	@fossil tarball ${FOSSIL_BRANCH} ${DISTFILE}
 	@echo "Successfully created ${DISTFILE}"
 
-${ZIPFILE}: clean clean-tags version
+${ZIPFILE}: clean version
 	@fossil zip ${FOSSIL_BRANCH} ${ZIPFILE}
 	@echo "Successfully created ${ZIPFILE}"
 

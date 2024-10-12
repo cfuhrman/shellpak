@@ -18,10 +18,12 @@
 ;; configuration or JSON files.  These are files that are not related
 ;; to specific programming languages.
 ;;
-;; WARN: cmf-ui *must* be loaded before this file
-;;
 
 ;;; Code:
+
+(require 'cmf-ide)
+(require 'cmf-ui)
+
 
 ;;
 ;; Packages

@@ -20,6 +20,9 @@
 
 ;;; Code:
 
+(require 'cmf-ide)
+
+
 ;;
 ;; Variables
 ;;
@@ -76,19 +79,17 @@
   :ensure t
   :defer t
 
-  :hook (yaml-mode .
-                   (lambda ()
-                     (ansible 1)))
+  :hook (yaml-mode . ansible-mode)
 
   :config
   (use-package company-ansible
     :ensure t
-    :no-require t
     :after company
 
     :hook (ansible-mode .
                         (lambda ()
-                          (add-to-list 'company-backends 'company-ansible)))
+                          (add-to-list 'company-backends
+                                       'company-ansible)))
     )
   )
 
@@ -152,7 +153,12 @@
     ;; This is a built-in mode on Emacs >= 29.1
 
     :hook (csharp-mode . lsp-deferred)
-    :mode ("\\.csproj\\'" . nxml-mode)
+    :hook (csharp-mode .
+                       (lambda ()
+                         (setq indent-tabs-mode nil)))
+
+    :mode (("\\.csproj\\'"         . nxml-mode)
+           ("\\.cshtml\\.cs\\'"    . csharp-mode))
 
     :init
     ;; csharp-mode is built in as of Emacs 29.1, so only install if
@@ -290,7 +296,7 @@
                        (setq lsp-imenu-index-symbol-kinds '(Class Property Constuctor Method Function))
                        (setq lsp-imenu-sort-methods '(name)))))
 
-    :mode (("\\.php\\'" . php-mode))
+    :mode ("\\.php\\'" . php-mode)
 
     :custom
     ;; DONT: License key settings not appropriate for public!
@@ -416,7 +422,7 @@
 
 (use-package sql
   ;; This is a built-in mode
-  :mode (("/sql[^/]]*" . sql-mode))
+  :mode ("/sql[^/]]*" . sql-mode)
 
   :config
   (use-package sql-indent
@@ -439,9 +445,10 @@
   :no-require t
 
   ;; LATER: Consider using web-mode for *.html pages
-  :mode (("\\.cshtml" . web-mode)
-         ("\\.blade"  . web-mode)
-         ("\\.svelte" . web-mode))
+  :mode (("\\.cshtml$"   . web-mode)
+         ("\\.blade"     . web-mode)
+         ("\\.razor"     . web-mode)
+         ("\\.svelte"    . web-mode))
 
   :custom
   (web-mode-attr-indent-offset 4)
@@ -449,9 +456,10 @@
 
   :config
   (setq web-mode-engines-alist
-	'(("razor"  . "\\.cshtml\\'")
-	  ("blade"  . "\\.blade\\.")
-	  ("svelte" . "\\.svelte\\."))
+        '(("razor"  . "\\.cshtml\\'")
+          ("razor"  . "\\.razor\\'")
+          ("blade"  . "\\.blade\\.")
+          ("svelte" . "\\.svelte\\."))
         )
   )
 
