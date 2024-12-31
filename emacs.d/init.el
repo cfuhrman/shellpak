@@ -25,7 +25,7 @@
 (setq gc-cons-threshold (* 500 1000 1000))
 
 ;; Variables needed for initialization
-(defvar cmf/min_emacs_version "27.1")
+(defvar cmf/min_emacs_version "28.1")
 (defvar cmf/path)
 
 ;; Make sure we are running a recent version of Emacs
@@ -57,6 +57,12 @@ https://github.com/daviwil/emacs-from-scratch/blob/master/init.el"
 
 ;; Uncomment to enable
 ;; (add-hook 'emacs-startup-hook #'cmf/display-startup-time)
+
+
+;; GENERAL CONFIGURATION
+;;
+;; Contains general emacs configuration
+;; --------------------------------------------------------------------
 
 ;; Set load-path
 (dolist (lpath '("./lisp"
@@ -90,12 +96,6 @@ https://github.com/daviwil/emacs-from-scratch/blob/master/init.el"
       )
     )
   )
-
-
-;; GENERAL CONFIGURATION
-;;
-;; Contains general emacs configuration, including set up of package.el
-;; --------------------------------------------------------------------
 
 ;; Set trash-directory, creating it if we need to
 (pcase system-type

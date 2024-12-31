@@ -26,11 +26,11 @@ export SHELLDIR
 # Set WINHOME if it is present.  Note that this block of code assumes
 # that the UNIX username is the same as the Windows username
 if [ -d /mnt/c/Users/${USER} ]; then
-	export WINHOME=/mnt/c/Users/${USER}
+        export WINHOME=/mnt/c/Users/${USER}
 elif [ -n ${USERPROFILE} ]; then
-	export WINHOME=${USERPROFILE}
+        export WINHOME=${USERPROFILE}
 else
-	export WINHOME=
+        export WINHOME=
 fi
 
 # Includes
@@ -46,9 +46,9 @@ if [ -f ${SHELLDIR}/VERSION ]; then
         export SHELLPAK_VERSION
 fi
 
-export HOSTNAME=$(hostname)	# Name of host from hostname(1)
-export OSTYPE=$(uname)		# Operating system name from uname(8)
-export OSVERSION=$(uname -r)	# Operating system version from uname(8)
+export HOSTNAME=$(hostname)        # Name of host from hostname(1)
+export OSTYPE=$(uname)                # Operating system name from uname(8)
+export OSVERSION=$(uname -r)        # Operating system version from uname(8)
 
 # Public: Sets up preferred timezone
 export TZ='America/Los_Angeles'
@@ -92,12 +92,12 @@ __sp_bashrc_set_browser ()
 # See code for order of preference.
 __sp_bashrc_set_editor ()
 {
-        editors=('emacs'			\
-                 'sensible-editor'		\
-                 'mg'				\
-                 'nano'				\
-                 'vim'				\
-                 'vi'				\
+        editors=('emacs'                        \
+                 'sensible-editor'              \
+                 'mg'                           \
+                 'nano'                         \
+                 'vim'                          \
+                 'vi'                           \
                 )
 
         for edit in ${editors[@]}; do
@@ -130,9 +130,9 @@ __sp_bashrc_set_pager ()
                 PAGER='cat'
         else
 
-                pagers=('sensible-pager'	\
-                        'less'			\
-                        'more'			\
+                pagers=('sensible-pager'        \
+                        'less'                  \
+                        'more'                  \
                         'view'
                        )
 
@@ -175,21 +175,21 @@ if [ "$PS1" ]; then
 fi
 
 # Directories to evaluate for adding to PATH
-PATHS=('/usr/games'				\
-       '/opt/schily/bin'			\
-       '/usr/X11R6/bin'				\
-       '/usr/X11R7/bin'				\
-       '/usr/sbin'				\
-       '/opt/bin'				\
-       '/opt/sbin'				\
-       '/sbin'					\
-       '/usr/local/sbin'			\
-       "$HOME/.composer/vendor/bin"		\
-       "$HOME/.config/composer/vendor/bin"	\
-       "$HOME/.dotnet/tools"			\
-       "$HOME/.local/bin"			\
-       "$HOME/vendor/bin"			\
-       "$HOME/perl5/bin"			\
+PATHS=('/usr/games'                             \
+       '/opt/schily/bin'                        \
+       '/usr/X11R6/bin'                         \
+       '/usr/X11R7/bin'                         \
+       '/usr/sbin'                              \
+       '/opt/bin'                               \
+       '/opt/sbin'                              \
+       '/sbin'                                  \
+       '/usr/local/sbin'                        \
+       "$HOME/.composer/vendor/bin"             \
+       "$HOME/.config/composer/vendor/bin"      \
+       "$HOME/.dotnet/tools"                    \
+       "$HOME/.local/bin"                       \
+       "$HOME/vendor/bin"                       \
+       "$HOME/perl5/bin"                        \
        "$HOME/bin"
       )
 
@@ -203,8 +203,8 @@ for path in ${PATHS[@]}; do
 
 done
 
-PATH=${PATH#:}			# Get rid of pre-pended colons
-PATH=${PATH//::/:}		# Remove double colons
+PATH=${PATH#:}                 # Get rid of pre-pended colons
+PATH=${PATH//::/:}             # Remove double colons
 
 # Public: Default program for awk(1)
 AWK=awk
@@ -221,6 +221,9 @@ fi
 
 export PATH
 
+# Customize colors produced by ls(1) and friends
+export LS_COLORS="no=00:fi=00:di=01;34:ln=00;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=41;33;01:ex=00;32:*.cmd=00;32:*.exe=01;32:*.com=01;32:*.bat=01;32:*.btm=01;32:*.dll=01;32:*.tar=00;31:*.tbz=00;31:*.tgz=00;31:*.rpm=00;31:*.deb=00;31:*.arj=00;31:*.taz=00;31:*.lzh=00;31:*.lzma=00;31:*.zip=00;31:*.zoo=00;31:*.z=00;31:*.Z=00;31:*.gz=00;31:*.bz2=00;31:*.tb2=00;31:*.tz2=00;31:*.tbz2=00;31:*.xz=00;31:*.avi=01;35:*.bmp=01;35:*.dl=01;35:*.fli=01;35:*.gif=01;35:*.gl=01;35:*.jpg=01;35:*.jpeg=01;35:*.mkv=01;35:*.mng=01;35:*.mov=01;35:*.mp4=01;35:*.mpg=01;35:*.pcx=01;35:*.pbm=01;35:*.pgm=01;35:*.png=01;35:*.ppm=01;35:*.svg=01;35:*.tga=01;35:*.tif=01;35:*.webm=01;35:*.webp=01;35:*.wmv=01;35:*.xbm=01;35:*.xcf=01;35:*.xpm=01;35:*.aiff=00;32:*.ape=00;32:*.au=00;32:*.flac=00;32:*.m4a=00;32:*.mid=00;32:*.mp3=00;32:*.mpc=00;32:*.ogg=00;32:*.voc=00;32:*.wav=00;32:*.wma=00;32:*.wv=00;32:"
+
 PERL5LIB="${HOME}/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
 PERL_LOCAL_LIB_ROOT="${HOME}/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
 PERL_MB_OPT="--install_base \"${HOME}/perl5\""; export PERL_MB_OPT;
@@ -228,7 +231,7 @@ PERL_MM_OPT="INSTALL_BASE=${HOME}/perl5"; export PERL_MM_OPT;
 
 # Make sure dotnet programs know where it is installed
 if [ -d /usr/share/dotnet ]; then
-	export DOTNET_ROOT=/usr/share/dotnet
+        export DOTNET_ROOT=/usr/share/dotnet
 fi
 
 
@@ -289,9 +292,9 @@ export HISTIGNORE
 # Save multi-line commands in history as single line
 shopt -s cmdhist
 
-export HISTSIZE=10000		# Number of commands to keep in history
-export HISTFILESIZE=${HISTSIZE}	# Sets max size of history
-export HISTTIMEFORMAT="[%F %T]: " # Time format of history
+export HISTSIZE=10000                  # Number of commands to keep in history
+export HISTFILESIZE=${HISTSIZE}        # Sets max size of history
+export HISTTIMEFORMAT="[%F %T]: "      # Time format of history
 
 #
 # Bash behavior settings
@@ -312,6 +315,10 @@ shopt -s lithist
 
 # Enable egrep-style pattern matching
 shopt -s extglob
+
+# Check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
 
 #
 # Additional Logic

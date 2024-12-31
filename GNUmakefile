@@ -63,7 +63,7 @@ GIT_REPO=${HOME}/dev/shpak
 
 # Command options
 RCLONE_BIN=rclone
-RCLONE_OPTS=-c --exclude-from=global-excludes
+RCLONE_OPTS=-c --progress --stats-one-line -v --exclude-from=global-excludes
 RSYNC_BIN=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS=-Ccavz --exclude='svn-commit*' --exclude='.AppleDouble' --exclude='*~' --exclude='.DS_Store' --exclude-from=${RSYNC_EXCLUDE} --delete --timeout=30

@@ -47,8 +47,8 @@ for path in ${PATHS[@]}; do
 
 done
 
-PATH=${PATH#:}			# Get rid of pre-pended colons
-PATH=${PATH//::/:}		# Remove double colons
+PATH=${PATH#:}                 # Get rid of pre-pended colons
+PATH=${PATH//::/:}             # Remove double colons
 
 export PATH
 

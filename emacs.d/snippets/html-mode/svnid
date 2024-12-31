@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name : SVN ID Keyword
+# expand-env: ((yas/indent-line 'fixed))
+#
+# --
+<!-- $Id$ -->

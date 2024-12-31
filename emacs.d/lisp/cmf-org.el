@@ -145,7 +145,7 @@
  '(org-clock-persist (quote history))
  '(org-clock-persist-file "~/.org-clock-save.el")
  '(org-complete-tags-always-offer-all-agenda-tags t)
- '(org-crypt-key "943DD02859DB2579")
+ '(org-crypt-key nil)
  '(org-crypt-tag-matcher "CRYPT")
  '(org-default-notes-file "~/org/notes.org")
  '(org-directory "~/org")
@@ -382,10 +382,6 @@
     (use-package ox-pandoc
       :ensure t
       )
-    )
-
-  (use-package ox-twbs
-    :ensure t
     )
 
   ;; Code borrowed from https://github.com/daviwil/emacs-from-scratch/blob/master/init.el

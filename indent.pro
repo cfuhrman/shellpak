@@ -6,6 +6,8 @@
 // Describes preferred indentation options for C-Code.  Note this file
 // is compatible with GNU Indent only.
 //
+// Created Thu Sep 6 13:15:34 2007 UTC
+//
 // ====================================================================
 --blank-lines-after-procedures
 --braces-on-if-line

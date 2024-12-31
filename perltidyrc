@@ -4,6 +4,8 @@
 #
 # perltidy options for formatting perl code to my own personal preferences
 #
+# Created Sat May 27 17:31:53 2006 UTC
+#
 # ==================================================================== 
 
 --indent-columns=8

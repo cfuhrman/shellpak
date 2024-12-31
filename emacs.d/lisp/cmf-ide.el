@@ -36,6 +36,7 @@
 ;; Functions
 ;;
 
+;; TODO : Remove this function and all references
 (defun cmf/choose-line-number-mode-hook ()
   "Determine line number mode to use based on Emacs version."
   (if (version< emacs-version "26.1")
@@ -152,6 +153,10 @@
   :ensure t
 
   :hook (prog-mode . indent-bars-mode)
+
+  :config
+  (if (eq system-type 'windows-nt)
+      (setq indent-bars-prefer-character t))
   )
 
 (use-package ivy-xref
@@ -326,11 +331,13 @@
     )
   )
 
-(use-package vc-fossil
-  :ensure t
+(unless (eq (executable-find "fossil") nil)
+  (use-package vc-fossil
+    :ensure t
 
-  :config
-  (add-to-list 'vc-handled-backends 'Fossil)
+    :config
+    (add-to-list 'vc-handled-backends 'Fossil)
+    )
   )
 
 (use-package yasnippet

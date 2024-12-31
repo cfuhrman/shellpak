@@ -43,8 +43,8 @@ for path in ${PATHS[@]}; do
 
 done
 
-PATH=${PATH#:}			# Get rid of pre-pended colons
-PATH=${PATH//::/:}		# Remove double colons
+PATH=${PATH#:}                 # Get rid of pre-pended colons
+PATH=${PATH//::/:}             # Remove double colons
 
 # Place /opt/pkg/bin first if pkgsrc is present
 if [ -d /opt/pkg/bin ]; then

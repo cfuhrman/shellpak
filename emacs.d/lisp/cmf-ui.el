@@ -92,7 +92,7 @@
   :ensure t
   :diminish company-box-mode
   :if window-system
-  :unless (version< emacs-version "26.1")
+  :unless (version< emacs-version "26.1") ; WARN: Unknown if this works
   :after company
 
   :hook (company-mode . company-box-mode)
@@ -146,10 +146,8 @@
   (ivy-height 10)
   (ivy-count-format "(%d/%d) ")
 
-  :init
-  (ivy-mode t)
-
   :config
+  (ivy-mode t)
   (use-package ivy-hydra
     :ensure t
     :pin gnu
@@ -182,9 +180,6 @@
          ("C-s"         . swiper)
          ("C-r"         . swiper-backward)
          )
-
-  :init
-  (ivy-mode t)
   )
 
 (use-package counsel
@@ -268,11 +263,19 @@
   )
 
 (use-package which-key
-  :ensure t
+  ;; This is a built-in mode on Emacs >= 30.1
   :diminish which-key-mode
 
+  :init
+  ;; which-key is built in as of Emacs 30.1, so only install if
+  ;; necessary
+  (if (and (version< emacs-version "30.1")
+           (not (package-installed-p 'which-key)))
+      (package-install 'which-key)
+    )
+
   :config
-  (which-key-mode)
+  (which-key-mode t)
 
   :custom
   (which-key-idle-delay 1)

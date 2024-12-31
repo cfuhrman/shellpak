@@ -4,6 +4,9 @@
 # gitconfig
 #
 # See git-config(1) for details
+#
+# Created Fri Jan 27 18:14:16 2012 UTC
+#
 
 [user]
 	name = Change My Name
@@ -25,8 +28,10 @@
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 
 [magit]
-        hideCampaign = true
+	hideCampaign = true
+
 [core]
 	autocrlf = false
+
 [init]
 	defaultBranch = trunk

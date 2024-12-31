@@ -1,5 +1,7 @@
 ! swap Caps_Lock and Control_R
 !
+! Created Wed Feb 23 01:51:01 2022 UTC
+!
 remove Lock = Caps_Lock
 remove Control = Control_L
 keysym Control_L = Caps_Lock

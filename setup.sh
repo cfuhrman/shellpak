@@ -43,7 +43,7 @@ MAKE=make
 COPYRIGHT='Copyright (c) 2000-2024 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 CWD_IS_SHELL_HOME=$( [ ${SHELLDIR} != ${PWD} ]; echo $? )
-DRYRUN=""			# Dry-run option to pass to rsync(1)
+DRYRUN=""           # Dry-run option to pass to rsync(1)
 UNINSTALL=0
 GOINSTALL=0
 GOPATH=${HOME}/go
@@ -158,7 +158,7 @@ this?
 EOF
 
         if [[ -d ${GOPATH} && $GOINSTALL -ne 0 ]]; then
-        	cat <<EOF
+                cat <<EOF
 Note that contents in ${GOPATH} will be removed as well!!!!
 Better save it before continuing!
 
@@ -223,18 +223,18 @@ EOF
         done
 
         if [ $GOINSTALL -ne 0 ]; then
-        	inform $L2 $FALSE \
-        	       "Removing go environment"
+                inform $L2 $FALSE \
+                       "Removing go environment"
 
-        	rm -rf ${GOPATH}
-        	echo "${GREEN}done${NORMAL}"
+                rm -rf ${GOPATH}
+                echo "${GREEN}done${NORMAL}"
         fi
 
         # Restore .emacs file if it exists
         if [ -f ${BACKUPDIR}/.emacs ]; then
-        	inform $L2 $FALSE "Restoring original .emacs"
-        	mv ${BACKUPDIR}/.emacs ${HOME}
-        	echo "${GREEN}done${NORMAL}"
+                inform $L2 $FALSE "Restoring original .emacs"
+                mv ${BACKUPDIR}/.emacs ${HOME}
+                echo "${GREEN}done${NORMAL}"
         fi
 
         # Finally remove SHELLDIR
@@ -260,9 +260,9 @@ goSetup ()
         local GOGITHUB=${GOSRC}/github.com
 
         if [ -d $GOPATH ]; then
-        	inform $L1 $TRUE \
-        	       "Go development has already been set up"
-        	return
+                inform $L1 $TRUE \
+                       "Go development has already been set up"
+                return
         fi
 
         inform $L1 $TRUE "Setting up development environment for golang"
@@ -274,18 +274,18 @@ goSetup ()
         # Create the directories
         for goDir in $GOPATH $GOBIN $GOSRC $GOGITHUB
         do
-        	mkdir -p $goDir
+                mkdir -p $goDir
         done
 
         if [ ! -d ${GOGITHUB}/$goSetup_git_user ]; then
-        	mkdir ${GOGITHUB}/$goSetup_git_user
+                mkdir ${GOGITHUB}/$goSetup_git_user
         fi
 
         inform $L2 $TRUE "Environment set up for golang"
 
         if ! type -p go >/dev/null; then
-        	inform $L2 $TRUE \
-        	       "${BOLD}$YELLOW}NOTICE:${NORMAL} Go binary not found in path"
+                inform $L2 $TRUE \
+                       "${BOLD}$YELLOW}NOTICE:${NORMAL} Go binary not found in path"
                 return
         fi
 
@@ -302,14 +302,14 @@ goSetup ()
 
         # Install gocode for auto-completion
         if [ ! -f {$GOBIN}/gocode ]; then
-        	inform $L2 $TRUE "Installing gocode"
-        	go ${GOINSTALLCMD} github.com/nsf/gocode${GOPKGVERSION}
+                inform $L2 $TRUE "Installing gocode"
+                go ${GOINSTALLCMD} github.com/nsf/gocode${GOPKGVERSION}
         fi
 
         # Install gotags for go-direx
         if [ ! -f {$GOBIN}/gotags ]; then
-        	inform $L2 $TRUE "Installing gotags"
-        	go ${GOINSTALLCMD} github.com/jstemmer/gotags${GOPKGVERSION}
+                inform $L2 $TRUE "Installing gotags"
+                go ${GOINSTALLCMD} github.com/jstemmer/gotags${GOPKGVERSION}
         fi
 
         # Install gopls
@@ -336,7 +336,7 @@ plSetup ()
         # have their DNS configured to return a bogus address should a
         # lookup fail, which can confuse the AnyEvent test suite.
         local PERL_MODULES=("Perl::LanguageServer"
-        		   )
+                           )
 
         export PATH=~/perl5/bin:$PATH
         export CC=$( which gcc )
@@ -344,38 +344,38 @@ plSetup ()
         inform $L1 $TRUE "Install Perl Language Server (this may take a while)"
 
         for module in ${PERL_MODULES[@]}; do
-        	inform $L2 $TRUE " ... ${module}"
-        	cpan install $module
+                inform $L2 $TRUE " ... ${module}"
+                cpan install $module
         done
 
         unset CC
-	inform $L2 $TRUE						\
-	"Setup may need to be run twice with the \"-l\" option to ensure installation of Perl::LanguageServer"
+        inform $L2 $TRUE                                                \
+        "Setup may need to be run twice with the \"-l\" option to ensure installation of Perl::LanguageServer"
         inform $L2 $TRUE "Done"
 }
 
 # Private: Installs the tools necessary for python development
 pySetup ()
 {
-        local PYTHON_PKGS=('autopep8'		\
-        		   'flake8'		\
-        		   'jedi'		\
-        		   'setuptools-black'	\
-        		   'virtualenv'		\
-        		   'yapf'
-        		  )
+        local PYTHON_PKGS=('autopep8'           \
+                           'flake8'             \
+                           'jedi'               \
+                           'setuptools-black'   \
+                           'virtualenv'         \
+                           'yapf'
+                          )
 
         # Make sure that pip is installed
         if ! type ${PIP_BIN} >/dev/null; then
-        	inform $L1 $TRUE "${RED}ERROR${NORMAL}: python ${PIP_BIN} is not installed on this system.  Cowardly aborting!"
-        	exit 1
+                inform $L1 $TRUE "${RED}ERROR${NORMAL}: python ${PIP_BIN} is not installed on this system.  Cowardly aborting!"
+                exit 1
         fi
 
         inform $L1 $TRUE "Setting up development environment for python${PYTHON_VERSION}"
 
         for pyPkg in ${PYTHON_PKGS[@]}; do
-        	inform $L2 $TRUE " ${pyPkg}"
-        	${PIP_BIN} install --prefix=$HOME $pyPkg
+                inform $L2 $TRUE " ${pyPkg}"
+                ${PIP_BIN} install --prefix=$HOME $pyPkg
         done
 }
 
@@ -439,7 +439,7 @@ usage: ${0##*/} -h This screen                             \\
                 -e Install emacs configuration only        \\
                 -g Set up/remove GoLang Development        \\
                 -l Set up Perl Language Server             \\
-        	-p Set up Python Development               \\
+                -p Set up Python Development               \\
                 -u Uninstall ShellPAK                      \\
                 -r perform a trial run with no changes made
                    (implies -n)
@@ -485,21 +485,21 @@ do
                 inform $L1 $TRUE "Existing files to be backed up in ${BACKUPDIR}"
                 ;;
         -e)
-		HOMEDOTFILES=('emacs.d')
-		inform $L1 $TRUE 'Only emacs configuration will be installed'
-		;;
+                HOMEDOTFILES=('emacs.d')
+                inform $L1 $TRUE 'Only emacs configuration will be installed'
+                ;;
 
         -g)
-        	GOINSTALL=1
-        	;;
+                GOINSTALL=1
+                ;;
 
         -p)
-        	PYINSTALL=1
-        	;;
+                PYINSTALL=1
+                ;;
 
         -l)
-        	PLINSTALL=1
-        	;;
+                PLINSTALL=1
+                ;;
 
         -u)
                 UNINSTALL=1
@@ -618,9 +618,9 @@ if [ ${NOLINK} -ne 1 ]; then
                 # Remove existing link file if it does not link to
                 # desired file
                 if [[ -h ${DOTFILE} && ${SHELLDIR%/}/${file} != ${LINKFILE} ]]; then
-			inform $L2 $FALSE "Removing old link ${DOTFILE}"
+                        inform $L2 $FALSE "Removing old link ${DOTFILE}"
                         rm ${DOTFILE}
-			echo -e "${YELLOW}removed${NORMAL}"
+                        echo -e "${YELLOW}removed${NORMAL}"
                 fi
 
                 # Should the link or file not exist, then link it as

@@ -225,6 +225,15 @@
     )
   )
 
+(use-package html
+  ;; This is a built-in mode
+
+  :hook ((html-mode . lsp-deferred)
+         (html-mode .
+                    (lambda ()
+                      (setq tab-width 4))))
+  )
+
 (use-package java
   ;; This is a built-in mode
 

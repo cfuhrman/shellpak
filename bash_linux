@@ -34,7 +34,7 @@ if [ "x$SHLVL" != 'x1' ] && [ -e '/etc/profile.d' ]; then
 fi
 
 # Directories to evaluate for adding to PATH
-PATHS=('/snap/bin'				\
+PATHS=('/snap/bin'                              \
        '/usr/games'
       )
 
@@ -48,8 +48,8 @@ for path in ${PATHS[@]}; do
 
 done
 
-PATH=${PATH#:}			# Get rid of pre-pended colons
-PATH=${PATH//::/:}		# Remove double colons
+PATH=${PATH#:}                 # Get rid of pre-pended colons
+PATH=${PATH//::/:}             # Remove double colons
 
 # Public: Specify location of mail spool under Linux
 MAIL=/var/spool/mail/$LOGNAME

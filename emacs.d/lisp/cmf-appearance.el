@@ -32,6 +32,34 @@
  )
 
 ;;
+;; Hook adjustments
+;;
+
+(add-hook 'window-setup-hook
+          (lambda ()           
+            (if (not window-system)
+                (progn
+                  (defvar cmf/terminal-number-of-colors (safe-length
+                                                         (tty-color-alist)))
+                  (cond ((> cmf/terminal-number-of-colors 256)
+                         (custom-set-faces
+                          '(tty-menu-disabled-face ((t (:background "darkslategray" :foreground "gray"))))
+                          '(tty-menu-enabled-face ((t (:background "lightslategray" :foreground "brightwhite" :weight bold))))
+                          '(tty-menu-selected-face ((t (:background
+                                                        "firebrick4" :foreground "ghostwhite"))))))
+                        ((> cmf/terminal-number-of-colors 8)
+                         (custom-set-faces
+                          '(tty-menu-disabled-face ((t (:background "color-235" :foreground "lightgray"))))
+                          '(tty-menu-enabled-face ((t (:background "color-238" :foreground "white" :weight bold))))
+                          '(tty-menu-selected-face ((t (:background
+                                                        "color-88" :foreground "brightwhite"))))))
+                        (t             ; default
+                         (custom-set-faces
+                          '(tty-menu-selected-face ((t (:background "cyan" :foreground "white"))))))))
+              )
+            ))
+
+;;
 ;; Default Face Configuration
 ;;
 
@@ -43,6 +71,14 @@
      ;; If there is more than one, they won't work right.
      '(default ((t (:foundry "JB" :family "JetBrains Mono" :height 110)))))
   )
+
+;; Use the Segoe Emoji Font Set should it be found (typically under
+;; MS-Windows systems)
+;;
+;; Code from https://ianyepan.github.io/posts/emacs-emojis/
+(when (member "Segoe UI Emoji" (font-family-list))
+  (set-fontset-font
+   t 'symbol (font-spec :family "Segoe UI Emoji") nil 'prepend))
 
 ;; Remove tool-bar
 (if (window-system)
