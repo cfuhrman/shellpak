@@ -293,7 +293,7 @@ ${ZIPFILE}: clean version
 .PHONY: subdirs ${TXTDIRS}
 .PHONY: subdirs ${MDDIRS}
 .PHONY: subdirs ${DBKDIRS}
-.PHONE: subdirs ${TXIDIRS}
+.PHONY: subdirs ${TXIDIRS}
 .PHONY: clean clean-elc docbook html pdf txt markdown texinfo
 
 # GNUmakefile ends here

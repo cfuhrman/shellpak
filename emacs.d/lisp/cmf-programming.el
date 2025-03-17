@@ -59,10 +59,10 @@
 ;;
 
 (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
-(add-hook 'prog-mode-hook 'cmf/choose-line-number-mode-hook)
 (add-hook 'prog-mode-hook
           (lambda ()
             (auto-fill-mode t)
+            (display-line-numbers-mode t)
             (eldoc-mode t)
             (electric-pair-mode t)
             (subword-mode t)))
@@ -75,33 +75,48 @@
 ;; Packages
 ;;
 
-(use-package ansible
-  :ensure t
-  :defer t
-
-  :hook (yaml-mode . ansible-mode)
-
-  :config
-  (use-package company-ansible
+(unless (eq (executable-find "ansible") nil)
+  (use-package ansible
     :ensure t
-    :after company
+    :defer t
 
-    :hook (ansible-mode .
-                        (lambda ()
-                          (add-to-list 'company-backends
-                                       'company-ansible)))
-    )
+    :hook (yaml-mode . ansible-mode)
+
+    :config
+    (use-package company-ansible
+      :ensure t
+      :after company
+
+      :hook (ansible-mode .
+                          (lambda ()
+                            (add-to-list 'company-backends
+                                         'company-ansible)))
+      )
   )
+)
 
-(unless (eq (executable-find "clangd") nil)
+(unless (and (eq (executable-find "clangd") nil)
+             (eq (executable-find "ccls") nil))
   (use-package c++-mode
     ;; This is a built-in mode
     :hook (c++-mode . lsp-deferred)
+
+    :init
+    (if (and (not (eq (executable-find "ccls") nil))
+             (not (package-installed-p 'ccls)))
+        (package-install 'ccls)
+      )
     )
 
   (use-package c-mode
     ;; This is a built-in mode
     :hook (c-mode . lsp-deferred)
+
+    :init
+    (if (and (not (eq (executable-find "ccls") nil))
+             (not (package-installed-p 'ccls)))
+        (package-install 'ccls)
+      )
     )
   )
 
@@ -277,7 +292,7 @@
   :ensure t
   :defer t
 
-  :hook (jinja2-mode . cmf/choose-line-number-mode-hook)
+  :hook (jinja2-mode . display-line-numbers-mode)
 
   :mode ("\\.j2\\'" . jinja2-mode)
   )

@@ -156,7 +156,7 @@
     :after company
 
     :hook ((restclient-mode . undo-tree-mode)
-           (restclient-mode . cmf/choose-line-number-mode-hook)
+           (restclient-mode . display-line-numbers-mode)
            (restclient-mode .
                             (lambda ()
                               (add-to-list 'company-backends 'company-restclient))))

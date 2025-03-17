@@ -123,7 +123,7 @@ https://github.com/daviwil/emacs-from-scratch/blob/master/init.el"
 (require 'package)
 
 (setq package-archives
-      '(("melpa"        . "https://melpa.org/packages/")
+      '(("melpa"        . "http://melpa.org/packages/")
         ("gnu"          . "https://elpa.gnu.org/packages/"))
       )
 (setq package-check-signature nil)

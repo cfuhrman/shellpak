@@ -2,8 +2,11 @@
 *undo-tree~
 *~
 .DS_Store
+.git
+.projectile-cache.eld
+TAGS
+VERSION
 emacs.d/GPATH
 emacs.d/GRTAGS
 emacs.d/GTAGS
-TAGS
-VERSION
+thirdparty/csharp.nanorc/.projectile-cache.eld

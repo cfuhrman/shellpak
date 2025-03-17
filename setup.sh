@@ -40,7 +40,7 @@ RSYNC=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS="-Ccav --perms --chmod=go-rw --delete --exclude-from=${RSYNC_EXCLUDE}"
 MAKE=make
-COPYRIGHT='Copyright (c) 2000-2024 Christopher M. Fuhrman'
+COPYRIGHT='Copyright (c) 2000-2025 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 CWD_IS_SHELL_HOME=$( [ ${SHELLDIR} != ${PWD} ]; echo $? )
 DRYRUN=""           # Dry-run option to pass to rsync(1)

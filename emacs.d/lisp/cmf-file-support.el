@@ -34,7 +34,7 @@
   :defer t
   :no-require t
 
-  :hook (apache-mode . cmf/choose-line-number-mode-hook)
+  :hook (apache-mode . display-line-numbers-mode)
 
   :mode (("\\.htaccess\\'"                   . apache-mode)
          ("access\\.conf\\'"                 . apache-mode)
@@ -43,6 +43,10 @@
          ("srm\\.conf\\'"                    . apache-mode))
   )
 
+(use-package apparmor-mode
+  :ensure t
+  :no-require t)
+
 (use-package crontab-mode
   :ensure t
   :no-require t
@@ -50,7 +54,7 @@
   :mode (("\\.cron\\(tab\\)?\\'" . crontab-mode)
          ("cron\\(tab\\)?\\."    . crontab-mode))
 
-  :hook ((crontab-mode . cmf/choose-line-number-mode-hook)
+  :hook ((crontab-mode . display-line-numbers-mode)
          (crontab-mode . cmf/crontab-hook))
 
   :config
@@ -80,7 +84,7 @@
 
   :hook ((json-mode . undo-tree-mode)
          (json-mode . lsp-deferred)
-         (json-mode . cmf/choose-line-number-mode-hook))
+         (json-mode . display-line-numbers-mode))
   )
 
 (use-package nxml-mode
@@ -90,7 +94,7 @@
 
   ;; NOTE: May need to download xmlls by hand in
   ;; ~/.emacs.d/.cache/lsp/xmlls
-  :hook ((nxml-mode . cmf/choose-line-number-mode-hook)
+  :hook ((nxml-mode . display-line-numbers-mode)
          (nxml-mode . cmf/nxml-hook)
          (nxml-mode . lsp-deferred))
 
@@ -113,7 +117,7 @@
     :mode (("\\.sls\\'" . yaml-mode)
            ("\\.yml\\'" . yaml-mode))
 
-    :hook ((yaml-mode . cmf/choose-line-number-mode-hook)
+    :hook ((yaml-mode . display-line-numbers-mode)
            (yaml-mode . lsp-deferred)
            (yaml-mode . hl-todo-mode)
            (yaml-mode .

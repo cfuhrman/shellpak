@@ -22,7 +22,7 @@ set functioncolor  brightwhite,black
 # Syntax Highlighting
 include "/usr/share/nano/default.nanorc"
 include "/usr/share/nano/elisp.nanorc"
-include "/usr/share/nano/git.nanorc"
+#include "/usr/share/nano/git.nanorc"
 include "/usr/share/nano/java.nanorc"
 include "/usr/share/nano/makefile.nanorc"
 include "/usr/share/nano/markdown.nanorc"
@@ -34,3 +34,4 @@ include "/usr/share/nano/sh.nanorc"
 include "/usr/share/nano/sql.nanorc"
 include "/usr/share/nano/xml.nanorc"
 include "/usr/share/nano/yaml.nanorc"
+include "~/SHELL/thirdparty/csharp.nanorc/csharp.colorful.nanorc"

@@ -150,7 +150,7 @@
 
 * Copyright
 
-  Copyright (c) 2000-2024 Christopher M. Fuhrman
+  Copyright (c) 2000-2025 Christopher M. Fuhrman
   All rights reserved.
 
   All files contained herein can be redistributed and/or modified

@@ -16,9 +16,12 @@ $0
 
 $1
 
-=head COPYRIGHT
+=head1 COPYRIGHT
 
-Copyright(c) `(format-time-string "%Y")` `(user-full-name)`
+Copyright (c) `(format-time-string "%Y")` `(user-full-name)`
+
 All rights reserved.
+
+=cut
 
 1;

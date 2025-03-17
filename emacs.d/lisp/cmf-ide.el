@@ -36,14 +36,6 @@
 ;; Functions
 ;;
 
-;; TODO : Remove this function and all references
-(defun cmf/choose-line-number-mode-hook ()
-  "Determine line number mode to use based on Emacs version."
-  (if (version< emacs-version "26.1")
-      (linum-mode t)
-    (display-line-numbers-mode t))
-  )
-
 ;;
 ;; Packages
 ;;

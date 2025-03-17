@@ -1,0 +1,20 @@
+# -*- mode: snippet -*-
+# name : Boilerplate with SVN ID for HTML files
+# expand-env: ((yas/indent-line 'fixed))
+#
+# --
+<!DOCTYPE html>
+<!-- $Id$ -->
+
+<html lang="${1:en}">
+  <head>
+	<meta charset="${2:UTF-8}">
+	<title>$3</title>
+  </head>
+
+  <body>
+	<h1>$3</h1>
+
+	$0
+  </body>
+</html>

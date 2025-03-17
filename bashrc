@@ -46,9 +46,9 @@ if [ -f ${SHELLDIR}/VERSION ]; then
         export SHELLPAK_VERSION
 fi
 
-export HOSTNAME=$(hostname)        # Name of host from hostname(1)
-export OSTYPE=$(uname)                # Operating system name from uname(8)
-export OSVERSION=$(uname -r)        # Operating system version from uname(8)
+export HOSTNAME=$(hostname)  # Name of host from hostname(1)
+export OSTYPE=$(uname)       # Operating system name from uname(8)
+export OSVERSION=$(uname -r) # Operating system version from uname(8)
 
 # Public: Sets up preferred timezone
 export TZ='America/Los_Angeles'
@@ -176,7 +176,6 @@ fi
 
 # Directories to evaluate for adding to PATH
 PATHS=('/usr/games'                             \
-       '/opt/schily/bin'                        \
        '/usr/X11R6/bin'                         \
        '/usr/X11R7/bin'                         \
        '/usr/sbin'                              \

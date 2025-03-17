@@ -33,7 +33,6 @@
      ("g" . "GTD Task Lists")
      ("gh" "Home" tags-todo "HOME")
      ("go" "Office" tags-todo "OFFICE")
-     ("gg" "G.G. Guards" tags-todo "GGG")
      ("gr" "Tasks to refile"
       ((todo "TODO"
              ((org-agenda-files
@@ -53,7 +52,6 @@
                 ("~/org/from-mobile.org" "~/org/refile.org")))))))
      ("B" "GTD (B)lock Agenda"
       ((tags-todo "OFFICE")
-       (tags-todo "GGG")
        (tags-todo "HOME"))
       nil)
      ("H" "Home Agenda"
@@ -67,13 +65,7 @@
        (tags-todo "OFFICE"))
       ((org-agenda-tag-filter-preset
         (quote
-         ("+OFFICE")))))
-     ("G" "G.G. Guards Agenda"
-      ((agenda "")
-       (tags-todo "GGG"))
-      ((org-agenda-tag-filter-preset
-        (quote
-         ("+GGG"))))))))
+         ("+OFFICE"))))))))
  '(org-agenda-files
    (quote
     ("~/org/tasks.org" "~/org/refile.org" "~/org/notes.org")))

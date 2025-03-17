@@ -35,7 +35,8 @@ fi
 
 # Directories to evaluate for adding to PATH
 PATHS=('/snap/bin'                              \
-       '/usr/games'
+       '/usr/games'                             \
+       '/opt/schily/bin'       
       )
 
 # Append additional directories if required

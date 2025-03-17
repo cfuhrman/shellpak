@@ -9,6 +9,7 @@
 .fslckout
 .lsp-session-v1
 .org-id-locations
+.projectile-cache.eld
 .python-environments
 GPATH
 GRTAGS
