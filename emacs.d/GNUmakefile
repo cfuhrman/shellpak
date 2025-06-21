@@ -7,6 +7,9 @@
 SUBDIRS+=lisp
 SUBDIRS+=thirdparty
 
+# Files
+ORG_FILES=EMACS-README.org
+
 CLEANDIRS=$(SUBDIRS:%=clean-%)
 
 RM_OPTS=$(shell if [ `uname` != "OpenBSD" ]; then echo '-vf'; else echo '-f'; fi)
@@ -21,5 +24,7 @@ clean: ${CLEANDIRS}
 
 ${CLEANDIRS} :
 	${MAKE} -C $(@:clean-%=%) clean
+
+include ../mk/documentation.mk
 
 # emacs.d/GNUmakefile ends here

@@ -54,4 +54,9 @@ export LANG                                     \
 # Use GNU coreutils if available
 aliasCoreUtils
 
+# Assume we are using a 256-color screen session
+if [ "$TERM" == 'screen' ]; then
+        export TERM=screen-256color
+fi
+
 # bash_bsd ends here

@@ -28,17 +28,9 @@
 ** Requirements
 
     - GNU Bash version 4.0 or greater
-    - GNU Emacs 28.1 or greater
+    - GNU Emacs 28.1 or greater (see [[file:emacs.d/EMACS-README.org][EMACS Documentation]])
     - GNU Make
     - rsync
-
-*** Emacs Font Requirements
-
-    This Emacs configuration makes use of the following fonts:
-
-     - [[https://fonts.google.com/specimen/Cantarell][Cantarell]]
-     - [[https://github.com/tonsky/FiraCode][Fira Code]]
-     - [[https://www.jetbrains.com/lp/mono/][JetBrains Mono]]
 
 ** Supported Platforms
 

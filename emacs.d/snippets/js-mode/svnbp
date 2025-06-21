@@ -1,10 +1,10 @@
 # -*- mode: snippet -*-
-# name : Javascript File Boilerplate
+# name : Javascript File Boilerplate with RCS/SVN Id
 # expand-env: ((yas/indent-line 'fixed))
 # --
 // ====================================================================
 // 
-// `(file-name-nondirectory (buffer-file-name))`
+// $Id$
 // 
 // Copyright (c) `(format-time-string "%Y")` `(user-full-name)`
 // All rights reserved.
@@ -14,6 +14,8 @@
 // ${1:Describe Javascript File}
 //
 // ====================================================================
+
+"use strict";
 
 $0
 

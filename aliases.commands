@@ -28,6 +28,7 @@ alias cp='cp -vi'
 alias rm='rm -vi'
 alias mv='mv -vi'
 alias ll='ls -alh'
+alias llr='ls -larth'
 
 # Make sure we use the rm binary
 if [ -e /bin/rm ]; then

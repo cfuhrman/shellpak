@@ -48,6 +48,13 @@
   :no-require t
   :defer t
 
+  :custom
+  (TeX-view-program-selection
+   '(((output-dvi has-no-display-manager) "dvi2tty")
+     ((output-dvi style-pstricks) "dvips and gv") (output-dvi "xdvi")
+     (output-pdf "xpdf") (output-pdf "Evince")
+     (output-html "xdg-open")))
+  
   :config
   (use-package company-auctex
     :ensure t

@@ -64,6 +64,13 @@
     )
   )
 
+(use-package css-mode
+  ;; This is a built-in mode
+
+  :hook ((css-mode . lsp-deferred)
+         (css-mode . font-lock-mode))
+  )
+
 (use-package dockerfile-mode
   :ensure t
   :defer t

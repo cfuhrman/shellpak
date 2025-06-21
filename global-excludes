@@ -36,6 +36,7 @@ lsp-cache/
 mastodon.plstore
 network-security.data
 org-clock-save.el
+org-persist/
 persist/
 projectile-bookmarks.eld
 projectile.cache

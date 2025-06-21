@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: Boilerplate for makefiles controlled by RCS/CVS/Subversion
+# expand-env: ((yas/indent-line 'fixed)
+# --
+##
+# $Id$
+#
+# Created on `(current-time-string)` `(car (cdr (current-time-zone)))`
+#
+
+$0
+
+# `(file-name-nondirectory (buffer-file-name))` ends here

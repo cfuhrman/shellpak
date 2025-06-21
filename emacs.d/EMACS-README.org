@@ -1,4 +1,4 @@
-#+TITLE: GNU Emacs Configuration Re-write 2004
+#+TITLE: GNU Emacs Requirements & Installation
 #+AUTHOR: Christopher M. Fuhrman
 #+EMAIL: cfuhrman@pobox.com
 #+OPTIONS: email:t
@@ -12,49 +12,85 @@
 
 #+LATEX: \thispagestyle{empty}
 
-* Background
+* Overview
 
-  It's been over three years since my last Emacs configuration re-write, so this
-  time around, I began to focus on breaking up my configuration into individual
-  files making the configuration much more modular.  In addition, I wished to
-  remove packages I did not use that often as well as optimize package loading
-  where possible.  This document provides an overview of how my Emacs
-  configuration was broken up as well as some fun statistics illustrating
-  start-up speed improvements.
+  Provides information about the care and feeding of this GNU Emacs
+  configuration.
 
+* Requirements
 
-* Compatibility
+** Operating System Requirements
 
-  This configuration is compatible with GNU Emacs 27.1 or greater running under
-  Linux, Windows 11 and possibly BSD operating systems.  As I no longer use a
-  Mac on a regular basis, no testing was done under that environment.  Consider
-  use of this configuration under macOS at your own risk.
+   This configuration is compatible with GNU Emacs 28.1 or greater and has been
+   tested under various Linux distributions, Windows 11 and NetBSD.  As I no
+   longer use a Mac on a regular basis, no testing was done under that
+   environment.
 
-* Packages
+   This configuration is *not* compatible with XEmacs.
 
-** New Packages
+** Font requirements
 
-   The following new packages are installed:
+   The following fonts are utilized when running Emacs in a window system
+   environment:
 
-    - [[https://github.com/dholm/benchmark-init-el][benchmark-init]] :: A package for profiling calls to =require= and =load=
-      functions in Emacs Lisp.
-    - [[https://github.com/mkcms/ivy-yasnippet][ivy-yasnippet]] :: Select a snippet to expand with Ivy
+     - [[https://fonts.google.com/specimen/Cantarell][Cantarell]]
+     - [[https://github.com/tonsky/FiraCode][Fira Code]]
+     - [[https://www.jetbrains.com/lp/mono/][JetBrains Mono]]
 
-** Removed Packages
+   In order to support emoji as well as custom icons, consider installing the
+   following fonts:
 
-   The following packages were removed as they were not used or provided
-   duplicate functionality to other packages.
+     - OpenSymbol
+     - Symbola
 
-    - [[https://codeberg.org/egirl/company-emoji][company-emoji]]
-    - [[https://github.com/iqbalansari/emacs-emojify][emojify]]
-    - [[http://github.com/SavchenkoValeriy/emacs-powerthesaurus][powerthesaurus]]
-    - [[https://github.com/Alexander-Miller/treemacs][treemacs-icons-dired]]
+   In most cases, these can be installed via the package manager (apt, brew,
+   dnf, pkg, zypper, etc.,) of your operating system.
+
+* Getting the source
+
+  The master repository is managed by the [[https://fossil-scm.org][Fossil]] distributed version control
+  system.  To check out the repository:
+
+  # DONT: Change these URLs to use the public repository in the public branch!
+  #+begin_src sh
+    # Clone the repository.  Note the destination directory is up to you.
+    fossil clone https://fossil.fuhrwerks.com/shpak ~/shpak.fsl
+
+    # Check out the repository
+    mkdir shellpak # Or whatever name you want to call it
+    cd shellpak
+    fossil open ~/shpak.fsl 
+  #+end_src
+
+** Git
+
+   An export of the Fossil repository is available on GitHub.  To check out this
+   repository, do the following:
+
+   # DONT: Be sure to change URL in public branch
+   #+begin_src sh
+     # Clone the repository
+     git clone https://github.com/cfuhrman/shellpak
+   #+end_src
+
+* Installation
+
+  Emacs can be installed by the included =setup.sh= script located at the
+  top-level directory.  Note this requires the =bash= shell.
+
+  #+begin_src sh
+    # This will /only/ install emacs configuration files
+    ./setup.sh -e
+
+    # Display command line options
+    ./setup.sh -h
+  #+end_src
 
 * Organization
 
   This GNU Emacs configuration has been broken up into the following modules.
   An attempt has been made to break up functionality into sections I consider
-  logical[fn:1] although opinions differ.  If you have strong opinions about how
+  logical although opinions differ.  If you have strong opinions about how
   things should be organized, feel free to fork this project and organize it to
   your heart's content.
 
@@ -85,7 +121,7 @@
 ** cmf-file-support
 
    This is for adding support for specific files that are not otherwise
-   addressed by cmf-programming.  Generally speaking, if the file type isn't
+   addressed by [[*cmf-programming][cmf-programming]].  Generally speaking, if the file type isn't
    related to a specific programming language, it is addressed here.  Most
    notable additions are:
 
@@ -97,7 +133,7 @@
 ** cmf-ide
 
    This file contains settings and packages that turn Emacs into a modern,
-   powerful IDE on par with VS Code and the Jetbrains family of products.  In my
+   powerful IDE on par with VS Code and the JetBrains family of products.  In my
    mind, an IDE includes the ability to work with more than just programming
    languages, so this file contains support for features also useful for
    authoring and publishing.
@@ -113,7 +149,7 @@
      * [[https://magit.vc/][Magit]] :: Git porcelain for Emacs
      * [[https://projectile.mx/][Projectile]] :: Project interaction library
      * [[https://github.com/Alexander-Miller/treemacs][Treemacs]] :: A tree-layout file explorer
-     * [[https://tumbleweed.nu/r/vc-fossil/doc/tip/README.md][vc-fossil]] :: Support for the [[https://fossil-scm.org][Fossil]] SCM
+     * [[https://tumbleweed.nu/r/vc-fossil/doc/tip/README.md][vc-fossil]] :: Support for the [[https://fossil-scm.org][Fossil]] distributed SCM
      * [[https://github.com/joaotavora/yasnippet][YASnippet]] :: A template system
 
 ** cmf-org
@@ -139,31 +175,19 @@
     * [[https://github.com/abo-abo/swiper][Ivy]] :: A generic completion framework that includes replacements for
       common Emacs commands
 
-* Observed improvements
+* Resources
 
-  The following are start-up times, in seconds, for various types of machines
-  including percentage improvement.  Note this was done running Emacs in console
-  mode as opposed to graphical mode.
+   - [[https://www.gnu.org/software/emacs/manual/][GNU Emacs Manual]]
+   - [[https://www.emacswiki.org/emacs/SiteMap][Emacs Wiki]]
+   - [[https://www.youtube.com/@SystemCrafters/featured][System Crafters Youtube Channel]] (Contains lots of great videos on
+     configuring and using Emacs!)
 
-  | Machine          | CPU                          | OS               | Before | After | % inc |
-  |------------------+------------------------------+------------------+--------+-------+-------|
-  | 2011 MacBook Pro | Intel i7-2640M (4)           | Zorin OS 17 Lite |   3.41 |  1.77 | 48.09 |
-  | Sys76 Thelio R2  | AMD Ryzen 7 3800X (16)       | Zorin OS 17 PRo  |   2.29 |  1.22 | 46.72 |
-  | Dell XPS 13      | 12th Gen Intel i7-1260P (16) | Ubuntu 22.04 LTS |   1.32 |  0.72 | 45.45 |
-  | NUC7i3BNH        | Intel i3-7100U (4)           | Debian 12        |   3.19 |  1.79 | 43.88 |
-  | GEEKCOM A5 Mini  | AMD Ryzen 7 5800H            | Windows 11       |   4.85 |  2.86 | 41.03 |
-  #+TBLFM: @2$6=floor(((@2$4 - @2$5) / @2$4) * 10000) / 100::@3$6=floor(((@3$4 - @3$5) / @3$4) * 10000) / 100::@4$6=floor(((@4$4 - @4$5) / @4$4) * 10000) / 100::@5$6=floor(((@5$4 - @5$5) / @5$4) * 10000) / 100::@6$6=floor(((@6$4 - @6$5) / @6$4) * 10000) / 100
+* Copyright
 
-  These results were unexpected, as I would have thought that loading up
-  individual files would take longer!
+  Copyright (c) 2000-2025 Christopher M. Fuhrman
+  All rights reserved.
 
-* Caveats
+  All files contained herein can be redistributed and/or modified
+  under the terms of the Simplified BSD License (also known as the
+  "2-Clause License" or "FreeBSD License".) unless otherwise noted.
 
-  1. As I no longer use an Apple Macintosh machine, no testing was done under
-     macOS.  This configuration is not guaranteed to work.
-  2. Projectile has issues when navigating a CVS-based project under MS-Windows.
-
-
-* Footnotes
-
-[fn:1] Logical at least to me!

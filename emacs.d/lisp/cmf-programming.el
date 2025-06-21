@@ -161,9 +161,6 @@
   )
 
 (unless (eq (executable-find "dotnet") nil)
-  ;; NOTE: omnisharp C# language server appears to have issues
-  ;;       installing under MS-Windows environment so csharp-ls is
-  ;;       recommended
   (use-package csharp-mode
     ;; This is a built-in mode on Emacs >= 29.1
 
@@ -351,10 +348,13 @@
     )
   )
 
-(if (eq system-type 'windows-nt)
-    (use-package powershell
-      :ensure t
-      )
+;; Only install powershell package if this is a MS-Windows system or
+;; if the powershell binary is installed
+(if (or (eq system-type 'windows-nt)
+        (not (eq (executable-find "pwsh") nil)))
+  (use-package powershell
+    :ensure t
+    )
   )
 
 (use-package python

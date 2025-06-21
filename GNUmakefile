@@ -39,6 +39,7 @@ CLEANDIRS=$(SUBDIRS:%=clean-%)
 
 # Documentation variables
 DOCDIRS+=docs
+DOCDIRS+=emacs.d
 HTMDIRS=$(DOCDIRS:%=html-%)
 PDFDIRS=$(DOCDIRS:%=pdf-%)
 TXTDIRS=$(DOCDIRS:%=txt-%)

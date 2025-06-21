@@ -137,7 +137,8 @@
  '(org-clock-persist (quote history))
  '(org-clock-persist-file "~/.org-clock-save.el")
  '(org-complete-tags-always-offer-all-agenda-tags t)
- '(org-crypt-key nil)
+ ;; DONT share personal key, even if it is public
+ '(org-crypt-key "Insert your key here")
  '(org-crypt-tag-matcher "CRYPT")
  '(org-default-notes-file "~/org/notes.org")
  '(org-directory "~/org")
