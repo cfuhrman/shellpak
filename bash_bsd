@@ -22,7 +22,8 @@
 MYLOCALE=en_US.UTF-8
 
 # Directories to evaluate for adding to PATH
-PATHS=('/usr/games'                             \
+PATHS=('/opt/schily/bin'                        \
+       '/usr/games'                             \
        '/usr/pkg/sbin'                          \
        '/usr/pkg/lib/perl5/site_perl/bin'
       )

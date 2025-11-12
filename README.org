@@ -30,19 +30,15 @@
     - GNU Bash version 4.0 or greater
     - GNU Emacs 28.1 or greater (see [[file:emacs.d/EMACS-README.org][EMACS Documentation]])
     - GNU Make
+    - rclone (under MS-Windows)
     - rsync
 
 ** Supported Platforms
 
-   The following operating systems are supported:
-
-    - CentOS
-    - macOS (Mac OS X)
-    - NetBSD
-    - OpenBSD
-    - Ubuntu
-    - openSUSE
-    - MS-Windows (/*experimental!* (Emacs only)/)
+   Provided the above requirements are met these dotfiles should work under most
+   UNIX-type operating systems including Linux, *BSD, macOS, and Cygwin.  As I
+   primarily use Debian GNU/Linux, Ubuntu Linux, Git Bash, and occasionally
+   NetBSD, these operating systems are best supported.  YMMV.
 
 * Obtaining ShellPAK
 

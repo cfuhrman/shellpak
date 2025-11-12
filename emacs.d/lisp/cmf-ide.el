@@ -143,6 +143,7 @@
 
 (use-package indent-bars
   :ensure t
+  :after c-mode
 
   :hook (prog-mode . indent-bars-mode)
 
@@ -255,6 +256,12 @@
   (projectile-enable-caching t)
   (projectile-indexing-method 'alien)
 
+  :init
+  (if (not (package-installed-p 'counsel-projectile))
+      (warn "Restart GNU Emacs to enable full projectile functionality")
+    (setq projectile-switch-project-action #'counsel-projectile-find-file)
+    )
+
   :config
   (dolist (devpath '("~/dev/"
                      "~/org/"
@@ -271,9 +278,6 @@
   (use-package counsel-projectile
     :ensure t
     :after counsel
-
-    :init
-    (setq projectile-switch-project-action #'counsel-projectile-find-file)
 
     :config
     (counsel-projectile-mode)

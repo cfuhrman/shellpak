@@ -169,7 +169,7 @@ if [ "$PS1" ]; then
         if [ $TERM == 'dumb' ] || [ $TERM == 'emacs' ]; then
                 promptDumb
         else
-                promptGREEN
+                promptCMF
         fi
 
 fi
@@ -285,7 +285,7 @@ __sp_bashrc_set_pager
 # needs to repeat the shutdown(8) command accidentally from your
 # command history?
 HISTIGNORE='\&:fg:bg:ls:pwd:cd ..:cd ~-:cd -:cd:jobs:set -x:ls -l:ls -al'
-HISTIGNORE=${HISTIGNORE}':%1:%2:popd:top:alpine:mutt:clear:shutdown*'
+HISTIGNORE+=':%1:%2:popd:top:alpine:mutt:clear:shutdown*'
 export HISTIGNORE
 
 # Save multi-line commands in history as single line

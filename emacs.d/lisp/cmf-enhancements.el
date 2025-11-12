@@ -102,7 +102,7 @@
   :custom
   ;; DONT: License key not appropriate for public!
   (gptel-api-key "*****")
-  (gptel-model "gpt-4-turbo")
+  (gptel-model "gpt-5-nano")
   )
 
 (use-package mastodon

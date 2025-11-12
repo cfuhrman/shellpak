@@ -55,9 +55,9 @@ PUBLICCO=../public/
 
 # Determine distribution file.  These lines will produce spewage if
 # this isn't a fossil checkout
-FOSSIL_BRANCH=$(shell fossil info | grep "^tags" | awk -F\: '{print $$2}' | sed 's/ //g' | awk -F\, '{print $$NF}')
+FOSSIL_BRANCH=$(shell fossil info | awk -F\: '/^tags/ {print $$2}' | sed 's/ //g' | awk -F\, '{print $$NF}')
 FOSSIL_REPO=${HOME}/repos/public.fossil
-CKOUT_DATE=$(shell fossil info | grep "^checkout" | awk '{ print $$3 }' | sed 's/[-: ]//g')
+CKOUT_DATE=$(shell fossil info | awk '/^checkout/ { print $$3 }' | sed 's/[-: ]//g')
 DISTFILE=shellpak-${FOSSIL_BRANCH}-${CKOUT_DATE}.tar.gz
 ZIPFILE=shellpak-${FOSSIL_BRANCH}-${CKOUT_DATE}.zip
 GIT_REPO=${HOME}/dev/shpak

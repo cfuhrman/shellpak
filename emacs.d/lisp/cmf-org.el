@@ -221,7 +221,6 @@
      ("ERRAND" . 101)
      ("PHONE" . 112)
      ("EMAIL" . 109)
-     ("GGG" . 103)
      ("APPT" . 97))))
  '(org-tags-exclude-from-inheritance (quote ("CRYPT")))
  '(org-todo-keywords
@@ -261,6 +260,17 @@
   (org-crypt-use-before-save-magic)
 
   :config
+  (use-package engrave-faces
+    :ensure t
+
+    :custom
+    (org-latex-src-block-backend 'engraved)
+    )
+
+  (use-package htmlize
+    :ensure t
+    )
+
   (use-package company-org-block
     :ensure t
 

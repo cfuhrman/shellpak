@@ -75,7 +75,7 @@ setPromptCommand ()
 }
 
 # Public: Sets up prompt to my own preference
-promptCMF ()
+promptYELLOW ()
 {
         setPromptCommand
         DEFAULTPS1=$PS1
@@ -157,7 +157,7 @@ promptGENTOO ()
 }
 
 # Public: Sets up a prompt with greenish-ish colors
-promptGREEN ()
+promptCMF ()
 {
         setPromptCommand
         DEFAULTPS1=$PS1
@@ -195,7 +195,7 @@ promptRED ()
 }
 
 # Public: Prompt used at a former employer
-promptTFCC ()
+promptBASIC ()
 {
         DEFAULTPS1=$PS1
         PS1='[\h-\[\e[32m\]\u\[\e[0m\]]$ '

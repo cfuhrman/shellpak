@@ -68,6 +68,7 @@ readonly FALSE=0
 
 # Define colors, but only if this is *not* a dumb terminal
 if [[ ${TERM} == 'dumb' ]]; then
+        BLACK=
         RED=
         GREEN=
         YELLOW=
@@ -79,6 +80,7 @@ if [[ ${TERM} == 'dumb' ]]; then
         UNDERLINE=
         NORMAL=
 else
+        BLACK=$(tput -T ${TERM} setaf 0)
         RED=$(tput -T ${TERM} setaf 1)
         GREEN=$(tput -T ${TERM} setaf 2)
         YELLOW=$(tput -T ${TERM} setaf 3)
@@ -132,7 +134,7 @@ done
 
 # Determine version and output to file
 if [[ -f .fslckout || -f _FOSSIL_ ]]; then
-        SHELLPAK_VERSION=$( fossil info | grep ^checkout | awk '{ printf "[%s] %s %s", substr($2, 0, 10), $3, $4 }' )
+        SHELLPAK_VERSION=$( fossil info | awk ' /^checkout/ { printf "[%s] %s %s", substr($2, 0, 10), $3, $4 }' )
         echo ${SHELLPAK_VERSION} > VERSION
 elif [ -f VERSION ]; then
         SHELLPAK_VERSION=$( cat VERSION )
@@ -313,8 +315,10 @@ goSetup ()
         fi
 
         # Install gopls
-        inform $L2 $TRUE "Installing go language server"
-        GO111MODULE=on go ${GOINSTALLCMD} golang.org/x/tools/gopls@latest
+        if ! type -p gopls >/dev/null; then
+                inform $L2 $TRUE "Installing go language server"
+                GO111MODULE=on go ${GOINSTALLCMD} golang.org/x/tools/gopls@latest
+        fi
 
         inform $L1 $TRUE "Installation of go modules complete!"
 }
@@ -329,6 +333,8 @@ goSetup ()
 #  * IO-AIO
 #  * Moose
 #
+# Deprecated: Consider installing Perl Language Server via operating
+#             system package management tool
 plSetup ()
 {
         # Should AnyEvent (a requirement for Coro) fail, be sure to
@@ -355,6 +361,8 @@ plSetup ()
 }
 
 # Private: Installs the tools necessary for python development
+#
+# Deprecated: This functionality has been replaced by LSP server
 pySetup ()
 {
         local PYTHON_PKGS=('autopep8'           \
@@ -438,8 +446,8 @@ usage: ${0##*/} -h This screen                             \\
                 -n Do _not_ link files                     \\
                 -e Install emacs configuration only        \\
                 -g Set up/remove GoLang Development        \\
-                -l Set up Perl Language Server             \\
-                -p Set up Python Development               \\
+                -l (Deprecated) Set up Perl Language Server \\
+                -p (Deprecated) Set up Python Development  \\
                 -u Uninstall ShellPAK                      \\
                 -r perform a trial run with no changes made
                    (implies -n)

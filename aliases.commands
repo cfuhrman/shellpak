@@ -78,7 +78,7 @@ alias grep="grep --color=auto"
 
 # Set up alias to go to Windows home directory
 if [ ${#WINHOME} -gt 0 ]; then
-        alias cdwnh="cd ${WINHOME}"
+        alias cdwnh="cd ${WINHOME//\\/\\\\}"
 fi
 
 # aliases.commands ends here

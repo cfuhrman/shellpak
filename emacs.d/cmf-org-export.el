@@ -44,7 +44,13 @@ will export to ASCII format."
   "Wrapper function for exporting an 'org-mode' document to PDF format via LaTeX."
   (interactive)
   (if (>= cmf-org-version 8)
-      (org-latex-export-to-pdf)
+      (progn
+        (package-initialize)
+        (package-install 'engrave-faces)
+        (require 'engrave-faces)
+        (setq org-latex-src-block-backend 'engraved)
+        (org-latex-export-to-pdf)
+        )
     (org-export-as-pdf))
   )
 
@@ -52,7 +58,12 @@ will export to ASCII format."
   "Wrapper function for exporting an 'org-mode' document to HTML."
   (interactive)
   (if (>= cmf-org-version 8)
-      (org-html-export-to-html)
+      (progn
+        (package-initialize)
+        (package-install 'htmlize)
+        (require 'htmlize)
+        (org-html-export-to-html)
+        )
     (org-export-as-html))
   )
 
