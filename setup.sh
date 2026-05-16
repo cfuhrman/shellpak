@@ -40,15 +40,13 @@ RSYNC=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS="-Ccav --perms --chmod=go-rw --delete --exclude-from=${RSYNC_EXCLUDE}"
 MAKE=make
-COPYRIGHT='Copyright (c) 2000-2025 Christopher M. Fuhrman'
+COPYRIGHT='Copyright (c) 2000-2026 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 CWD_IS_SHELL_HOME=$( [ ${SHELLDIR} != ${PWD} ]; echo $? )
 DRYRUN=""           # Dry-run option to pass to rsync(1)
 UNINSTALL=0
 GOINSTALL=0
 GOPATH=${HOME}/go
-PYINSTALL=0
-PLINSTALL=0
 NOLINK=0            # If set to 1 (true), then the following apply:
                     #   - Linked files will not be created
                     #   - ~/tmp directory will not be created
@@ -94,20 +92,21 @@ else
 fi
 
 # Private: List of dot-files to link
-HOMEDOTFILES=('bash_logout'			\
-              'bash_profile'			\
-              'bashrc'				\
-              'emacs.d'				\
-              'gitconfig'			\
-              'indent.pro'			\
-              'mg'				\
-              'nanorc'				\
-              'perltidyrc'			\
-              'tmux.conf'			\
-              'screenrc'			\
-              'selected_editor'			\
-              'Xmodmap'				\
-              'Xresources'
+HOMEDOTFILES=('authinfo.gpg'                    \
+              'bash_logout'                     \
+              'bash_profile'                    \
+              'bashrc'                          \
+              'emacs.d'                         \
+              'gitconfig'                       \
+              'indent.pro'                      \
+              'mg'                              \
+              'nanorc'                          \
+              'perltidyrc'                      \
+              'tmux.conf'                       \
+              'screenrc'                        \
+              'selected_editor'                 \
+              'Xmodmap'                         \
+              'Xresources'                      \
              )
 
 # Private: List of possible locations to search for make(1) binary
@@ -323,70 +322,6 @@ goSetup ()
         inform $L1 $TRUE "Installation of go modules complete!"
 }
 
-# Private: Installs Perl Language Server
-#
-# NOTE: Installation of the following perl libraries via your
-# operating systems package manager (apt, zypper, dnf) strongly
-# recommended prior to running this function:
-#
-#  * Coro
-#  * IO-AIO
-#  * Moose
-#
-# Deprecated: Consider installing Perl Language Server via operating
-#             system package management tool
-plSetup ()
-{
-        # Should AnyEvent (a requirement for Coro) fail, be sure to
-        # check output for DNS failures.  In some cases, an ISP may
-        # have their DNS configured to return a bogus address should a
-        # lookup fail, which can confuse the AnyEvent test suite.
-        local PERL_MODULES=("Perl::LanguageServer"
-                           )
-
-        export PATH=~/perl5/bin:$PATH
-        export CC=$( which gcc )
-
-        inform $L1 $TRUE "Install Perl Language Server (this may take a while)"
-
-        for module in ${PERL_MODULES[@]}; do
-                inform $L2 $TRUE " ... ${module}"
-                cpan install $module
-        done
-
-        unset CC
-        inform $L2 $TRUE                                                \
-        "Setup may need to be run twice with the \"-l\" option to ensure installation of Perl::LanguageServer"
-        inform $L2 $TRUE "Done"
-}
-
-# Private: Installs the tools necessary for python development
-#
-# Deprecated: This functionality has been replaced by LSP server
-pySetup ()
-{
-        local PYTHON_PKGS=('autopep8'           \
-                           'flake8'             \
-                           'jedi'               \
-                           'setuptools-black'   \
-                           'virtualenv'         \
-                           'yapf'
-                          )
-
-        # Make sure that pip is installed
-        if ! type ${PIP_BIN} >/dev/null; then
-                inform $L1 $TRUE "${RED}ERROR${NORMAL}: python ${PIP_BIN} is not installed on this system.  Cowardly aborting!"
-                exit 1
-        fi
-
-        inform $L1 $TRUE "Setting up development environment for python${PYTHON_VERSION}"
-
-        for pyPkg in ${PYTHON_PKGS[@]}; do
-                inform $L2 $TRUE " ${pyPkg}"
-                ${PIP_BIN} install --prefix=$HOME $pyPkg
-        done
-}
-
 # Private: Displays a header for the world to see
 headerDisplay ()
 {
@@ -446,8 +381,6 @@ usage: ${0##*/} -h This screen                             \\
                 -n Do _not_ link files                     \\
                 -e Install emacs configuration only        \\
                 -g Set up/remove GoLang Development        \\
-                -l (Deprecated) Set up Perl Language Server \\
-                -p (Deprecated) Set up Python Development  \\
                 -u Uninstall ShellPAK                      \\
                 -r perform a trial run with no changes made
                    (implies -n)
@@ -499,14 +432,6 @@ do
 
         -g)
                 GOINSTALL=1
-                ;;
-
-        -p)
-                PYINSTALL=1
-                ;;
-
-        -l)
-                PLINSTALL=1
                 ;;
 
         -u)
@@ -579,6 +504,11 @@ if [ ${NOLINK} -ne 1 ]; then
 
 fi
 
+# KLUDGE: Explicitly restrict permissions on authinfo.gpg
+if [ -e authinfo.gpg ]; then
+        chmod 600 authinfo.gpg
+fi
+
 # Create SHELL directory if it doesn't exist
 if [[ ${#DRYRUN} -eq 0 && ! -d ${SHELLDIR} ]]; then
         inform $L2 $FALSE "Creating ${SHELLDIR} for our shell-related files"
@@ -602,16 +532,6 @@ fi
 # Do we want to set up our environment for golang development?
 if [ ${GOINSTALL} -ne 0 ]; then
         goSetup
-fi
-
-# Do we want to set up our environment for perl development?
-if [ ${PLINSTALL} -ne 0 ]; then
-        plSetup
-fi
-
-# Do we want to set up our environment for python development?
-if [ ${PYINSTALL} -ne 0 ]; then
-        pySetup
 fi
 
 # Set up appropriate symlinks
@@ -645,7 +565,6 @@ if [ ${NOLINK} -ne 1 ]; then
                 fi
 
         done
-
 fi
 
 # Create ~/tmp directory if it doesn't exist

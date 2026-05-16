@@ -92,7 +92,6 @@
   :ensure t
   :diminish company-box-mode
   :if window-system
-  :unless (version< emacs-version "26.1") ; WARN: Unknown if this works
   :after company
 
   :hook (company-mode . company-box-mode)
@@ -103,7 +102,7 @@
       ;; running under full screen mode (at least under Mojave).  The
       ;; same is true regardless if ns-use-native-fullscreen is set to
       ;; nil or not.  For the time being, just notify the user.
-      (message "Do not use full-screen mode when running under macOS!")
+      (warn "Do not use full-screen mode when running under macOS!")
     )
   )
 

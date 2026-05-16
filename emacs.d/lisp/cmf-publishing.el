@@ -54,8 +54,18 @@
      ((output-dvi style-pstricks) "dvips and gv") (output-dvi "xdvi")
      (output-pdf "xpdf") (output-pdf "Evince")
      (output-html "xdg-open")))
-  
+
   :config
+  (unless (eq (executable-find "texlab") nil)
+    (use-package lsp-latex
+      :ensure t
+
+      :hook ((TeX-mode    . lsp)
+             (LaTeX-mode  . lsp)
+             (bibtex-mode . lsp))
+      )
+    )
+
   (use-package company-auctex
     :ensure t
     :after (company latex)

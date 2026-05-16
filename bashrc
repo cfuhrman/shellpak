@@ -38,7 +38,13 @@ source $SHELLDIR/functions
 source $SHELLDIR/prompts
 source $SHELLDIR/aliases.commands
 source $SHELLDIR/aliases.hosts
-source $SHELLDIR/thirdparty/git-prompt.sh
+
+# Use installed git-prompt.sh if this is a Windows system
+if [ -f /c/Program\ Files/Git/etc/profile.d/git-prompt.sh ]; then
+        source /c/Program\ Files/Git/etc/profile.d/git-prompt.sh
+else
+        source $SHELLDIR/thirdparty/git-prompt.sh
+fi
 
 # Set SHELLPAK_VERSION
 if [ -f ${SHELLDIR}/VERSION ]; then

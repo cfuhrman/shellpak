@@ -300,7 +300,8 @@
          ("\\.mk\\'"       . makefile-mode))
   )
 
-(unless (eq (executable-find "npm") nil)
+(unless (or (eq (executable-find "php") nil)
+            (eq (executable-find "npm") nil))
   (use-package php-mode
     :ensure t
     :no-require t
@@ -320,9 +321,6 @@
     :mode ("\\.php\\'" . php-mode)
 
     :custom
-    ;; DONT: License key settings not appropriate for public!
-    ;; Purchase your intelephense license key at https://intelephense.com
-    (lsp-intelephense-licence-key "*****")
     (php-insert-doc-access-tag nil)
     (php-enable-psr2-coding-style)
     (php-lineup-cascaded-calls t)
@@ -332,6 +330,9 @@
     (require 'php-doc)
     (require 'phpcbf)
 
+    ;; Obtain an intelephense license key at https://intelephense.com/buy
+    ;; (setq lsp-intelephense-licence-key (auth-source-search :host 'intelephense))
+    
     (use-package company-php
       :ensure t
       :after company

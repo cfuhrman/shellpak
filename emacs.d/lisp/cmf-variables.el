@@ -30,7 +30,7 @@
 (defvar cmf/latitude 37.3306615)
 (defvar cmf/longitude -212.9049502)
 (defvar cmf/location-name "San Jose, CA")
-(defvar cmf/time-zone "America/Los Angeles")
+(defvar cmf/time-zone "America/Los_Angeles")
 (defvar cmf/time-zone-short-name "PST")
 (defvar cmf/time-zone-short-name-daylight "PDT")
 

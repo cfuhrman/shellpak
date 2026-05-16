@@ -96,13 +96,40 @@
     )
   )
 
+;; WARN: This configuration will *not* work without an API key.  To
+;;       obtain a license key, visit https://platform.anthropic.com/.
+;;
+;; Resources:
+;;
+;;  * https://www.gnu.org/software/emacs/manual/html_node/emacs/Authentication.html
+;;  * https://github.com/karthink/gptel#optional-securing-api-keys-with-authinfo
+;;  * https://github.com/karthink/gptel#anthropic-claude
 (use-package gptel
   :ensure t
 
+  :bind
+  ("C-c RET" . gptel-send)
+  ("C-c C-m" . gptel-menu)
+
+  ;; TODO: Fix issue with switching backends
+  :config
+  ;; Based on response from Claude Sonnet 4.6
+  (defvar cmf/gptel-claude
+    (gptel-make-anthropic "Claude"
+      :stream t
+      ;; :key (gptel-api-key-from-auth-source "claude"))
+    ))
+  
+  ;; Set up ChatGPT key and use Claude as default backend.
+
+  ;; Uncomment the below code once an API key has been obtained
+  ;; (setq gptel-api-key (gptel-api-key-from-auth-source "chatgpt")
+  ;;       gptel-backend cmf/gptel-claude)
+  
   :custom
-  ;; DONT: License key not appropriate for public!
-  (gptel-api-key "*****")
-  (gptel-model "gpt-5-nano")
+  (gptel-default-mode 'org-mode)
+  (gptel-model 'claude-sonnet-4-6)
+  (gptel-system "You are a helpful assistant.")
   )
 
 (use-package mastodon

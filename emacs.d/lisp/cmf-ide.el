@@ -255,12 +255,17 @@
   (projectile-completion-system 'ivy)
   (projectile-enable-caching t)
   (projectile-indexing-method 'alien)
+  (projectile-switch-project-action #'projectile-find-file)
 
   :init
-  (if (not (package-installed-p 'counsel-projectile))
-      (warn "Restart GNU Emacs to enable full projectile functionality")
-    (setq projectile-switch-project-action #'counsel-projectile-find-file)
+  ;; Warn the user about counsel-projectile
+  (if (package-installed-p 'counsel-projectile)
+      (warn (concat
+        "The counsel-projectile package breaks projectile "
+        "functionality.  Consider removing it."))
     )
+
+  (projectile-mode +1)
 
   :config
   (dolist (devpath '("~/dev/"
@@ -272,16 +277,6 @@
         (add-to-list 'projectile-project-search-path (expand-file-name
                                                       devpath user-emacs-directory))
       ))
-
-  (projectile-mode +1)
-
-  (use-package counsel-projectile
-    :ensure t
-    :after counsel
-
-    :config
-    (counsel-projectile-mode)
-    )
 
   (use-package treemacs-projectile
     :ensure t
