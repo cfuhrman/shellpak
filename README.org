@@ -100,15 +100,6 @@
    # Set up go programming environment
    $ ./setup.sh -g
 
-   # Set up Perl::LanguageServer
-   $ ./setup.sh -l
-
-   # Set up python development environment
-   $ ./setup.sh -p
-
-   # Set up python3 development environment
-   $ PYTHON_VERSION=3 PIP_BIN=pip3 setup.sh -p
-
    # Remove ShellPAK
    $ ./setup.sh -u
 
