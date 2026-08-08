@@ -168,7 +168,7 @@ promptCMF ()
         else
                 PS1=${BRIGHT_BLUE}'[ '${BRIGHT_GREEN}'\h'${BRIGHT_BLUE}'-'${BRIGHT_WHITE}'\@'${BRIGHT_BLUE}' ]-'${BRIGHT_PURPLE}'\w '${BRIGHT_WHITE}'\$'${NO_COLOR}' '
         fi
-        
+
         PS2='> '
         PS4='+ '
 

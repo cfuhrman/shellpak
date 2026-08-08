@@ -32,9 +32,11 @@ alias llr='ls -larth'
 
 # Make sure we use the rm binary
 if [ -e /bin/rm ]; then
-        alias rmrmrm='/bin/rm -vif'
+        alias rmrmrm='/bin/rm -vf'
+        alias rmrmrf='/bin/rm -rvf'
 else
-        alias rmrmrm='rm -vif'
+        alias rmrmrm='rm -vf'
+        alias rmrmrf='rm -rvf'
 fi
 
 # Set up pine/alpine aliases
@@ -49,15 +51,6 @@ fi
 
 # An alias to strip out current directory from PATH
 alias stripcwd='export PATH=${PATH/:./}'
-
-# Add alias for switching to 256 colors should the need arise
-if [[ $TERM =~ ^screen ]]; then
-        alias go256='export TERM=screen-256color'
-        alias no256='export TERM=screen'
-else
-        alias go256='export TERM=xterm-256color'
-        alias no256='export TERM=xterm'
-fi
 
 # Alias for fossil
 if type -p fossil >/dev/null; then
@@ -75,10 +68,5 @@ fi
 
 # GREP_OPTIONS is deprecated, so here is a work-around
 alias grep="grep --color=auto"
-
-# Set up alias to go to Windows home directory
-if [ ${#WINHOME} -gt 0 ]; then
-        alias cdwh="cd ${WINHOME//\\/\\\\}"
-fi
 
 # aliases.commands ends here

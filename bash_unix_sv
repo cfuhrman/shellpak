@@ -25,7 +25,6 @@ stty intr ^C
 
 # Directories to evaluate for adding to PATH
 PATHS=('/usr/local/bin'                         \
-       '/usr/pkg/bin'                           \
        '/usr/ccs/bin'                           \
        '/usr/sfw/bin'                           \
        '/opt/sfw/bin'                           \
@@ -39,12 +38,9 @@ PATHS=('/usr/local/bin'                         \
 
 # Pre-pend additional directories if required
 for path in ${PATHS[@]}; do
-
-        # We only want to add the directory if it exists
-        if [ -d $path ]; then
-                echo $PATH | egrep '(^|\:)'${path}'(\:|$)' >/dev/null 2>&1 || PATH=${path}:$PATH
+        if [ -d $path ] && ! [[ "$PATH" =~ (^|:)"${path}"(:|$) ]]; then
+                PATH=${path}:$PATH
         fi
-
 done
 
 PATH=${PATH#:}                 # Get rid of pre-pended colons
@@ -52,11 +48,15 @@ PATH=${PATH//::/:}             # Remove double colons
 
 export PATH
 
+# Set up alias to go to Windows home directory
+if [ -n ${USERPROFILE} ]; then
+        alias cdwh="cd ${USERPROFILE//\\/\\\\}"
+fi
+
 # See if coreutils is installed
 aliasCoreUtils
 
 if [[ ${OSTYPE} == 'SunOS' ]]; then
-
         # Make sure we have all necessary libraries loaded
         if [ -d /opt/csw/lib ]; then
                 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/csw/lib
@@ -74,7 +74,6 @@ if [[ ${OSTYPE} == 'SunOS' ]]; then
 
         # Set up default ulimit
         ulimit -c unlimited
-
 else
         export FILE_OPS_RM_FLAGS='e' # Deprecated
 fi

@@ -46,17 +46,12 @@ CWD_IS_SHELL_HOME=$( [ ${SHELLDIR} != ${PWD} ]; echo $? )
 DRYRUN=""           # Dry-run option to pass to rsync(1)
 UNINSTALL=0
 GOINSTALL=0
+INSTALL_EMACS_ONLY=0
 GOPATH=${HOME}/go
 NOLINK=0            # If set to 1 (true), then the following apply:
                     #   - Linked files will not be created
                     #   - ~/tmp directory will not be created
                     #   - Existing files in $HOME will not be backed up
-
-# Public: Indicates what python version to use
-: ${PYTHON_VERSION:=3}
-
-# Public: Indicates location of pip program
-: ${PIP_BIN:=pip3}
 
 # Read only constants
 readonly L1=1
@@ -66,29 +61,29 @@ readonly FALSE=0
 
 # Define colors, but only if this is *not* a dumb terminal
 if [[ ${TERM} == 'dumb' ]]; then
-        BLACK=
-        RED=
-        GREEN=
-        YELLOW=
-        BLUE=
-        MAGENTA=
-        CYAN=
-        WHITE=
-        BOLD=
-        UNDERLINE=
-        NORMAL=
+        readonly BLACK=
+        readonly RED=
+        readonly GREEN=
+        readonly YELLOW=
+        readonly BLUE=
+        readonly MAGENTA=
+        readonly CYAN=
+        readonly WHITE=
+        readonly BOLD=
+        readonly UNDERLINE=
+        readonly NORMAL=
 else
-        BLACK=$(tput -T ${TERM} setaf 0)
-        RED=$(tput -T ${TERM} setaf 1)
-        GREEN=$(tput -T ${TERM} setaf 2)
-        YELLOW=$(tput -T ${TERM} setaf 3)
-        BLUE=$(tput -T ${TERM} setaf 4)
-        MAGENTA=$(tput -T ${TERM} setaf 5)
-        CYAN=$(tput -T ${TERM} setaf 6)
-        WHITE=$(tput -T ${TERM} setaf 7)
-        BOLD=$(tput -T ${TERM} bold)
-        UNDERLINE=$(tput sgr 0 1)
-        NORMAL=$(tput -T ${TERM} sgr0)
+        readonly BLACK=$(tput -T ${TERM} setaf 0)
+        readonly RED=$(tput -T ${TERM} setaf 1)
+        readonly GREEN=$(tput -T ${TERM} setaf 2)
+        readonly YELLOW=$(tput -T ${TERM} setaf 3)
+        readonly BLUE=$(tput -T ${TERM} setaf 4)
+        readonly MAGENTA=$(tput -T ${TERM} setaf 5)
+        readonly CYAN=$(tput -T ${TERM} setaf 6)
+        readonly WHITE=$(tput -T ${TERM} setaf 7)
+        readonly BOLD=$(tput -T ${TERM} bold)
+        readonly UNDERLINE=$(tput sgr 0 1)
+        readonly NORMAL=$(tput -T ${TERM} sgr0)
 fi
 
 # Private: List of dot-files to link
@@ -133,7 +128,10 @@ done
 
 # Determine version and output to file
 if [[ -f .fslckout || -f _FOSSIL_ ]]; then
-        SHELLPAK_VERSION=$( fossil info | awk ' /^checkout/ { printf "[%s] %s %s", substr($2, 0, 10), $3, $4 }' )
+        SHELLPAK_VERSION=$( fossil info | awk '/^checkout/ { printf "[%s] %s %sZ", substr($2, 0, 10), $3, $4 }' )
+        echo ${SHELLPAK_VERSION} > VERSION
+elif [ -d .git ]; then
+        SHELLPAK_VERSION=$( TZ=UTC git log -1 --format='[git-%h] %cd' --date=format:'%Y-%m-%d %H:%M:%SZ' )
         echo ${SHELLPAK_VERSION} > VERSION
 elif [ -f VERSION ]; then
         SHELLPAK_VERSION=$( cat VERSION )
@@ -145,6 +143,7 @@ fi
 # Private: Uninstalls shellpak
 doUninstall ()
 {
+        inform $L1 $TRUE 'UNINSTALL invoked'
         echo ''
         echo '===================================================================='
         echo -ne "${BOLD}${RED}"
@@ -196,12 +195,10 @@ EOF
         echo ''
         inform $L1 $TRUE "Removing linked dot-files"
         for file in ${HOMEDOTFILES[@]}; do
-
                 DOTFILE=${HOME}/.${file}
                 LINKFILE=$(readlink ${DOTFILE})
 
                 if [[ -h ${DOTFILE} && ${SHELLDIR%/}/${file} == ${LINKFILE} ]]; then
-
                         inform $L2 $FALSE "Removing ${DOTFILE}"
 
                         if [ ${#DRYRUN} -eq 0 ]; then
@@ -211,16 +208,12 @@ EOF
                         echo "${GREEN}done${NORMAL}"
 
                         if [ -e ${BACKUPDIR}/.${file} ]; then
-
                                 if [ ${#DRYRUN} -eq 0 ]; then
                                         mv ${BACKUPDIR}/.${file} ${HOME}
                                         echo "    Restored original ${file}"
                                 fi
-
                         fi
-
                 fi
-
         done
 
         if [ $GOINSTALL -ne 0 ]; then
@@ -273,8 +266,7 @@ goSetup ()
         local goSetup_git_user=${GITHUB_USER_NAME:=${USER}}
 
         # Create the directories
-        for goDir in $GOPATH $GOBIN $GOSRC $GOGITHUB
-        do
+        for goDir in $GOPATH $GOBIN $GOSRC $GOGITHUB; do
                 mkdir -p $goDir
         done
 
@@ -382,8 +374,9 @@ usage: ${0##*/} -h This screen                             \\
                 -e Install emacs configuration only        \\
                 -g Set up/remove GoLang Development        \\
                 -u Uninstall ShellPAK                      \\
-                -r perform a trial run with no changes made
+                -r Perform a trial run with no changes made \\
                    (implies -n)
+                -v Show version and exit
 
 STDERR
 }
@@ -391,15 +384,11 @@ STDERR
 
 # --------------------------------------------------------------------
 
-headerDisplay
-
-args=$(getopt d:b:hlenrpgu $*)
+args=$(getopt d:b:henrguv $*)
 
 set -- $args
 
-while [ $# -gt 0 ]
-do
-
+while [ $# -gt 0 ]; do
         case "$1" in
         -h)
                 usage
@@ -412,22 +401,20 @@ do
 
         -n)
                 NOLINK=1
-                inform $L1 $TRUE "Shell-related files will ${UNDERLINE}not${NORMAL} be linked to \$HOME"
                 ;;
 
         -r)
                 DRYRUN=' --dry-run '
                 NOLINK=1
-                inform $L1 $TRUE 'DRY-RUN: No changes will be propagated'
                 ;;
 
         -b)
                 BACKUPDIR=$2; shift;
-                inform $L1 $TRUE "Existing files to be backed up in ${BACKUPDIR}"
                 ;;
+
         -e)
+                INSTALL_EMACS_ONLY=1
                 HOMEDOTFILES=('emacs.d')
-                inform $L1 $TRUE 'Only emacs configuration will be installed'
                 ;;
 
         -g)
@@ -436,7 +423,11 @@ do
 
         -u)
                 UNINSTALL=1
-                inform $L1 $TRUE 'UNINSTALL invoked'
+                ;;
+
+        -v)
+                echo $SHELLPAK_VERSION
+                exit 0
                 ;;
 
         --)
@@ -444,14 +435,9 @@ do
                 ;;
         esac
         shift
-
 done
 
-# Are we uninstalling?
-if [ ${UNINSTALL} -eq 1 ]; then
-        doUninstall
-        exit 0
-fi
+headerDisplay
 
 # Is rsync installed on this system?
 if [ ${CWD_IS_SHELL_HOME} -eq 0 ] && ! type rsync >/dev/null; then
@@ -459,27 +445,44 @@ if [ ${CWD_IS_SHELL_HOME} -eq 0 ] && ! type rsync >/dev/null; then
         exit 1
 fi
 
+# Is this a dry run?
+if [ ${#DRYRUN} -gt 0 ]; then
+        inform $L1 $TRUE 'DRY-RUN: No changes will be propagated'
+fi
+
+# Are we only installing emacs?
+if [ ${INSTALL_EMACS_ONLY} -eq 1 ]; then
+        inform $L1 $TRUE 'Only emacs configuration will be installed'
+fi
+
+# Are we uninstalling?
+if [ ${UNINSTALL} -eq 1 ]; then
+        if [ ${#DRYRUN} -eq 0 ]; then
+                doUninstall
+        else
+                inform $L1 $TRUE "Will not uninstall as DRYRUN indicated"
+        fi
+
+        exit 0
+fi
+
 # First make sure our backup directory exists but only if NOLINK is
 # not 1
 if [ ${NOLINK} -ne 1 ]; then
-
         BACKUPFLAG=0
 
         if [[ ! -d ${BACKUPDIR} ]]; then
-
                 # Create backup directory for old files
                 inform $L1 $FALSE "Creating ${BACKUPDIR} for archived files"
                 mkdir -p ${BACKUPDIR}
                 BACKUPFLAG=1
                 echo -e "${GREEN}done${NORMAL}"
-
         fi
 
         # Iterate through each dot-file, copying it over as
         # appropriate
         inform $L1 $TRUE "Backing up existing files to ${BACKUPDIR}"
         for file in ${HOMEDOTFILES[@]}; do
-
                 DOTFILE="${HOME}/.${file}"
                 BACKUPFILE="${BACKUPDIR}/.${file}"
 
@@ -492,7 +495,6 @@ if [ ${NOLINK} -ne 1 ]; then
                         inform $L2 $TRUE "Removing old symlink .${file}"
                         rm ${DOTFILE}
                 fi
-
         done
 
         # See if there is a pre-existing .emacs file
@@ -501,7 +503,8 @@ if [ ${NOLINK} -ne 1 ]; then
             mv ${HOME}/.emacs ${BACKUPDIR}
             echo -e "${GREEN}done${NORMAL}"
         fi
-
+else
+        inform $L1 $TRUE "Shell-related files will ${UNDERLINE}not${NORMAL} be linked to \$HOME"
 fi
 
 # KLUDGE: Explicitly restrict permissions on authinfo.gpg
@@ -520,11 +523,9 @@ fi
 # that matches SHELLDIR.  This gets around issues such as when $HOME
 # resides in a symlinked directory.
 if [ ${CWD_IS_SHELL_HOME} -eq 0 ]; then
-
         # Now rsync(1) things over
         inform $L1 $TRUE "Synchronize ${SHELLDIR}"
         ${RSYNC} ${DRYRUN} ${RSYNC_OPTS} . ${SHELLDIR}
-
 else
         inform $L1 $TRUE 'Synchronization not necessary'
 fi
@@ -536,10 +537,8 @@ fi
 
 # Set up appropriate symlinks
 if [ ${NOLINK} -ne 1 ]; then
-
         # Set up links
         for file in ${HOMEDOTFILES[@]}; do
-
                 DOTFILE=${HOME}/.${file}
                 LINKFILE=$(readlink ${DOTFILE})
 
@@ -563,7 +562,6 @@ if [ ${NOLINK} -ne 1 ]; then
                                 echo -e "${RED}not found${NORMAL}"
                         fi
                 fi
-
         done
 fi
 

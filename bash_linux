@@ -21,16 +21,12 @@
 
 # This is in case we're not a login shell
 if [ "x$SHLVL" != 'x1' ] && [ -e '/etc/profile.d' ]; then
-
         # Red Hat/Fedora Core distributions use /etc/profile.d
         for i in /etc/profile.d/*.sh; do
-
                 if [ -x $i ]; then
                         source $i
                 fi
-
         done
-
 fi
 
 # Directories to evaluate for adding to PATH
@@ -41,12 +37,9 @@ PATHS=('/snap/bin'                              \
 
 # Append additional directories if required
 for path in ${PATHS[@]}; do
-
-        # We only want to add the directory if it exists
-        if [ -d $path ]; then
-                echo $PATH | egrep '(^|\:)'${path}'(\:|$)' >/dev/null 2>&1 || PATH=$PATH:${path}
+        if [ -d $path ] && ! [[ "$PATH" =~ (^|:)"${path}"(:|$) ]]; then
+                PATH=$PATH:${path}
         fi
-
 done
 
 PATH=${PATH#:}                 # Get rid of pre-pended colons
@@ -57,29 +50,17 @@ MAIL=/var/spool/mail/$LOGNAME
 
 export MAIL PATH
 
-# Deprecated: Flag to pass to ls(1), mv(1), rm(1), etc.,
-export FILE_OPS_FLAGS='v'
+# Set WINHOME if it is present.  Note that this block of code assumes
+# that the UNIX username is the same as the Windows username
+if [ -d /mnt/c/Users/${USER} ]; then
+        export WINHOME=/mnt/c/Users/${USER}
+else
+        export WINHOME=
+fi
 
-# Deprecated: Flag to pass to rm(1)
-export FILE_OPS_RM_FLAGS=${FILE_OPS_FLAGS}
-
-# Older versions of RedHat do not support screen-256color, so reset TERM if
-# necessary
-if [[ $TERM =~ ^screen\-256color && -f /etc/redhat-release ]]; then
-
-        # Grab version
-        if grep ^CentOS /etc/redhat-release >/dev/null; then
-                REDHAT_VERSION=$( sed 's/CentOS.*release.\([0-9]*\).*$/\1/' /etc/redhat-release )
-        else
-                REDHAT_VERSION=$( awk '{ print $7 }' /etc/redhat-release | awk -F\. '{ print $1 }' )
-        fi
-
-        if [[ ${REDHAT_VERSION} -lt 6 ]]; then
-                echo 'Resetting TERM to screen'
-                TERM='screen'
-                export TERM
-        fi
-
+# Set up alias to go to Windows home directory
+if [ ${#WINHOME} -gt 0 ]; then
+        alias cdwh="cd ${WINHOME//\\/\\\\}"
 fi
 
 # Most, if not all, Linux distributions use GNU ls(1) which supports
@@ -91,5 +72,10 @@ fi
 
 # Public: Set up colors for ip(8)
 export COLORFGBG=";0"
+
+# Make sure dotnet programs know where it is installed
+if [ -d /usr/share/dotnet ]; then
+        export DOTNET_ROOT=/usr/share/dotnet
+fi
 
 # bash_linux ends here

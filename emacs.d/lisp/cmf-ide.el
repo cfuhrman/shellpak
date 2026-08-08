@@ -290,6 +290,12 @@
   :hook (prog-mode . rainbow-delimiters-mode)
   )
 
+(unless (eq (executable-find "rg") nil)
+  (use-package ripgrep
+    :ensure t
+    )
+  )
+
 (use-package treemacs
   :ensure t
   :defer t

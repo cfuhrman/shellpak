@@ -30,11 +30,9 @@ PATHS=('/opt/schily/bin'                        \
 
 # Append additional directories if required
 for path in ${PATHS[@]}; do
-
-        if [ -d $path ]; then
-                echo $PATH | egrep '(^|\:)'${path}'(\:|$)' >/dev/null 2>&1 || PATH=$PATH:${path}
+        if [ -d $path ] && ! [[ "$PATH" =~ (^|:)"${path}"(:|$) ]]; then
+                PATH=$PATH:${path}
         fi
-
 done
 
 PATH=${PATH#:}			# Get rid of pre-pended colons

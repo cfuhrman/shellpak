@@ -35,12 +35,9 @@ PATHS=('/opt/local/bin'                         \
 
 # Pre-pend additional directories if required
 for path in ${PATHS[@]}; do
-
-        # We only want to add the directory if it exists
-        if [ -d $path ]; then
-                echo $PATH | egrep '(^|\:)'${path}'(\:|$)' >/dev/null 2>&1 || PATH=${path}:$PATH
+        if [ -d $path ] && ! [[ "$PATH" =~ (^|:)"${path}"(:|$) ]]; then
+                PATH=${path}:$PATH
         fi
-
 done
 
 PATH=${PATH#:}                 # Get rid of pre-pended colons

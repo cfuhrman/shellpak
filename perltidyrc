@@ -29,6 +29,6 @@
 --opening-brace-always-on-right
 --comma-arrow-breakpoints=0
 --blanks-before-subs
---blanks-before-comments
 --blanks-before-blocks
+--break-at-old-comma-breakpoints
 --trim-qw

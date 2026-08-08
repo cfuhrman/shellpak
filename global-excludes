@@ -20,11 +20,11 @@ ac-dict/
 auto-save-list
 bookmarks
 config/
-docs/tomdoc/
 eclipse.jdt.ls/
 eln-cache/
 elpa*/
 elpy/
+emacs.d/projectile-frecency.eld
 emojis/
 eshell/
 ext/

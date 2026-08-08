@@ -128,7 +128,7 @@
   
   :custom
   (gptel-default-mode 'org-mode)
-  (gptel-model 'claude-sonnet-4-6)
+  (gptel-model 'claude-sonnet-5)
   (gptel-system "You are a helpful assistant.")
   )
 

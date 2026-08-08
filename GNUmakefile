@@ -20,7 +20,6 @@
 #   pdf         : Generate PDF documentation using LaTeX
 #   txt         : Generate plain-text documentation (UTF-8 encoding when available)
 #   texinfo     : Generate PDF documentation using texinfo (org-mode >= 8)
-#   tomdoc      : Generate TXT developer documentation using Tomdoc.sh
 #
 # Created Thu Jan 22 14:51:59 2015 PST
 #
@@ -81,21 +80,6 @@ TAR=$(shell if [ `uname` != "Darwin" ] && type gtar >/dev/null; then echo 'gtar'
 DRYRUN_OPT=$(shell if echo ${DRYRUN} | egrep '[Yy][Ee][Ss]' >/dev/null ; then echo -n '-r'; fi)
 RM_OPTS=$(shell if [ `uname` != "OpenBSD" ]; then echo '-vf'; else echo '-f'; fi)
 
-# Tomdoc variables
-TOMDOC_BIN=./thirdparty/tomdoc.sh
-TOMDOC_DOC_DIR=./docs/tomdoc
-TOMDOC_FILES=${TOMDOC_DOC_DIR}/aliases.commands	\
-             ${TOMDOC_DOC_DIR}/aliases.hosts	\
-             ${TOMDOC_DOC_DIR}/bash_bsd		\
-             ${TOMDOC_DOC_DIR}/bash_darwin	\
-             ${TOMDOC_DOC_DIR}/bash_linux	\
-             ${TOMDOC_DOC_DIR}/bash_profile	\
-             ${TOMDOC_DOC_DIR}/bashrc		\
-             ${TOMDOC_DOC_DIR}/bash_unix_sv	\
-             ${TOMDOC_DOC_DIR}/functions	\
-             ${TOMDOC_DOC_DIR}/prompts		\
-             ${TOMDOC_DOC_DIR}/setup.sh
-
 #
 # Targets
 #
@@ -152,15 +136,12 @@ clean-xkcd:
 	@echo 'Removing left-over xkcd comics:'
 	@rm ${RM_OPTS}r ${HOME}/.emacs.d/xkcd/*
 
-clean-all: clean clean-elc clean-xkcd clean-tomdoc
+clean-all: clean clean-elc clean-xkcd
 
 clean-dist:
 	@rm ${RM_OPTS} shellpak*.tar.gz
 	@rm ${RM_OPTS} shellpak*.zip
 	@rm ${RM_OPTS}r shellpak
-
-clean-tomdoc:
-	@rm -rvf ${TOMDOC_DOC_DIR}
 
 clean-cache:
 	@rm ${RM_OPTS}r ${HOME}/.emacs.d/eln-cache
@@ -245,16 +226,6 @@ ${TXTDIRS}:
 texinfo: emacs ${TXIDIRS}
 ${TXIDIRS}:
 	${MAKE} -C $(@:texinfo-%=%) texinfo
-
-# Development documentation via tomdoc.sh
-tomdoc: ${TOMDOC_FILES}
-${TOMDOC_DOC_DIR}:
-	@echo "Creating ${TOMDOC_DOC_DIR}"
-	@mkdir -p ${TOMDOC_DOC_DIR}
-
-${TOMDOC_FILES}: ${TOMDOC_DOC_DIR}
-	@echo "Generating $@.txt"
-	@${TOMDOC_BIN} $(shell echo `basename $@`) > $@.txt
 
 #
 # Host Targets

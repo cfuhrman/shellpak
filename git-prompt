@@ -1,0 +1,49 @@
+#!/bin/bash
+# ====================================================================
+#
+# git-prompt
+#
+# Copyright (c) 2026 Christopher M. Fuhrman
+# All rights reserved.
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under terms of the Simplified BSD License (also
+# known as the "2-Clause License" or "FreeBSD License".)
+# 
+# Created Tue Jun 30 17:42:38 2026 PDT
+#
+# ====================================================================
+
+#
+# Determines location of completion scripts installed by git and
+# sources git-prompt.sh as appropriate
+#
+
+# Do not do anything unless git is installed
+if type -p git >/dev/null; then
+        if [ -f /etc/bash_completion.d/git-prompt ]; then
+                source /etc/bash_completion.d/git-prompt
+        else
+                GITPROMPT_BIN='git-prompt.sh'
+                GIT_DIRECTORIES=(
+                        '/c/Program\ Files/Git/etc/profile.d/'                  \
+                        '/usr/share/git-core/contrib/completion/'               \
+                        '/usr/pkg/share/examples/git/'                          \
+                        '/usr/local/share/git-core/contrib/completion/'         \
+                        "${SHELLDIR}/thirdparty/"
+                )
+
+                # Determine location
+                for gitdir in ${GIT_DIRECTORIES[@]}; do
+                        GITPROMPT_FULL="${gitdir}${GITPROMPT_BIN}"
+                        if [ -e $GITPROMPT_FULL ]; then
+                                source $GITPROMPT_FULL
+                                break;
+                        fi
+                done
+
+                unset GITPROMPT_BIN GIT_DIRECTORIES GITPROMPT_FULL
+        fi
+fi
+
+# git-prompt ends here

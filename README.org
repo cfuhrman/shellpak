@@ -111,6 +111,9 @@
 
    # List runtime options
    $ ./setup.sh -h
+
+   # Show version and exit
+   $ ./setup.sh -v
    #+end_src
 
    Previous versions of =setup.sh= provided options for installation

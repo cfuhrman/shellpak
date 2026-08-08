@@ -22,7 +22,6 @@ aliasCoreUtils ()
 
         # Do we have the GNU version of ls installed as gls?
         if type -p gls >/dev/null; then
-
                 # Note we disable color-mode if we're a dumb terminal
                 if [[ ${TERM} != 'dumb' && ${TERM} != 'emacs' ]]; then
                         alias ls='gls --color'
@@ -31,7 +30,6 @@ aliasCoreUtils ()
                 fi
 
                 NOGNU="unalias ls"
-
         fi
 
         # Do we have the GNU version of df installed as gdf?

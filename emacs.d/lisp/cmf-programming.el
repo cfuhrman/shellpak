@@ -134,7 +134,7 @@
   (cperl-electric-parens nil)
   (cperl-font-lock t)
   (cperl-highlight-variables-indiscriminately t)
-  (cperl-indent-level 4)
+  (cperl-indent-level 8)
   (cperl-indent-parens-as-block t)
   (cperl-tab-always-indent t)
 

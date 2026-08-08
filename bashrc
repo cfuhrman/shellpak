@@ -23,28 +23,12 @@
 SHELLDIR=$HOME/SHELL
 export SHELLDIR
 
-# Set WINHOME if it is present.  Note that this block of code assumes
-# that the UNIX username is the same as the Windows username
-if [ -d /mnt/c/Users/${USER} ]; then
-        export WINHOME=/mnt/c/Users/${USER}
-elif [ -n ${USERPROFILE} ]; then
-        export WINHOME=${USERPROFILE}
-else
-        export WINHOME=
-fi
-
 # Includes
 source $SHELLDIR/functions
 source $SHELLDIR/prompts
 source $SHELLDIR/aliases.commands
 source $SHELLDIR/aliases.hosts
-
-# Use installed git-prompt.sh if this is a Windows system
-if [ -f /c/Program\ Files/Git/etc/profile.d/git-prompt.sh ]; then
-        source /c/Program\ Files/Git/etc/profile.d/git-prompt.sh
-else
-        source $SHELLDIR/thirdparty/git-prompt.sh
-fi
+source $SHELLDIR/git-prompt
 
 # Set SHELLPAK_VERSION
 if [ -f ${SHELLDIR}/VERSION ]; then
@@ -72,9 +56,8 @@ PINE_REMOTE_CONFIG="{mail.example.com/ssl/novalidate-cert/user=cfuhrman@example.
 # See code for order of preference.
 __sp_bashrc_set_browser ()
 {
-        browsers=('sensible-browser'            \
+        browsers=('google-chrome'               \
                   'firefox'                     \
-                  'google-chrome'               \
                   'chromium'                    \
                   'w3m'                         \
                   'elinks'                      \
@@ -82,12 +65,10 @@ __sp_bashrc_set_browser ()
                  )
 
         for browser in ${browsers[@]}; do
-
                 if type -p ${browser} >/dev/null; then
                         BROWSER=$browser
                         break;
                 fi
-
         done
 
         export BROWSER
@@ -107,14 +88,12 @@ __sp_bashrc_set_editor ()
                 )
 
         for edit in ${editors[@]}; do
-
                 if type -p ${edit} >/dev/null; then
                         EDITOR=$edit
                         export EDITOR;
 
                         break;
                 fi
-
         done
 
         # Should the editor be emacs(1), make sure we use console
@@ -135,7 +114,6 @@ __sp_bashrc_set_pager ()
         if [ $TERM == 'dumb' ] || [ $TERM == 'emacs' ]; then
                 PAGER='cat'
         else
-
                 pagers=('sensible-pager'        \
                         'less'                  \
                         'more'                  \
@@ -143,14 +121,11 @@ __sp_bashrc_set_pager ()
                        )
 
                 for pagr in ${pagers[@]}; do
-
                         if type -p ${pagr} >/dev/null; then
                                 PAGER=$pagr
                                 break;
                         fi
-
                 done
-
        fi
 
         export PAGER
@@ -165,7 +140,6 @@ fi
 
 # First check and see if we're an interactive shell
 if [ "$PS1" ]; then
-
         if [ "x`tput kbs`" != 'x' ] && [ ! $OSTYPE != ^MINGW64_NT* ]; then
                 stty erase `tput kbs`
         fi
@@ -177,7 +151,6 @@ if [ "$PS1" ]; then
         else
                 promptCMF
         fi
-
 fi
 
 # Directories to evaluate for adding to PATH
@@ -185,8 +158,6 @@ PATHS=('/usr/games'                             \
        '/usr/X11R6/bin'                         \
        '/usr/X11R7/bin'                         \
        '/usr/sbin'                              \
-       '/opt/bin'                               \
-       '/opt/sbin'                              \
        '/sbin'                                  \
        '/usr/local/sbin'                        \
        "$HOME/.composer/vendor/bin"             \
@@ -200,12 +171,9 @@ PATHS=('/usr/games'                             \
 
 # Pre-pend additional directories if required
 for path in ${PATHS[@]}; do
-
-        # Determine if this directory is already in $PATH
-        if [ -d $path ]; then
-                echo $PATH | egrep '(^|\:)'${path}'(\:|$)' >/dev/null 2>&1 || PATH=${path}:$PATH
+        if [ -d $path ] && ! [[ "$PATH" =~ (^|:)"${path}"(:|$) ]]; then
+                PATH=${path}:$PATH
         fi
-
 done
 
 PATH=${PATH#:}                 # Get rid of pre-pended colons
@@ -218,10 +186,9 @@ AWK=awk
 if type -p go >/dev/null; then
         export GOPATH=${HOME}/go
 
-        if [ -d ${GOPATH}/bin ]; then
-                echo $PATH | egrep '(^|\:)'${GOPATH}'/bin(\:|$)' >/dev/null 2>&1 || PATH=$PATH:${GOPATH}/bin
+        if [ -d ${GOPATH}/bin ] && ! [[ "$PATH" =~ (^|:)"${GOPATH}/bin"(:|$) ]]; then
+                PATH=$PATH:${GOPATH}/bin
         fi
-
 fi
 
 export PATH
@@ -233,11 +200,6 @@ PERL5LIB="${HOME}/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
 PERL_LOCAL_LIB_ROOT="${HOME}/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
 PERL_MB_OPT="--install_base \"${HOME}/perl5\""; export PERL_MB_OPT;
 PERL_MM_OPT="INSTALL_BASE=${HOME}/perl5"; export PERL_MM_OPT;
-
-# Make sure dotnet programs know where it is installed
-if [ -d /usr/share/dotnet ]; then
-        export DOTNET_ROOT=/usr/share/dotnet
-fi
 
 
 # OS-Specific variable(s)
@@ -292,6 +254,7 @@ __sp_bashrc_set_pager
 # command history?
 HISTIGNORE='\&:fg:bg:ls:pwd:cd ..:cd ~-:cd -:cd:jobs:set -x:ls -l:ls -al'
 HISTIGNORE+=':%1:%2:popd:top:alpine:mutt:clear:shutdown*'
+HISTIGNORE+=':*git restore*'
 export HISTIGNORE
 
 # Save multi-line commands in history as single line
