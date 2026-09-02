@@ -171,6 +171,10 @@
          )
   )
 
+(use-package pinentry
+  :ensure t
+  )
+
 (use-package restclient
   :ensure t
   :mode ("\\.rtt\\'" . restclient-mode)

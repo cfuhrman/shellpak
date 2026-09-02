@@ -39,7 +39,6 @@ HOMETMPDIR=${HOME}/tmp
 RSYNC=rsync
 RSYNC_EXCLUDE=global-excludes
 RSYNC_OPTS="-Ccav --perms --chmod=go-rw --delete --exclude-from=${RSYNC_EXCLUDE}"
-MAKE=make
 COPYRIGHT='Copyright (c) 2000-2026 Christopher M. Fuhrman'
 OUTPUTSPACING=55
 CWD_IS_SHELL_HOME=$( [ ${SHELLDIR} != ${PWD} ]; echo $? )
@@ -103,28 +102,6 @@ HOMEDOTFILES=('authinfo.gpg'                    \
               'Xmodmap'                         \
               'Xresources'                      \
              )
-
-# Private: List of possible locations to search for make(1) binary
-#
-# Use GNU Make if available, otherwise blindly assume that the system
-# make is compatible
-MAKEPATHS=('/usr/pkg/bin/gmake'                 \
-           '/usr/local/bin/gmake'               \
-           '/usr/bin/gnumake'                   \
-           '/opt/csw/bin/gmake'                 \
-           '/usr/sfw/bin/gmake'                 \
-           '/opt/freeware/bin/gmake'            \
-           '/usr/ccs/bin/make'                  \
-           '/opt/csw/bin/make'                  \
-           '/usr/bin/make'
-          )
-
-for makeprog in ${MAKEPATHS[@]}; do
-        if [ -e ${makeprog} ]; then
-                MAKE=${makeprog}
-                break
-        fi
-done
 
 # Determine version and output to file
 if [[ -f .fslckout || -f _FOSSIL_ ]]; then

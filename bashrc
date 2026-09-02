@@ -179,9 +179,6 @@ done
 PATH=${PATH#:}                 # Get rid of pre-pended colons
 PATH=${PATH//::/:}             # Remove double colons
 
-# Public: Default program for awk(1)
-AWK=awk
-
 # Set up GOPATH
 if type -p go >/dev/null; then
         export GOPATH=${HOME}/go

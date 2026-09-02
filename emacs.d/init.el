@@ -189,6 +189,6 @@ https://github.com/daviwil/emacs-from-scratch/blob/master/init.el"
 ;; --------------------------------------------------------------------
 
 ;; Make gc pauses faster by decreasing the threshold.
-(setq gc-cons-threshold (* 200 1000 1000))
+(setq gc-cons-threshold (* 50 1000 1000))
 
 ;;; init.el ends here

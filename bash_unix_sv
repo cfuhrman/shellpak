@@ -67,11 +67,6 @@ if [[ ${OSTYPE} == 'SunOS' ]]; then
                 alias man='GROFF_NO_SGR= TCAT="less -s" TROFF="groff -Tascii" man -t'
         fi
 
-        # Use GNU AWK whenever possible
-        if [ -e /opt/csw/bin/gawk ]; then
-                AWK=gawk
-        fi
-
         # Set up default ulimit
         ulimit -c unlimited
 else
