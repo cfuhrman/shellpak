@@ -31,6 +31,7 @@ ext/
 flycheck_init.el
 games/
 ido.last
+image-dired/
 intelephense/
 lsp-cache/
 mastodon.plstore
@@ -41,6 +42,7 @@ persist/
 projectile-bookmarks.eld
 projectile.cache
 recentf
+recentf.eld
 request
 session.*
 tramp

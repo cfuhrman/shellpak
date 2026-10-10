@@ -1,4 +1,4 @@
-;;; cmf-ide.el --- IDE customization
+;;; cmf-ide.el --- IDE customization -*- lexical-binding: t; -*-
 ;; ====================================================================
 ;;;
 ;; Copyright (c) 2024 Christopher M. Fuhrman
@@ -23,7 +23,6 @@
 
 (require 'cmf-ui)
 
-
 ;;
 ;; Variables
 ;;
@@ -36,14 +35,34 @@
 ;; Functions
 ;;
 
+;; As suggested by Claude Sonnet 4.6
+(defun cmf/lsp-mode-setup-completion ()
+  ;; Use orderless (or a mix) for lsp-completion-at-point
+  (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+        '(orderless))
+  )
+
 ;;
 ;; Packages
 ;;
 
 (use-package dap-mode
+  :ensure t
   :after lsp
+  :commands (dap-debug dap-breakpoints-add)
 
-  :config
+  ;; MS Visual Studio Keybindings for debugging
+  :bind (:map dap-mode-map
+              ("<f5>"     . dap-continue)
+              ("<f9>"     . dap-breakpoint-add)
+              ("C-S-<f9>" . dap-breakpoint-clear-all)
+              ("<f10>"    . dap-next)
+              ("<f11>"    . dap-step-in)
+              ("S-<f11>"  . dap-step-out))
+  
+  :init
+  (dap-mode 1)
+  (dap-ui-mode 1)
   (dap-auto-configure-mode)
   )
 
@@ -69,17 +88,32 @@
 
   :config
   (global-flycheck-mode)
+
+  (use-package consult-flycheck
+    :ensure t
+
+    )
   )
 
 (use-package flyspell
   ;; This is a built-in mode
-  :bind (:map flyspell-mode-map
-              ("C-c ;" . flyspell-correct-wrapper))
-
   :hook ((prog-mode . flyspell-prog-mode)
          (text-mode . flyspell-mode))
 
   :config
+  ;; Enable flyspell-correct for better correction UI
+  (use-package flyspell-correct
+    :ensure t
+    :after flyspell
+    
+    :bind (:map flyspell-mode-map
+                ("C-c ;" . flyspell-correct-wrapper) ;; Trigger correction at point
+                ("C-c $" . flyspell-correct-at-point))
+
+    :init
+    (setq flyspell-correct-interface #'flyspell-correct-completing-read)
+    )
+  
   (if (eq system-type 'windows-nt)
       (progn
         (setq ispell-dictionary "english")
@@ -96,11 +130,6 @@
     (setq-default ispell-program-name "aspell")
     )
 
-  (use-package flyspell-correct-ivy
-    :ensure t
-    :pin melpa
-    )
-
   :custom
   (ispell-extra-args (quote ("--run-together")))
   )
@@ -115,7 +144,8 @@
          ("C-c h i" . hl-todo-insert)
          )
 
-  :hook (prog-mode . hl-todo-mode)
+  :hook ((LaTeX-mode . hl-todo-mode)
+         (prog-mode . hl-todo-mode))
 
   :custom
   (hl-todo-keyword-faces
@@ -152,17 +182,6 @@
       (setq indent-bars-prefer-character t))
   )
 
-(use-package ivy-xref
-  :ensure t
-  :after ivy
-
-  :init
-  (when (>= emacs-major-version 27)
-    (setq xref-show-definitions-function #'ivy-xref-show-defs))
-
-  (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
-  )
-
 (use-package log-edit
   ;; This is a built-in mode
   :mode (("COMMIT.*"   . log-edit-mode)
@@ -174,9 +193,16 @@
 
 (use-package lsp-mode
   :ensure t
+  :after consult
   :commands (lsp lsp-deferred)
 
+  :bind ("C-x C-k w" . consult-lsp-symbols)
+  
+  :hook ((lsp-mode . yas-minor-mode)
+         (lsp-completion-mode . cmf/lsp-mode-setup-completion))
+
   :custom
+  (lsp-completion-provider :none)
   (lsp-prefer-flymake nil)
   (lsp-file-watch-threshold 40000)
   (lsp-response-timeout 30)
@@ -203,14 +229,9 @@
     (setq lsp-headerline-breadcrumb-icons-enable nil)
     )
 
-  (use-package lsp-ivy
+  (use-package consult-lsp
     :ensure t
-    :after ivy
 
-    :bind(
-          ;; Convenience shortcut for finding workspace symbols
-          ("C-x C-k w"   . lsp-ivy-workspace-symbol)
-          )
     )
 
   (use-package lsp-treemacs
@@ -252,22 +273,17 @@
   ("C-c p" . projectile-command-map)
 
   :custom
-  (projectile-completion-system 'ivy)
   (projectile-enable-caching t)
   (projectile-indexing-method 'alien)
   (projectile-switch-project-action #'projectile-find-file)
 
-  :init
-  ;; Warn the user about counsel-projectile
-  (if (package-installed-p 'counsel-projectile)
-      (warn (concat
-        "The counsel-projectile package breaks projectile "
-        "functionality.  Consider removing it."))
+  :config
+  ;; Install ripgrep package, which is needed by projectile
+  (unless (eq (executable-find "rg") nil)
+    (use-package ripgrep
+      :ensure t)
     )
 
-  (projectile-mode +1)
-
-  :config
   (dolist (devpath '("~/dev/"
                      "~/org/"
                      "~/source/repos/"
@@ -277,6 +293,14 @@
         (add-to-list 'projectile-project-search-path (expand-file-name
                                                       devpath user-emacs-directory))
       ))
+
+  (projectile-mode +1)
+
+  (use-package consult-projectile
+    :ensure t
+    :after consult
+
+    )
 
   (use-package treemacs-projectile
     :ensure t
@@ -288,12 +312,6 @@
   :ensure t
 
   :hook (prog-mode . rainbow-delimiters-mode)
-  )
-
-(unless (eq (executable-find "rg") nil)
-  (use-package ripgrep
-    :ensure t
-    )
   )
 
 (use-package treemacs
@@ -343,15 +361,14 @@
 
   :config
   (yas-global-mode t)
-  (use-package yasnippet-snippets
+  (use-package consult-yasnippet
     :ensure t
+    :after consult
+    
     )
 
-  (use-package ivy-yasnippet
+  (use-package yasnippet-snippets
     :ensure t
-    :after ivy
-
-    :bind (("C-x C-k =" . ivy-yasnippet))
     )
 
   :custom

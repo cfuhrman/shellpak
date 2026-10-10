@@ -1,4 +1,4 @@
-;;; cmf-org-export.el --- Org-mode export wrapper functions
+;;; cmf-org-export.el --- Org-mode export wrapper functions -*- lexical-binding: t; -*-
 ;; ====================================================================
 ;;;
 ;; Copyright (c) 2014 Christopher M. Fuhrman
@@ -41,7 +41,7 @@ will export to ASCII format."
   )
 
 (defun cmf-export-to-pdf ()
-  "Wrapper function for exporting an 'org-mode' document to PDF format via LaTeX."
+  "Wrapper function for exporting an 'org-mode' document to PDF via LaTeX."
   (interactive)
   (if (>= cmf-org-version 8)
       (progn

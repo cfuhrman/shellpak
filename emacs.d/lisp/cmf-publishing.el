@@ -1,4 +1,4 @@
-;;; cmf-publishing.el --- Publishing customization
+;;; cmf-publishing.el --- Publishing customization -*- lexical-binding: t; -*-
 ;; ====================================================================
 ;;;
 ;; Copyright (c) 2024 Christopher M. Fuhrman
@@ -66,22 +66,10 @@
       )
     )
 
-  (use-package company-auctex
+  (use-package consult-tex
     :ensure t
-    :after (company latex)
+    :after consult
 
-    :config
-    (company-auctex-init)
-    )
-
-  (use-package company-bibtex
-    :ensure t
-    :after (company)
-
-    :hook (bibtex-mode .
-                       (lambda ()
-                         (add-to-list 'company-backends
-                                      'company-bibtex)))
     )
   )
 

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: Boiler plate for LaTeX files managed by CVS/RCS
+# --
+%
+% $Id$
+%
+
+$0
+
+% `(file-name-nondirectory (buffer-file-name))` ends here

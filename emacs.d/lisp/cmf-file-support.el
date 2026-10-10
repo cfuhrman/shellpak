@@ -1,4 +1,4 @@
-;;; cmf-file-support.el --- File customization
+;;; cmf-file-support.el --- File customization -*- lexical-binding: t; -*-
 ;; ====================================================================
 ;;;
 ;; Copyright (c) 2024 Christopher M. Fuhrman

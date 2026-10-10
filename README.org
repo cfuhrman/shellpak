@@ -28,7 +28,7 @@
 ** Requirements
 
     - GNU Bash version 4.0 or greater
-    - GNU Emacs 28.1 or greater (see [[file:emacs.d/EMACS-README.org][EMACS Documentation]])
+    - GNU Emacs 29.1 or greater (see [[file:emacs.d/EMACS-README.org][EMACS Documentation]])
     - GNU Make
     - rclone (under MS-Windows)
     - rsync
@@ -133,8 +133,9 @@
 * Copyright
 
   Copyright (c) 2000-2026 Christopher M. Fuhrman \\
-  All rights reserved.
+  All rights reserved. \\
 
+  #+LATEX: \noindent
   All files contained herein can be redistributed and/or modified \\
   under the terms of the Simplified BSD License (also known as the \\
   "2-Clause License" or "FreeBSD License".) unless otherwise noted.

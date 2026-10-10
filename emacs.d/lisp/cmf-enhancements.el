@@ -1,4 +1,4 @@
-;;; cmf-enhancements.el --- Adds enhancements to Emacs
+;;; cmf-enhancements.el --- Adds enhancements to Emacs -*- lexical-binding: t; -*-
 ;; ====================================================================
 ;;;
 ;; Copyright (c) 2024 Christopher M. Fuhrman
@@ -67,8 +67,13 @@
 ;; GNU/Linux systems typically have GNU coreutils installed, so pass
 ;; the --dired flag to ls since GNU ls supports that
 (if (eq system-type 'gnu/linux)
-    (setq dired-listing-switches "-alh --dired")
+    (setq dired-listing-switches "-alh --dired --group-directories-first")
   (setq dired-listing-switches "-alh")
+  )
+
+;; Disable native Ispell functions to favor cape
+(if (not (version< emacs-version "30.1"))
+    (setq text-mode-ispell-word-completion nil)
   )
 
 ;;
@@ -104,43 +109,50 @@
 ;;  * https://www.gnu.org/software/emacs/manual/html_node/emacs/Authentication.html
 ;;  * https://github.com/karthink/gptel#optional-securing-api-keys-with-authinfo
 ;;  * https://github.com/karthink/gptel#anthropic-claude
-(use-package gptel
-  :ensure t
+;;
+(if (file-exists-p "~/.gnupg/secring.gpg")
+    (use-package gptel
+      :ensure t
 
-  :bind
-  ("C-c RET" . gptel-send)
-  ("C-c C-m" . gptel-menu)
+      :bind
+      ("C-c RET" . gptel-send)
+      ("C-c C-m" . gptel-menu)
 
-  ;; TODO: Fix issue with switching backends
-  :config
-  ;; Based on response from Claude Sonnet 4.6
-  (defvar cmf/gptel-claude
-    (gptel-make-anthropic "Claude"
-      :stream t
-      ;; :key (gptel-api-key-from-auth-source "claude"))
-    ))
-  
-  ;; Set up ChatGPT key and use Claude as default backend.
-
-  ;; Uncomment the below code once an API key has been obtained
-  ;; (setq gptel-api-key (gptel-api-key-from-auth-source "chatgpt")
-  ;;       gptel-backend cmf/gptel-claude)
-  
-  :custom
-  (gptel-default-mode 'org-mode)
-  (gptel-model 'claude-sonnet-5)
-  (gptel-system "You are a helpful assistant.")
+      ;; TODO: Fix issue with switching backends
+      :config
+      ;; Based on response from Claude Sonnet 4.6
+      (defvar cmf/gptel-claude
+        (gptel-make-anthropic "Claude"
+          :stream t
+          :key (gptel-api-key-from-auth-source "claude"))
+        )
+      
+      ;; Set up ChatGPT key and use Claude as default backend
+      (setq gptel-api-key (gptel-api-key-from-auth-source "chatgpt")
+            gptel-backend cmf/gptel-claude)
+      
+      :custom
+      (gptel-default-mode 'org-mode)
+      (gptel-model 'claude-sonnet-5)
+      (gptel-system "You are a helpful assistant.")
+      )
   )
 
-(use-package mastodon
-  :ensure t
+;; TODO: Consider removing this package as I do not use it
+;;
+;; This package can only be installed on Emacs >= 31.1 as it relies on
+;; the compat-31.1 library.
+(if (not (version< emacs-version "31.1"))
+    (use-package mastodon
+      :ensure t
 
-  :hook ((mastodon-toot-mode . footnote-mode))
+      :hook ((mastodon-toot-mode . footnote-mode))
 
-  :custom
-  ;; DONT: Personal settings not appropriate for public!
-  (mastodon-instance-url "https://mastodon.example.com")
-  (mastodon-active-user "your-username-here")
+      :custom
+      ;; DONT: Personal settings not appropriate for public!
+      (mastodon-instance-url "https://tiggi.es")
+      (mastodon-active-user "wulflock")
+      )
   )
 
 (if (eq system-type 'darwin)
@@ -176,18 +188,6 @@
   :mode ("\\.rtt\\'" . restclient-mode)
 
   :hook (restclient-mode . auto-fill-mode);
-
-  :config
-  (use-package company-restclient
-    :ensure t
-    :after company
-
-    :hook ((restclient-mode . undo-tree-mode)
-           (restclient-mode . display-line-numbers-mode)
-           (restclient-mode .
-                            (lambda ()
-                              (add-to-list 'company-backends 'company-restclient))))
-    )
   )
 
 (use-package sudo-edit

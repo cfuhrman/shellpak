@@ -57,6 +57,41 @@ else
         export GIT_INSTALLED=0
 fi
 
+# Private: Loads git-prompt script
+loadGitPromptBin ()
+{
+        # Don't do anything if git(1) isn't installed
+        if [ $GIT_INSTALLED -eq 0 ]; then
+                return
+        fi
+
+        if [ -f /etc/bash_completion.d/git-prompt ]; then
+                source /etc/bash_completion.d/git-prompt
+        else
+                # TODO: Determine location of git-prompt as installed
+                #       by homebrew under macOS.
+                GITPROMPT_BIN='git-prompt.sh'
+                GIT_DIRECTORIES=(
+                        '/c/Program\ Files/Git/etc/profile.d/'                  \
+                        '/usr/share/git-core/contrib/completion/'               \
+                        '/usr/pkg/share/examples/git/'                          \
+                        '/usr/local/share/git-core/contrib/completion/'         \
+                        "${SHELLDIR}/thirdparty/"
+                )
+
+                # Determine location
+                for gitdir in ${GIT_DIRECTORIES[@]}; do
+                        GITPROMPT_FULL="${gitdir}${GITPROMPT_BIN}"
+                        if [ -e $GITPROMPT_FULL ]; then
+                                source $GITPROMPT_FULL
+                                break;
+                        fi
+                done
+
+                unset GITPROMPT_BIN GIT_DIRECTORIES GITPROMPT_FULL
+        fi        
+}
+
 # Private: Sets the title font if an xterm is detected
 #
 # WARN: DO NOT unset this function as it will break other methods in
@@ -94,7 +129,7 @@ promptYELLOW ()
 }
 
 # Public: Sets up prompt using 256 colors
-promptCMF256 ()
+promptYELLOW256 ()
 {
         setPromptCommand
         DEFAULTPS1=$PS1
@@ -156,8 +191,8 @@ promptGENTOO ()
         export DEFAULTPS1
 }
 
-# Public: Sets up a prompt with greenish-ish colors
-promptCMF ()
+# Public: Sets up prompt with green hostname and purple directory
+promptGREEN ()
 {
         setPromptCommand
         DEFAULTPS1=$PS1
@@ -203,5 +238,8 @@ promptBASIC ()
 
         export DEFAULTPS1
 }
+
+# Load git-prompt logic
+loadGitPromptBin
 
 # prompts ends here

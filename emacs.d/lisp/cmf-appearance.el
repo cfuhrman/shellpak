@@ -1,4 +1,4 @@
-;;; cmf-appearance.el --- Appearance customization
+;;; cmf-appearance.el --- Appearance customization -*- lexical-binding: t; -*-
 ;; ====================================================================
 ;;;
 ;; Copyright (c) 2024 Christopher M. Fuhrman
@@ -117,29 +117,11 @@
     :custom
     (all-the-icons-dired-monochrome nil)
     )
-  )
-
-(use-package all-the-icons-ivy
-  :ensure t
-  :if window-system
-  :after (ivy all-the-icons)
-
-  :config
-  (all-the-icons-ivy-setup)
 
   (use-package all-the-icons-ibuffer
     :ensure t
 
     :hook (ibuffer-mode . all-the-icons-ibuffer-mode)
-    )
-
-  (use-package all-the-icons-ivy-rich
-    :ensure t
-    :if window-system
-    :after ivy
-
-    :init
-    (all-the-icons-ivy-rich-mode t)
     )
   )
 
@@ -169,6 +151,15 @@
 
   :config
   (load-theme 'doom-sourcerer t)
+  )
+
+(use-package kind-icon
+  :ensure t
+  :if window-system
+  :after corfu
+
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
   )
 
 ;; Enables ligature support for JetBrains Mono font

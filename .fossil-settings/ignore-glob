@@ -6,6 +6,7 @@
 .projectile-cache.eld
 TAGS
 VERSION
+*#
 emacs.d/GPATH
 emacs.d/GRTAGS
 emacs.d/GTAGS

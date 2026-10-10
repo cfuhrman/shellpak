@@ -112,11 +112,13 @@ disabled: ${DISABLEDHOSTS}
 	@echo 'All disabled hosts updated (Are they working now?)'
 
 clean: clean-echo ${CLEANDIRS} clean-dist
-	@rm ${RM_OPTS} *.bak
-	@rm ${RM_OPTS} *~
 	@rm ${RM_OPTS} *-baseline*
 	@rm ${RM_OPTS} *-merge*
 	@rm ${RM_OPTS} *-original*
+	@rm ${RM_OPTS} *.bak
+	@rm ${RM_OPTS} *.pdf
+	@rm ${RM_OPTS} *.tex
+	@rm ${RM_OPTS} *~
 
 clean-echo:
 	@echo 'Cleaning old files:'

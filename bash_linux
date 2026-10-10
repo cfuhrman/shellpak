@@ -18,7 +18,6 @@
 # Sets up system environment for Linux-based boxen
 #
 
-
 # This is in case we're not a login shell
 if [ "x$SHLVL" != 'x1' ] && [ -e '/etc/profile.d' ]; then
         # Red Hat/Fedora Core distributions use /etc/profile.d
@@ -73,7 +72,7 @@ fi
 # Public: Set up colors for ip(8)
 export COLORFGBG=";0"
 
-# Make sure dotnet programs know where it is installed
+# Make sure dotnet programs know where they are installed
 if [ -d /usr/share/dotnet ]; then
         export DOTNET_ROOT=/usr/share/dotnet
 fi

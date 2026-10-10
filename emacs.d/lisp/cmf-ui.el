@@ -1,7 +1,7 @@
-;;; cmf-ui.el --- UI customization
+;;; cmf-ui.el --- UI customization -*- lexical-binding: t; -*-
 ;; ====================================================================
 ;;;
-;; Copyright (c) 2024 Christopher M. Fuhrman
+;; Copyright (c) 2024, 2026 Christopher M. Fuhrman
 ;; All rights reserved.
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -33,10 +33,22 @@
  '(global-auto-revert-non-file-buffers t)
  '(global-prettify-symbols-mode t)
  '(recentf-mode t)
+ `(tab-always-indent 'complete)
  '(transient-mark-mode t)
  '(warning-suppress-log-types '((comp)))
  '(warning-suppress-types '((comp)))
  )
+
+;;
+;; Functions
+;;
+
+(defun cmf/corfu-enable-in-minibuffer ()
+  "Enable Corfu in the minibuffer if `completion-at-point' is bound."
+  (when (where-is-internal #'completion-at-point (list (current-local-map)))
+    (setq-local corfu-auto nil)
+    (corfu-mode 1))
+  )
 
 ;;
 ;; Behavior
@@ -60,185 +72,176 @@
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   )
 
-(use-package company
+(use-package cape
   :ensure t
-  :diminish company-mode
 
-  :bind (:map company-active-map
-              ("C-n" . company-select-next)
-              ("C-p" . company-select-previous)
-              ("TAB" . company-complete-selection)
-              )
-
-  :hook (emacs-lisp-mode .
-                         (lambda ()
-                           (add-to-list 'company-backends 'company-capf)))
-
-  :custom
-  (company-dabbrev-downcase nil)
-  (company-dabbrev-ignore-case 'keep-prefix)
-  (company-idle-delay 0.3)
-  (company-minimum-prefix-length 3)
-  (company-tooltip-align-annotations t)
-  (company-tooltip-flip-when-above t)
-  (company-tooltip-limit 10)
-  (company-tooltip-minimum-width 27)
+  :bind (("C-c e \\" . cape-tex)
+         ("C-c e ^"  . cape-tex)
+         ("C-c e _"  . cape-tex))
 
   :init
-  (global-company-mode)
+  ;; completion-at-point will evaluate these in order
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  (add-to-list 'completion-at-point-functions #'cape-abbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
   )
 
-(use-package company-box
+(use-package consult
   :ensure t
-  :diminish company-box-mode
-  :if window-system
-  :after company
+  :pin gnu
 
-  :hook (company-mode . company-box-mode)
+  :bind (
+         ("C-c b" . consult-bookmark)
+         ("C-c j" . consult-git-grep)
+         ("C-c g" . consult-grep)
+         ("C-c k" . consult-ripgrep)
+         ("C-c o" . consult-outline)
+         ("C-c t" . consult-theme)
+         ("M-g g" . consult-goto-line)
+         ("C-x b" . consult-buffer)
+         ("C-x l" . consult-locate)
+         ("C-r"   . consult-line)
+         ("C-s"   . consult-line)
+         ("M-i"   . consult-imenu)
+         ("M-y"   . consult-yank-pop)
+
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s"   . consult-history)                 ;; orig. next-matching-history-element
+         ("M-r"   . consult-history)                 ;; orig. previous-matching-history-element
+         )
+  )
+
+(use-package corfu
+  :ensure t
+  :pin gnu
+
+  :bind
+  (:map corfu-map
+        ("TAB"     . corfu-next)
+        ([tab]     . corfu-next)
+        ("S-TAB"   . corfu-previous)
+        ([backtab] . corfu-previous)
+        ("RET"     . corfu-insert))
+
+  :hook ((prog-mode   . corfu-mode)
+         (shell-mode  . corfu-mode)
+         (eshell-mode . corfu-mode))
+
+  :init
+  (global-corfu-mode t)
+  (corfu-history-mode t)
+
+  :custom
+  (corfu-auto t)
+  (corfu-auto-delay 0.2)
+  (corfu-auto-prefix 2)
+  (corfu-auto-trigger ".")
+  (corfu-cycle t)
+  (corfu-preselect 'first)
+  (corfu-preview-current t)
+  )
+
+(use-package corfu-popupinfo
+  :ensure nil ;; part of corfu
+  :after corfu
+
+  :hook (corfu-mode . corfu-popupinfo-mode)
+
+  :custom
+  (corfu-popupinfo-delay '(0.5 . 0.2))
+  )
+
+(add-hook 'minibuffer-setup-hook #'cmf/corfu-enable-in-minibuffer)
+
+(if (version< emacs-version "31.1")
+    (use-package corfu-terminal
+      :ensure t
+      :if (not (display-graphic-p))
+
+      :config
+      (corfu-terminal-mode 1)
+      )
+  )
+
+(use-package embark
+  :ensure t
+
+  :bind (("C-c m ."      . embark-act)
+         ("C-c m ,"      . embark-dwim)
+         ("C-c m j"      . embark-dired-jump)
+         ("C-h B"        . embark-bindings))
+
+  :init
+  ;; Replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
 
   :config
-  (if (eq window-system 'ns)
-      ;; DONT: Company-box and macOS do not behave properly when
-      ;; running under full screen mode (at least under Mojave).  The
-      ;; same is true regardless if ns-use-native-fullscreen is set to
-      ;; nil or not.  For the time being, just notify the user.
-      (warn "Do not use full-screen mode when running under macOS!")
-    )
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none))))
+  )
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :ensure t
+  :pin gnu
+  :after embark
+
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode)
+  )
+
+(use-package emojify
+  :ensure t
+
+  :config
+  (setq emojify-display-style 'unicode)
+  (setq emojify-emoji-styles '(unicode))
+
+  ;; Mnemonic: C-c (i)nsert (e)moji
+  (bind-key* (kbd "C-c i e") #'emojify-insert-emoji)
+  )
+
+(use-package goggles
+  :ensure t
+  
+  :hook ((prog-mode text-mode) . goggles-mode)
+
+  :config
+  (setq-default goggles-pulse t) ;; set to nil to disable pulsing
   )
 
 (use-package helpful
   :ensure t
-  :after counsel
-  :commands (helpful-callable helpful helpful-command helpful-key)
+  :commands (helpful-callable helpful-variable helpful-command helpful-key)
 
   :bind
-  ([remap describe-function]    . counsel-helpful-function)
   ([remap describe-symbol]      . helpful-symbol)
-  ([remap describe-variable]    . counsel-helpful-variable)
   ([remap describe-command]     . helpful-command)
   ([remap describe-key]         . helpful-key)
+  )
+
+(use-package marginalia
+  :ensure t
+  :pin gnu
+
+  :init
+  (marginalia-mode 1)
+  )
+
+(use-package orderless
+  :ensure t
+  :pin gnu
 
   :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  )
-
-(use-package hydra
-  :ensure t
-  )
-
-(use-package ivy
-  :ensure t
-  :diminish ivy-mode
-
-  :bind (
-         ;; Ivy-based interface to standard commands
-         ("C-c v"   . ivy-push-view)
-         ("C-c V"   . ivy-pop-view)
-
-         ;; Ivy-resume and other commands
-         ("C-c C-r" . ivy-resume)
-         )
-
-  :custom
-  (ivy-use-virtual-buffers t)
-  (ivy-height 10)
-  (ivy-count-format "(%d/%d) ")
-
-  :config
-  (ivy-mode t)
-  (use-package ivy-hydra
-    :ensure t
-    :pin gnu
-    :after hydra
-    )
-  )
-
-(use-package ivy-emoji
-  :ensure t
-  :after ivy
-
-  :bind ("C-c i e" . ivy-emoji) ;; mnemonics i e = insert emoji
-  )
-
-(use-package ivy-rich
-  :ensure t
-  :after (ivy counsel)
-
-  :config
-  (ivy-rich-mode t)
-  (setcdr (assq t ivy-format-functions-alist)
-          #'ivy-format-function-line)
-  )
-
-(use-package swiper
-  :ensure t
-  :after ivy
-
-  :bind (
-         ("C-s"         . swiper)
-         ("C-r"         . swiper-backward)
-         )
-  )
-
-(use-package counsel
-  :ensure t
-  :diminish counsel-mode
-
-  :bind (
-         ("M-x"         . counsel-M-x)
-         ("C-x C-f"     . counsel-find-file)
-         ("C-x d"       . counsel-dired)
-         ("M-y"         . counsel-yank-pop)
-         ("<f1> f"      . counsel-describe-function)
-         ("<f1> v"      . counsel-describe-variable)
-         ("<f1> l"      . counsel-find-library)
-         ("<f2> i"      . counsel-info-lookup-symbol)
-         ("<f2> u"      . counsel-unicode-char)
-         ("<f2> j"      . counsel-set-variable)
-         ("C-x b"       . counsel-switch-buffer)
-         ("M-i"         . counsel-imenu)
-
-         ;; Ivy-based interface to shell and system tools
-         ("C-c C"       . counsel-compile)
-         ("C-c g"       . counsel-git)
-         ("C-c j"       . counsel-git-grep)
-         ("C-c L"       . counsel-git-log)
-         ("C-c k"       . counsel-rg)
-         ("C-c m"       . counsel-linux-app)
-         ("C-x l"       . counsel-locate)
-         ("C-c J"       . counsel-file-jump)
-         ("C-S-o"       . counsel-rhythmbox)
-         ("C-c w"       . counsel-wmctrl)
-
-         ;; Other commands
-         ("C-c b"       . counsel-bookmark)
-         ("C-c d"       . counsel-descbinds)
-         ("C-c o"       . counsel-outline)
-         ("C-c t"       . counsel-load-theme)
-         ("C-c F"       . counsel-org-file)
-         )
-
-  :custom
-  (counsel-preselect-current-file t)
-
-  :config
-  (counsel-mode t)
-
-  (use-package counsel-web
-    :ensure t
-    :defer t
-
-    :config
-    ;; Define "C-c w" as a prefix key.
-    (defvar counsel-web-map
-      (let ((map (make-sparse-keymap "counsel-web")))
-        (define-key map (kbd "w") #'counsel-web-suggest)
-        (define-key map (kbd "s") #'counsel-web-search)
-        (define-key map (kbd ".") #'counsel-web-thing-at-point)
-        map))
-    (global-set-key (kbd "C-c w") counsel-web-map)
-    )
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic
+                                                 partial-completion))))
+  (completion-category-defaults nil) ;; Disable defaults, use our settings
   )
 
 (use-package undo-tree
@@ -259,6 +262,26 @@
   (undo-tree-history-directory-alist '(("" . "~/.emacs.d/undo")))
   (undo-tree-visualizer-diff t)
   (undo-tree-visualizer-timestamps t)
+  )
+
+(use-package vertico
+  :ensure t
+  :pin gnu
+
+  :init
+  (vertico-mode 1)
+
+  :config
+  ;; Configure directory extension.
+  (use-package vertico-directory
+    :after vertico
+    :ensure nil
+
+    ;; More convenient directory navigation commands
+    :bind (:map vertico-map
+                ("RET" . vertico-directory-enter)
+                ("DEL" . vertico-directory-delete-char)
+                ("M-DEL" . vertico-directory-delete-word)))
   )
 
 (use-package which-key

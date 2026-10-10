@@ -19,6 +19,8 @@
 #
 
 # Private: Setting for Pine/Alpine remote config
+#
+# DONT: Alpine remote host configuration not suitable for public release.
 PINE_REMOTE_CONFIG="{mail.example.com/ssl/novalidate-cert/user=cfuhrman@example.com}INBOX.in-my-alpine-config"
 
 # Aliases

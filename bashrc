@@ -28,7 +28,6 @@ source $SHELLDIR/functions
 source $SHELLDIR/prompts
 source $SHELLDIR/aliases.commands
 source $SHELLDIR/aliases.hosts
-source $SHELLDIR/git-prompt
 
 # Set SHELLPAK_VERSION
 if [ -f ${SHELLDIR}/VERSION ]; then
@@ -149,7 +148,7 @@ if [ "$PS1" ]; then
         if [ $TERM == 'dumb' ] || [ $TERM == 'emacs' ]; then
                 promptDumb
         else
-                promptCMF
+                promptGREEN
         fi
 fi
 
@@ -178,9 +177,6 @@ done
 
 PATH=${PATH#:}                 # Get rid of pre-pended colons
 PATH=${PATH//::/:}             # Remove double colons
-
-# Public: Default program for awk(1)
-AWK=awk
 
 # Set up GOPATH
 if type -p go >/dev/null; then
@@ -242,6 +238,7 @@ __sp_bashrc_set_editor
 # Determine pager
 __sp_bashrc_set_pager
 
+
 # Bash Command History
 # --------------------------------------------------------------------
 
@@ -264,9 +261,9 @@ export HISTSIZE=10000                  # Number of commands to keep in history
 export HISTFILESIZE=${HISTSIZE}        # Sets max size of history
 export HISTTIMEFORMAT="[%F %T]: "      # Time format of history
 
-#
+
 # Bash behavior settings
-#
+# --------------------------------------------------------------------
 
 # Correct minor spelling errors in cd commands
 shopt -s cdspell
@@ -288,9 +285,9 @@ shopt -s extglob
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-#
+
 # Additional Logic
-#
+# --------------------------------------------------------------------
 
 # Set up some default settings
 umask 022
@@ -312,6 +309,7 @@ if [ $DOMAIN ] && [ -f $SHELLDIR/hosts/$DOMAIN ]; then
 fi
 
 # Clean up
+# --------------------------------------------------------------------
 unset __sp_bashrc_set_browser
 unset __sp_bashrc_set_editor
 unset __sp_bashrc_set_pager

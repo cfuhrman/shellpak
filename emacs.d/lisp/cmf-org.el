@@ -1,4 +1,4 @@
-;;; cmf-org.el --- ORG-mode customization
+;;; cmf-org.el --- ORG-mode customization -*- lexical-binding: t; -*-
 ;; ====================================================================
 ;;;
 ;; Copyright (c) 2024 Christopher M. Fuhrman
@@ -240,11 +240,11 @@
 (use-package org
   ;; This is a built-in mode
   :bind (
-         ("C-c C-o l" . org-store-link)
-         ("C-c a" . org-agenda)
-         ("C-c c" . org-capture)
+         ("C-c a"     . org-agenda)
+         ("C-c c"     . org-capture)
+         ("C-x C-k l" . org-store-link)
          :map org-mode-map
-         ("C-c [" . org-time-stamp-inactive)
+         ("C-c ["     . org-time-stamp-inactive)
          )
 
   :hook ((org-mode . auto-fill-mode)
@@ -271,17 +271,6 @@
     :ensure t
     )
 
-  (use-package company-org-block
-    :ensure t
-
-    :hook ((org-mode . (lambda ()
-                         (setq-local company-backends '(company-org-block))
-                         (company-mode +1))))
-
-    :custom
-    (company-org-block-edit-style 'auto) ;; 'auto, 'prompt, or 'inline
-    )
-
   (use-package org-bullets
     :ensure t
 
@@ -299,7 +288,7 @@
     (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕"))
     (setq org-lowest-priority ?D)
     )
-
+  
   (use-package org-present
     :ensure t
 

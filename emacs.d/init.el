@@ -1,4 +1,4 @@
-;;; init.el --- Personal customization
+;;; init.el --- Personal customization -*- lexical-binding: t; -*-
 ;; ====================================================================
 ;;;
 ;; Copyright (c) 2008, 2016, 2021, 2024 Christopher M. Fuhrman
@@ -20,12 +20,13 @@
 
 ;;; Code:
 
-;; This will let Emacs load faster by reducing the number of times we
-;; must garbage collect.  The default is 800 kilobytes.
-(setq gc-cons-threshold (* 500 1000 1000))
+;; Increase gc-cons-threshold from the default of 800kb, thus reducing
+;; the number of times garbage collection takes place during loading
+;; of Emacs packages.
+(setq gc-cons-threshold (* 500 1024 1000)) ; 500mg
 
 ;; Variables needed for initialization
-(defvar cmf/min_emacs_version "28.1")
+(defvar cmf/min_emacs_version "29.1")
 (defvar cmf/path)
 
 ;; Make sure we are running a recent version of Emacs
@@ -124,7 +125,8 @@ https://github.com/daviwil/emacs-from-scratch/blob/master/init.el"
 
 (setq package-archives
       '(("melpa"        . "http://melpa.org/packages/")
-        ("gnu"          . "https://elpa.gnu.org/packages/"))
+        ("gnu"          . "https://elpa.gnu.org/packages/")
+        ("nongnu"       . "https://elpa.nongnu.org/nongnu/"))
       )
 (setq package-check-signature nil)
 
@@ -150,6 +152,11 @@ https://github.com/daviwil/emacs-from-scratch/blob/master/init.el"
 
 ;; Needed so :diminish works with use-package
 (use-package diminish
+  :ensure t
+  )
+
+;; pinentry must be present for any package that uses authinfo
+(use-package pinentry
   :ensure t
   )
 
@@ -188,7 +195,9 @@ https://github.com/daviwil/emacs-from-scratch/blob/master/init.el"
 ;; CLEAN UP
 ;; --------------------------------------------------------------------
 
-;; Make gc pauses faster by decreasing the threshold.
-(setq gc-cons-threshold (* 200 1000 1000))
+;; Reduce garbage collection threshold to a value large enough to
+;; allow for large language server requests to be handled with a
+;; minimum number of gc pauses.
+(setq gc-cons-threshold (* 100 1024 1000)) ; 100mg
 
 ;;; init.el ends here

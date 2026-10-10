@@ -1,4 +1,4 @@
-;;; cmf-programming.el --- Programming environment customization
+;;; cmf-programming.el --- Programming environment customization -*- lexical-binding: t; -*-
 ;; ====================================================================
 ;;;
 ;; Copyright (c) 2024 Christopher M. Fuhrman
@@ -21,7 +21,14 @@
 ;;; Code:
 
 (require 'cmf-ide)
+(require 'dap-netcore)
 
+;; Javascript debugging
+;;
+;; Uncomment preferred browser below
+;; (require 'dap-chrome)
+;; (require 'dap-edge)
+;; (require 'dap-firefox)
 
 ;;
 ;; Variables
@@ -42,6 +49,14 @@
 ")
  '(show-paren-mode t)
  )
+
+;; NOTE: Set netcoredbg variables per version, operating system, and
+;; architecture
+;;
+;; See https://github.com/Samsung/netcoredbg/releases
+(defvar cmf/dap-netcoredbg-url-prefix "https://github.com/Samsung/netcoredbg/releases/download")
+(defvar cmf/dap-netcoredbg-version "3.2.0-1092")
+(defvar cmf/dap-netcoredbg-file "netcoredbg-linux-amd64.tar.gz")
 
 ;;
 ;; Programming Styles
@@ -68,6 +83,7 @@
             (subword-mode t)))
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
+            (checkdoc-minor-mode t)
             (setq fill-column 70)
             (setq indent-tabs-mode nil)))
 
@@ -81,17 +97,6 @@
     :defer t
 
     :hook (yaml-mode . ansible-mode)
-
-    :config
-    (use-package company-ansible
-      :ensure t
-      :after company
-
-      :hook (ansible-mode .
-                          (lambda ()
-                            (add-to-list 'company-backends
-                                         'company-ansible)))
-      )
   )
 )
 
@@ -161,13 +166,17 @@
   )
 
 (unless (eq (executable-find "dotnet") nil)
+  ;; The csharp-ls language server is recommended for this configuration.
   (use-package csharp-mode
     ;; This is a built-in mode on Emacs >= 29.1
 
-    :hook (csharp-mode . lsp-deferred)
-    :hook (csharp-mode .
-                       (lambda ()
-                         (setq indent-tabs-mode nil)))
+    :custom
+    (dap-netcore-install-dir "~/.emacs.d/.cache")
+
+    :hook ((csharp-mode . lsp-deferred)
+           (csharp-mode .
+                        (lambda ()
+                          (setq indent-tabs-mode nil))))
 
     :mode (("\\.csproj\\'"         . nxml-mode)
            ("\\.cshtml\\.cs\\'"    . csharp-mode))
@@ -180,15 +189,31 @@
         (package-install 'csharp-mode)
       )
 
-    :config
+    ;; DAP Support
+    ;;
+    ;; Emacs will prompt the user to download NetCoreDBG when
+    ;; dap-debug is invoked for the first time.  To download and
+    ;; install NetCoreDBG manually, do the following:
+    ;;
+    ;;   1. Update the cmf/dap* variables above per environment
+    ;;   2. Open up a C# file (e.g., Program.cs)
+    ;;   3. M-x dap-netcore-update-debugger
+    ;;
+    ;; See https://github.com/Samsung/netcoredbg for further details
+    ;;
+    (setq dap-netcore-download-url
+          (file-name-concat cmf/dap-netcoredbg-url-prefix
+                            cmf/dap-netcoredbg-version
+                            cmf/dap-netcoredbg-file)
+          )
     )
 
   (use-package dotnet
     :ensure t
 
     :hook ((csharp-mode . dotnet-mode)
-           (dired-mode . dotnet-mode))    ; Allows running dotnet in
-                                          ; dired buffer
+           (dired-mode  . dotnet-mode)) ; Allows running dotnet in
+                                        ; dired buffer
     )
   )
 
@@ -205,18 +230,6 @@
     :mode ("\\.go\\'" . go-mode)
 
     :config
-    (use-package company-go
-      :ensure t
-      :after company
-
-      :hook (go-mode .
-                     (lambda ()
-                       (add-to-list 'company-backends 'company-go)))
-
-      :init
-      (add-hook 'before-save-hook #'gofmt-before-save)
-      )
-
     (use-package go-complete
       :ensure t
 
@@ -261,10 +274,9 @@
   (use-package lsp-java
     :ensure t
     :defer t
-    :after (hydra lsp)
+    :after lsp
 
-    :hook ((java-mode . lsp-java-boot-lens)
-           (java-mode .
+    :hook ((java-mode .
                       (lambda ()
                         (setq lsp-imenu-index-symbol-kinds
                               '(Property Constant Variable Constructor
@@ -279,6 +291,18 @@
     )
   )
 
+;; Javascript LSP Support
+;;
+;; deno-ls (recommended) installation will report that it is unable to
+;; find an installed server.  This is due to a dangling symlink.  To
+;; rectify this issue:
+;;
+;; 1. Open the Emacs shell (M-x eshell)
+;; 2. cd ~/.emacs.d/.cache/lsp/npm/deno/bin
+;; 3. rm deno && ln -s ../lib/node_modules/deno/deno .
+;; 4. Return to your javascript program
+;; 5. M-x lsp
+;;
 (use-package js-mode
   ;; This is a built-in mode
 
@@ -327,20 +351,15 @@
     (phpcbf-standard "PSR2")
 
     :config
+    ;; (require 'dap-php)
     (require 'php-doc)
     (require 'phpcbf)
 
-    ;; Obtain an intelephense license key at https://intelephense.com/buy
-    ;; (setq lsp-intelephense-licence-key (auth-source-search :host 'intelephense))
-    
-    (use-package company-php
-      :ensure t
-      :after company
-
-      :hook (php-mode .
-                      (lambda ()
-                        (add-to-list 'company-backends 'company-ac-php-backend
-                                     )))
+    (if (file-exists-p "~/.gnupg/secring.pgp")
+        ;; Obtain an intelephense license key at https://intelephense.com/buy
+    	;;
+        ;; DONT: License key settings not appropriate for public!
+	;; (setq lsp-intelephense-licence-key (auth-source-search :host 'intelephense))
       )
 
     (use-package phpunit
@@ -430,19 +449,6 @@
     (sh-indent-for-continuation 4)
     (sh-indentation 8)
     )
-  )
-
-;; This *must* be loaded outside of sh-mode stanza
-(use-package company-shell
-  :ensure t
-  :commands shell-mode
-
-  :hook (sh-mode .
-                 (lambda ()
-                   (add-to-list 'company-backends 'company-shell)))
-
-  :custom
-  (company-shell-clean-manpage t)
   )
 
 (use-package sql

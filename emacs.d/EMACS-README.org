@@ -21,7 +21,7 @@
 
 ** Operating System Requirements
 
-   This configuration is compatible with GNU Emacs 28.1 or greater and has been
+   This configuration is compatible with GNU Emacs 29.1 or greater and has been
    tested under various Linux distributions, Windows 11 and NetBSD.  As I no
    longer use a Mac on a regular basis, no testing was done under that
    environment.
@@ -115,7 +115,7 @@
    include:
 
     * [[https://github.com/karthink/gptel][gptel]]
-    * [[https://codeberg.org/martianh/mastodon.el][mastodon]]
+    * [[https://codeberg.org/martianh/mastodon.el][mastodon]][fn:1]
     * [[https://github.com/pashky/restclient.el][restclient]]
 
 ** cmf-file-support
@@ -171,9 +171,37 @@
    User interface enhancements, including packages for Window navigation and
    text completion.  Notable packages include:
 
-    * [[https://company-mode.github.io/][company-mode]] :: Text-completion mode
-    * [[https://github.com/abo-abo/swiper][Ivy]] :: A generic completion framework that includes replacements for
-      common Emacs commands
+    * [[https://github.com/minad/cape][cape]] :: Completion At Point Extensions
+    * [[https://github.com/minad/consult][consult]] :: Search and navigate via completing-read
+    * [[https://github.com/minad/corfu][corfu]] :: COmpletion in Region FUnction
+    * [[https://github.com/oantolin/embark][embark]] :: Emacs Mini-Buffer Actions Rooted in Keymaps
+    * [[https://github.com/minad/goggles][goggles]] :: Pulse modified region
+    * [[https://github.com/minad/marginalia][marginalia]] :: Marginalia in the minibuffer
+    * [[https://github.com/oantolin/orderless][orderless]] :: Provide an orderless completion style
+    * [[https://github.com/minad/vertico][vertico]] :: VERTical Interactive COmpletion
+
+*** WARNING
+
+    Prior to v2026.10, the main completion system was comprised of
+    a combination of Ivy/Swiper/Counsel and company mode.  This has now been
+    replaced by Consult, Corfu, Embark, Marginalia, Orderless, and Vertico.  To
+    avoid conflicts between packages, clean out =~/.emacs.d/elpa= (removing old
+    byte-compiled files as well as outdated package versions) and restart GNU
+    Emacs as shown below:
+
+   #+begin_src bash
+     # Switch to SHELL directory
+     cd ~/SHELL
+
+     # Remove all packages from ~/.emacs.d/elpa directory
+     make clean-elpa
+
+     # Install latest changes
+     ./setup.sh
+
+     # Start emacs, triggering automatic installation of new packages
+     emacs
+   #+end_src
 
 * Resources
 
@@ -187,7 +215,11 @@
   Copyright (c) 2000-2026 Christopher M. Fuhrman \\
   All rights reserved. \\
 
-  All files contained herein can be redistributed and/or modified   \\
-  under the terms of the Simplified BSD License (also known as the  \\
+  #+LATEX: \noindent
+  All files contained herein can be redistributed and/or modified \\
+  under the terms of the Simplified BSD License (also known as the \\
   "2-Clause License" or "FreeBSD License".) unless otherwise noted.
 
+* Footnotes
+
+[fn:1] Available under GNU Emacs 31.1 or greater 

@@ -1,4 +1,4 @@
-;;; cmf-variables.el --- Variables
+;;; cmf-variables.el --- Variables -*- lexical-binding: t; -*-
 ;; ====================================================================
 ;;;
 ;; Copyright (c) 2024 Christopher M. Fuhrman

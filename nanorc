@@ -21,4 +21,11 @@ set keycolor       brightwhite,red
 set functioncolor  brightwhite,black
 
 # Syntax Highlighting
-include "~/SHELL/thirdparty/csharp.nanorc/csharp.colorful.nanorc"
+include "~/SHELL/thirdparty/nano/csharp.nanorc"
+include "~/SHELL/thirdparty/nano/gitcommit.nanorc"
+include "~/SHELL/thirdparty/nano/git.nanorc"
+include "~/SHELL/thirdparty/nano/lisp.nanorc"
+include "~/SHELL/thirdparty/nano/markdown.nanorc"
+include "~/SHELL/thirdparty/nano/powershell.nanorc"
+include "~/SHELL/thirdparty/nano/sh.nanorc"
+include "~/SHELL/thirdparty/nano/svn.nanorc"
